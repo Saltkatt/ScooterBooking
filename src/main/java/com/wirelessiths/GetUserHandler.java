@@ -2,13 +2,13 @@ package com.wirelessiths;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.serverless.dal.Product;
+import com.wirelessiths.dal.User;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
 import java.util.Map;
 
-public class GetProductHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
+public class GetUserHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -21,13 +21,13 @@ public class GetProductHandler implements RequestHandler<Map<String, Object>, Ap
         String productId = pathParameters.get("id");
 
         // get the Product by id
-        Product product = new Product().get(productId);
+        User user = new User().get(productId);
 
         // send the response back
-        if (product != null) {
+        if (user != null) {
           return ApiGatewayResponse.builder()
       				.setStatusCode(200)
-      				.setObjectBody(product)
+      				.setObjectBody(user)
       				.setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
       				.build();
         } else {
