@@ -4,13 +4,13 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.serverless.dal.Product;
+import com.wirelessiths.dal.User;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
 import java.util.Map;
 
-public class CreateProductHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
+public class CreateUserHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -21,25 +21,28 @@ public class CreateProductHandler implements RequestHandler<Map<String, Object>,
           // get the 'body' from input
           JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
 
-          // create the Product object for post
-          Product product = new Product();
-          // product.setId(body.get("id").asText());
-          product.setName(body.get("name").asText());
-          product.setPrice((float) body.get("price").asDouble());
-          product.save(product);
+          // create the User object for post
+          User user = new User();
+          // user.setId(body.get("id").asText());
+          user.setFirstName(body.get("firstName").asText());
+          user.setLastName(body.get("lastName").asText());
+          user.setEmail(body.get("email").asText());
+          user.setPassword(body.get("password").asText());
+          user.setPersonalIdentificationNumber(body.get("personalIdentificationNumber").asText());
+          user.save(user);
 
           // send the response back
       		return ApiGatewayResponse.builder()
       				.setStatusCode(200)
-      				.setObjectBody(product)
+      				.setObjectBody(user)
       				.setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
       				.build();
 
       } catch (Exception ex) {
-          logger.error("Error in saving product: " + ex);
+          logger.error("Error in saving user: " + ex);
 
           // send the error response back
-    			Response responseBody = new Response("Error in saving product: ", input);
+    			Response responseBody = new Response("Error in saving user: ", input);
     			return ApiGatewayResponse.builder()
     					.setStatusCode(500)
     					.setObjectBody(responseBody)
