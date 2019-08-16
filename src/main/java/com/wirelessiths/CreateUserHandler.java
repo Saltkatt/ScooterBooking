@@ -24,6 +24,7 @@ public class CreateUserHandler implements RequestHandler<Map<String, Object>, Ap
           // create the User object for post
           User user = new User();
           // user.setId(body.get("id").asText());
+		  user.setUsername(body.get("username").asText());
           user.setFirstName(body.get("firstName").asText());
           user.setLastName(body.get("lastName").asText());
           user.setEmail(body.get("email").asText());
