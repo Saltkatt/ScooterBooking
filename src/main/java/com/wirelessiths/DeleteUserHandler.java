@@ -2,13 +2,13 @@ package com.wirelessiths;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.serverless.dal.Product;
+import com.wirelessiths.dal.User;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
 import java.util.Map;
 
-public class DeleteProductHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
+public class DeleteUserHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -18,10 +18,10 @@ public class DeleteProductHandler implements RequestHandler<Map<String, Object>,
     try {
         // get the 'pathParameters' from input
         Map<String,String> pathParameters =  (Map<String,String>)input.get("pathParameters");
-        String productId = pathParameters.get("id");
+        String userId = pathParameters.get("id");
 
-        // get the Product by id
-        Boolean success = new Product().delete(productId);
+        // get the User by id
+        Boolean success = new User().delete(userId);
 
         // send the response back
         if (success) {
@@ -32,15 +32,15 @@ public class DeleteProductHandler implements RequestHandler<Map<String, Object>,
         } else {
           return ApiGatewayResponse.builder()
       				.setStatusCode(404)
-      				.setObjectBody("Product with id: '" + productId + "' not found.")
+      				.setObjectBody("User with id: '" + userId + "' not found.")
       				.setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
       				.build();
         }
     } catch (Exception ex) {
-        logger.error("Error in deleting product: " + ex);
+        logger.error("Error in deleting user: " + ex);
 
         // send the error response back
-  			Response responseBody = new Response("Error in deleting product: ", input);
+  			Response responseBody = new Response("Error in deleting user: ", input);
   			return ApiGatewayResponse.builder()
   					.setStatusCode(500)
   					.setObjectBody(responseBody)
