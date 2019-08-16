@@ -46,7 +46,7 @@ functions:
           path: /products
           method: get
   getProduct:
-    handler: com.serverless.GetProductHandler
+    handler: com.serverless.GetUserHandler
     events:
       - http:
           path: /products/{id}
