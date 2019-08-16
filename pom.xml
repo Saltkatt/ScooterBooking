@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.wireless</groupId>
-  <artifactId>bookingScooter</artifactId>
+  <artifactId>users-api</artifactId>
   <packaging>jar</packaging>
   <version>dev</version>
   <name>users-api</name>
@@ -44,6 +44,13 @@
       <artifactId>aws-java-sdk-dynamodb</artifactId>
       <version>1.11.119</version>
     </dependency>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>

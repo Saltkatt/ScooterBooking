@@ -11,7 +11,7 @@
 #
 # Happy Coding!
 
-service: products-api
+service: users-api
 
 custom:
   usersTableName: 'users-${self:provider.stage}'
@@ -39,34 +39,34 @@ package:
   artifact: 'target/${self:service}-${self:provider.stage}.jar'
 
 functions:
-  listProducts:
-    handler: com.serverless.ListProductsHandler
+  listUsers:
+    handler: com.serverless.ListUsersHandler
     events:
       - http:
-          path: /products
+          path: /users
           method: get
-  getProduct:
+  getUser:
     handler: com.serverless.GetUserHandler
     events:
       - http:
-          path: /products/{id}
+          path: /users/{id}
           method: get
-  createProduct:
+  createUser:
     handler: com.serverless.CreateProductHandler
     events:
       - http:
-          path: /products
+          path: /users
           method: post
-  deleteProduct:
+  deleteUser:
     handler: com.serverless.DeleteProductHandler
     events:
       - http:
-          path: /products/{id}
+          path: /users/{id}
           method: delete
 
 resources:
   Resources:
-    ProductsDynamoDBTable:
+    UsersDynamoDBTable:
       Type: AWS::DynamoDB::Table
       Properties:
         TableName: ${self:custom.usersTableName}
