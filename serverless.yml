@@ -40,25 +40,25 @@ package:
 
 functions:
   listUsers:
-    handler: com.serverless.ListUsersHandler
+    handler: com.wirelessiths.ListUsersHandler
     events:
       - http:
           path: /users
           method: get
   getUser:
-    handler: com.serverless.GetUserHandler
+    handler: com.wirelessiths.GetUserHandler
     events:
       - http:
           path: /users/{id}
           method: get
   createUser:
-    handler: com.serverless.CreateProductHandler
+    handler: com.wirelessiths.CreateUserHandler
     events:
       - http:
           path: /users
           method: post
   deleteUser:
-    handler: com.serverless.DeleteProductHandler
+    handler: com.wirelessiths.DeleteUserHandler
     events:
       - http:
           path: /users/{id}
