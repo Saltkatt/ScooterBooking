@@ -152,7 +152,6 @@ public class User {
     public Boolean delete(String id) throws IOException {
         User user = null;
 
-        // get product if exists
         user = get(id);
         if (user != null) {
           logger.info("User - delete(): " + user.toString());
