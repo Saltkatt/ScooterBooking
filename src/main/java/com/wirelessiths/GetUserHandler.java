@@ -2,7 +2,7 @@ package com.wirelessiths;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.wirelessiths.dal.User;
+import com.wirelessiths.dal.Booking;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
@@ -21,7 +21,7 @@ public class GetUserHandler implements RequestHandler<Map<String, Object>, ApiGa
         String productId = pathParameters.get("id");
 
         // get the Product by id
-        User user = new User().get(productId);
+        Booking user = new Booking().get(productId);
 
         // send the response back
         if (user != null) {

@@ -11,10 +11,10 @@
 #
 # Happy Coding!
 
-service: users-api
+service: bookings-api
 
 custom:
-  usersTableName: 'users-${self:provider.stage}'
+  bookingsTableName: 'bookings-${self:provider.stage}'
 
 provider:
   name: aws
@@ -31,9 +31,9 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource:
-        - { "Fn::GetAtt": ["UsersDynamoDBTable", "Arn" ] }
+        - { "Fn::GetAtt": ["BookingsDynamoDBTable", "Arn" ] }
   environment:
-    USERS_TABLE_NAME: ${self:custom.usersTableName}
+    BOOKINGS_TABLE_NAME: ${self:custom.bookingsTableName}
 
 package:
   artifact: 'target/${self:service}-${self:provider.stage}.jar'
@@ -43,25 +43,25 @@ functions:
     handler: com.wirelessiths.ListUsersHandler
     events:
       - http:
-          path: /users
+          path: /bookings
           method: get
   getUser:
     handler: com.wirelessiths.GetUserHandler
     events:
       - http:
-          path: /users/{id}
+          path: /bookings/{id}
           method: get
   createUser:
     handler: com.wirelessiths.CreateUserHandler
     events:
       - http:
-          path: /users
+          path: /bookings
           method: post
   deleteUser:
     handler: com.wirelessiths.DeleteUserHandler
     events:
       - http:
-          path: /users/{id}
+          path: /bookings/{id}
           method: delete
 
 resources:
@@ -69,16 +69,18 @@ resources:
     UsersDynamoDBTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.usersTableName}
+        TableName: ${self:custom.bookingsTableName}
         AttributeDefinitions:
           - AttributeName: id
             AttributeType: S
-          - AttributeName: username
+          - AttributeName: scooterId
             AttributeType: S
+          - AttributeName: userId
+          AttributeType: S
         KeySchema:
-          - AttributeName: id
+          - AttributeName: bookingsId
             KeyType: HASH
-          - AttributeName: username
+          - AttributeName: startTime
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
