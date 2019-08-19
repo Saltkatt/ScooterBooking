@@ -52,7 +52,7 @@ functions:
           path: /users/{id}
           method: get
   createUser:
-    handler: com.wirelessiths.CreateUserHandler
+    handler: com.wirelessiths.CreateBookingHandler
     events:
       - http:
           path: /users

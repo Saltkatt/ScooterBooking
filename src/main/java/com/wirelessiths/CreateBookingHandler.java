@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 import java.util.Collections;
 import java.util.Map;
 
-public class CreateUserHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
+public class CreateBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -24,12 +24,12 @@ public class CreateUserHandler implements RequestHandler<Map<String, Object>, Ap
           // create the Booking object for post
           Booking booking = new Booking();
           //booking.setSelectedScooter(body.get("id").asText());
-		  booking.setBooker(body.get("username").asText());
-          booking.setStartTimer(body.get("firstName").asText());
-          booking.setEndTime(body.get("lastName").asText());
-          booking.setEndPos(body.get("email").asText());
-          booking.setStartPos(body.get("password").asText());
-          booking.setPersonalIdentificationNumber(body.get("personalIdentificationNumber").asText());
+		  booking.setBooker(body.get("booker").asText());
+          booking.setStartTime(body.get("startTime").asText());
+          booking.setEndTime(body.get("endTimer").asText());
+          booking.setEndPos(body.get("End position").asText());
+          booking.setStartPos(body.get("Start position").asText());
+          //booking.setPersonalIdentificationNumber(body.get("personalIdentificationNumber").asText());
           booking.save(booking);
 
           // send the response back

@@ -24,7 +24,7 @@ public class Booking {
 
     private List<Scooter> selectedScooter;
     private User booker;
-    private Date startTimer;
+    private Date startTime;
     private Date endTime;
     private String startPos;
     private String endPos;
@@ -48,12 +48,12 @@ public class Booking {
         this.booker = booker;
     }
 
-    @DynamoDBAttribute(attributeName = "startTimer")
-    public String getStartTimer() {
-        return this.startTimer;
+    @DynamoDBAttribute(attributeName = "startTime")
+    public String getStartTime() {
+        return this.startTime;
     }
-    public void setStartTimer(String startTimer) {
-        this.startTimer = startTimer;
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
     }
 
     @DynamoDBAttribute(attributeName = "endTime")
@@ -104,7 +104,7 @@ public class Booking {
         return "Booking{" +
                 "selectedScooter='" + selectedScooter + '\'' +
                 ", booker='" + booker + '\'' +
-                ", startTimer='" + startTimer + '\'' +
+                ", startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +
                 ", startPos='" + startPos + '\'' +
                 ", endPos='" + endPos + '\'' +
