@@ -4,7 +4,7 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wirelessiths.dal.User;
+import com.wirelessiths.dal.Booking;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
@@ -21,20 +21,21 @@ public class CreateUserHandler implements RequestHandler<Map<String, Object>, Ap
           // get the 'body' from input
           JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
 
-          // create the User object for post
-          User user = new User();
-          // user.setId(body.get("id").asText());
-          user.setFirstName(body.get("firstName").asText());
-          user.setLastName(body.get("lastName").asText());
-          user.setEmail(body.get("email").asText());
-          user.setPassword(body.get("password").asText());
-          user.setPersonalIdentificationNumber(body.get("personalIdentificationNumber").asText());
-          user.save(user);
+          // create the Booking object for post
+          Booking booking = new Booking();
+          //booking.setSelectedScooter(body.get("id").asText());
+		  booking.setBooker(body.get("username").asText());
+          booking.setStartTimer(body.get("firstName").asText());
+          booking.setEndTime(body.get("lastName").asText());
+          booking.setEndPos(body.get("email").asText());
+          booking.setStartPos(body.get("password").asText());
+          booking.setPersonalIdentificationNumber(body.get("personalIdentificationNumber").asText());
+          booking.save(booking);
 
           // send the response back
       		return ApiGatewayResponse.builder()
       				.setStatusCode(200)
-      				.setObjectBody(user)
+      				.setObjectBody(booking)
       				.setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
       				.build();
 

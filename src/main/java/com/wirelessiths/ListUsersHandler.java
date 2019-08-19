@@ -2,7 +2,7 @@ package com.wirelessiths;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.wirelessiths.dal.User;
+import com.wirelessiths.dal.Booking;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
@@ -17,7 +17,7 @@ public class ListUsersHandler implements RequestHandler<Map<String, Object>, Api
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
     try {
         // get all users
-        List<User> products = new User().list();
+        List<Booking> products = new Booking().list();
 
         // send the response back
         return ApiGatewayResponse.builder()

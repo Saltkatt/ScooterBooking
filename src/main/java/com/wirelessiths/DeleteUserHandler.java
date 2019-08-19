@@ -2,7 +2,7 @@ package com.wirelessiths;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.wirelessiths.dal.User;
+import com.wirelessiths.dal.Booking;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
@@ -20,8 +20,8 @@ public class DeleteUserHandler implements RequestHandler<Map<String, Object>, Ap
         Map<String,String> pathParameters =  (Map<String,String>)input.get("pathParameters");
         String userId = pathParameters.get("id");
 
-        // get the User by id
-        Boolean success = new User().delete(userId);
+        // get the Booking by id
+        Boolean success = new Booking().delete(userId);
 
         // send the response back
         if (success) {
@@ -32,7 +32,7 @@ public class DeleteUserHandler implements RequestHandler<Map<String, Object>, Ap
         } else {
           return ApiGatewayResponse.builder()
       				.setStatusCode(404)
-      				.setObjectBody("User with id: '" + userId + "' not found.")
+      				.setObjectBody("Booking with id: '" + userId + "' not found.")
       				.setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
       				.build();
         }
