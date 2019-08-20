@@ -75,12 +75,29 @@ resources:
             AttributeType: S
           - AttributeName: message
             AttributeType: S
+#          - AttributeName: startTime
+#            AttributeType: S
+#          - AttributeName: endTime
+#            AttributeType: S
 
         KeySchema:
           - AttributeName: bookingId
             KeyType: HASH
           - AttributeName: message
             KeyType: RANGE
+
+#        GlobalSecondaryIndexes:
+#          - IndexName: timeIndex
+#            KeySchema:
+#              - AttributeName: startTime
+#                KeyType: HASH
+#              - AttributeName: endTime
+#                KeyType: RANGE
+#            Projection:
+#              ProjectionType: KEY_ONLY
+#            ProvisionedThroughput:
+#              ReadCapacityUnits: 1
+#              WriteCapacityUnits: 1
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1

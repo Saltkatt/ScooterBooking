@@ -54,11 +54,11 @@
 <!--      <version>1.11.119</version>-->
 <!--    </dependency> -->
     <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-dynamodb -->
-    <dependency>
-      <groupId>com.amazonaws</groupId>
-      <artifactId>aws-java-sdk-dynamodb</artifactId>
-      <version>1.9.0</version>
-    </dependency>
+<!--    <dependency>-->
+<!--      <groupId>com.amazonaws</groupId>-->
+<!--      <artifactId>aws-java-sdk-dynamodb</artifactId>-->
+<!--      <version>1.9.0</version>-->
+<!--    </dependency>-->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
