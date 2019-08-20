@@ -11,10 +11,10 @@
 #
 # Happy Coding!
 
-service: users-api
+service: bookings-api
 
 custom:
-  usersTableName: 'users-${self:provider.stage}'
+  bookingsTableName: 'bookings-${self:provider.stage}'
 
 provider:
   name: aws
@@ -31,54 +31,55 @@ provider:
         - dynamodb:UpdateItem
         - dynamodb:DeleteItem
       Resource:
-        - { "Fn::GetAtt": ["UsersDynamoDBTable", "Arn" ] }
+        - { "Fn::GetAtt": ["BookingsDynamoDBTable", "Arn" ] }
   environment:
-    USERS_TABLE_NAME: ${self:custom.usersTableName}
+    BOOKINGS_TABLE_NAME: ${self:custom.bookingsTableName}
 
 package:
   artifact: 'target/${self:service}-${self:provider.stage}.jar'
 
 functions:
-  listUsers:
-    handler: com.wirelessiths.ListUsersHandler
+  listBookings:
+    handler: com.wirelessiths.ListBookingHandler
     events:
       - http:
-          path: /users
+          path: /bookings
           method: get
-  getUser:
-    handler: com.wirelessiths.GetUserHandler
+  getBooking:
+    handler: com.wirelessiths.GetBookingHandler
     events:
       - http:
-          path: /users/{id}
+          path: /bookings/{id}
           method: get
-  createUser:
+  createBooking:
     handler: com.wirelessiths.CreateBookingHandler
     events:
       - http:
-          path: /users
+          path: /bookings
           method: post
-  deleteUser:
-    handler: com.wirelessiths.DeleteUserHandler
+  deleteBooking:
+    handler: com.wirelessiths.DeleteBookingHandler
     events:
       - http:
-          path: /users/{id}
+          path: /bookings/{id}
           method: delete
 
 resources:
   Resources:
-    UsersDynamoDBTable:
+    BookingsDynamoDBTable:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.usersTableName}
+        TableName: ${self:custom.bookingsTableName}
         AttributeDefinitions:
-          - AttributeName: id
+          - AttributeName: bookingId
             AttributeType: S
-          - AttributeName: username
+          - AttributeName: message
             AttributeType: S
+
         KeySchema:
-          - AttributeName: id
+          - AttributeName: bookingId
             KeyType: HASH
-          - AttributeName: username
+          - AttributeName: message
             KeyType: RANGE
         ProvisionedThroughput:
           ReadCapacityUnits: 1
