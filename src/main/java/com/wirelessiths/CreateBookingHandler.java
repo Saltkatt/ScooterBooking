@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
-public class CreateUserHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
+public class CreateBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -26,15 +26,15 @@ public class CreateUserHandler implements RequestHandler<Map<String, Object>, Ap
           // create the Booking object for post
           Booking booking = new Booking();
           // user.setId(body.get("id").asText());
-		  String userId = context.getIdentity().getIdentityId();
+		  //String userId = context.getIdentity().getIdentityId();
 
 
-		  booking.setScooterId(body.get("scooterId").asText());
+		  //booking.setScooterId(body.get("scooterId").asText());
 		  //booking.setStartTime(body.get("startTime"));
-		  booking.setStartTime(LocalDateTime.parse(body.get("startTime").asText()));
-		  booking.setEndTime(LocalDateTime.parse(body.get("endTime").asText()));
-		  booking.setUserId("");
-		  booking.setUserId(body.get("userId").asText());
+		  //booking.setStartTime(LocalDateTime.parse(body.get("startTime").asText()));
+		  //booking.setEndTime(LocalDateTime.parse(body.get("endTime").asText()));
+		  booking.setUserId(userId);
+		  booking.setMessage(body.get("message").asText());
 
           booking.save(booking);
 

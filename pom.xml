@@ -4,10 +4,10 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.wireless</groupId>
-  <artifactId>users-api</artifactId>
+  <artifactId>bookings-api</artifactId>
   <packaging>jar</packaging>
   <version>dev</version>
-  <name>users-api</name>
+  <name>bookings-api</name>
 
   <properties>
     <maven.compiler.source>1.8</maven.compiler.source>
@@ -16,6 +16,13 @@
   </properties>
 
   <dependencies>
+    <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-cognitoidentity -->
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-cognitoidentity</artifactId>
+      <version>1.11.613</version>
+    </dependency>
+
     <dependency>
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-lambda-java-core</artifactId>

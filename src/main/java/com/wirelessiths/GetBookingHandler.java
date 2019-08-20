@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import java.util.Collections;
 import java.util.Map;
 
-public class DeleteUserHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
+public class GetBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -18,29 +18,30 @@ public class DeleteUserHandler implements RequestHandler<Map<String, Object>, Ap
     try {
         // get the 'pathParameters' from input
         Map<String,String> pathParameters =  (Map<String,String>)input.get("pathParameters");
-        String userId = pathParameters.get("id");
+        String productId = pathParameters.get("id");
 
-        // get the Booking by id
-        Boolean success = new Booking().delete(userId);
+        // get the Product by id
+        Booking user = new Booking().get(productId);
 
         // send the response back
-        if (success) {
+        if (user != null) {
           return ApiGatewayResponse.builder()
-      				.setStatusCode(204)
+      				.setStatusCode(200)
+      				.setObjectBody(user)
       				.setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
       				.build();
         } else {
           return ApiGatewayResponse.builder()
       				.setStatusCode(404)
-      				.setObjectBody("Booking with id: '" + userId + "' not found.")
+              .setObjectBody("Booking with id: '" + productId + "' not found.")
       				.setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
       				.build();
         }
     } catch (Exception ex) {
-        logger.error("Error in deleting user: " + ex);
+        logger.error("Error in retrieving Booking: " + ex);
 
         // send the error response back
-  			Response responseBody = new Response("Error in deleting user: ", input);
+  			Response responseBody = new Response("Error in retrieving Booking: ", input);
   			return ApiGatewayResponse.builder()
   					.setStatusCode(500)
   					.setObjectBody(responseBody)
