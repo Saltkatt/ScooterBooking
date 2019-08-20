@@ -15,13 +15,13 @@ public class DynamoDBAdapter {
     private DynamoDBAdapter() {
         // create the client
         this.client = AmazonDynamoDBClientBuilder.standard()
-            .withRegion(Regions.US_EAST_1)
-            .build();
+                .withRegion(Regions.US_EAST_1)
+                .build();
     }
 
     public static DynamoDBAdapter getInstance() {
         if (db_adapter == null)
-          db_adapter = new DynamoDBAdapter();
+            db_adapter = new DynamoDBAdapter();
 
         return db_adapter;
     }
