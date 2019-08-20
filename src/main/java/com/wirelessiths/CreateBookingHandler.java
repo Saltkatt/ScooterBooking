@@ -9,7 +9,6 @@ import org.apache.log4j.Logger;
 
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Map;
 
 public class CreateBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
@@ -29,11 +28,13 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 		  //String userId = context.getIdentity().getIdentityId();
 
 
-		  //booking.setScooterId(body.get("scooterId").asText());
+		  booking.setScooterId(body.get("scooterId").asText());
+		  booking.setUserId(body.get("userId").asText());
 		  //booking.setStartTime(body.get("startTime"));
-		  //booking.setStartTime(LocalDateTime.parse(body.get("startTime").asText()));
+		  booking.setStartTime(LocalDateTime.parse("2019-08-20T12:17:41.592"));
 		  //booking.setEndTime(LocalDateTime.parse(body.get("endTime").asText()));
-		  booking.setUserId(userId);
+          booking.setEndTime(LocalDateTime.parse("2019-08-20T12:17:30.592"));
+		  //booking.setUserId(userId);
 		  booking.setMessage(body.get("message").asText());
 
           booking.save(booking);
@@ -47,6 +48,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
       } catch (Exception ex) {
           logger.error("Error in saving user: " + ex);
+          logger.error("error:" + ex.getMessage());
 
           // send the error response back
     			Response responseBody = new Response("Error in saving user: ", input);
