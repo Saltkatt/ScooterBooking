@@ -1,5 +1,6 @@
 package com.wirelessiths;
 
+import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -21,20 +22,12 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
       try {
           // get the 'body' from input
           JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
-
-          // create the Booking object for post
           Booking booking = new Booking();
-          // user.setId(body.get("id").asText());
-		  //String userId = context.getIdentity().getIdentityId();
-
 
 		  booking.setScooterId(body.get("scooterId").asText());
 		  booking.setUserId(body.get("userId").asText());
-		  //booking.setStartTime(body.get("startTime"));
-		  booking.setStartTime(LocalDateTime.parse("2019-08-20T12:17:41.592"));
-		  //booking.setEndTime(LocalDateTime.parse(body.get("endTime").asText()));
-          booking.setEndTime(LocalDateTime.parse("2019-08-20T12:17:30.592"));
-		  //booking.setUserId(userId);
+		  booking.setStartTime(LocalDateTime.parse(body.get("startTime").asText()));
+          booking.setEndTime(LocalDateTime.parse(body.get("endTime").asText()));
 		  booking.setMessage(body.get("message").asText());
 
           booking.save(booking);
