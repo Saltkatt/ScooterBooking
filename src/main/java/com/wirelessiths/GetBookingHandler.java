@@ -2,13 +2,13 @@ package com.wirelessiths;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.wirelessiths.dal.User;
+import com.wirelessiths.dal.Booking;
 import org.apache.log4j.Logger;
 
 import java.util.Collections;
 import java.util.Map;
 
-public class GetUserHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
+public class GetBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
@@ -21,7 +21,7 @@ public class GetUserHandler implements RequestHandler<Map<String, Object>, ApiGa
         String productId = pathParameters.get("id");
 
         // get the Product by id
-        User user = new User().get(productId);
+        Booking user = new Booking().get(productId);
 
         // send the response back
         if (user != null) {
@@ -33,15 +33,15 @@ public class GetUserHandler implements RequestHandler<Map<String, Object>, ApiGa
         } else {
           return ApiGatewayResponse.builder()
       				.setStatusCode(404)
-              .setObjectBody("Product with id: '" + productId + "' not found.")
+              .setObjectBody("Booking with id: '" + productId + "' not found.")
       				.setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
       				.build();
         }
     } catch (Exception ex) {
-        logger.error("Error in retrieving product: " + ex);
+        logger.error("Error in retrieving Booking: " + ex);
 
         // send the error response back
-  			Response responseBody = new Response("Error in retrieving product: ", input);
+  			Response responseBody = new Response("Error in retrieving Booking: ", input);
   			return ApiGatewayResponse.builder()
   					.setStatusCode(500)
   					.setObjectBody(responseBody)
