@@ -40,6 +40,8 @@ public class DeleteBookingHandler implements RequestHandler<Map<String, Object>,
 			}
 		} catch (CouldNotDeleteBookingException ex) {
 			logger.error("Error in deleting booking: " + ex);
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
 
 			// send the error response back
 			Response responseBody = new Response("Error in deleting booking, state is null: ", input);
@@ -50,6 +52,8 @@ public class DeleteBookingHandler implements RequestHandler<Map<String, Object>,
 					.build();
 		} catch (IOException ex) {
 			logger.error("Error: IOException " + ex);
+			logger.error(ex.getMessage());
+			ex.printStackTrace();
 
 			// send the error response back
 			Response responseBody = new Response("Error in I/O: ", input);
@@ -61,6 +65,8 @@ public class DeleteBookingHandler implements RequestHandler<Map<String, Object>,
 
 		}catch (Exception ex) {
             logger.error("Error in deleting Booking: " + ex);
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
 
         // send the error response back
         Response responseBody = new Response("Unknown error in deleting Booking: ", input);

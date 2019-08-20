@@ -44,6 +44,8 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
 		} catch (CouldNotCreateBookingException ex) {
 			logger.error("Error in creating booking: " + ex);
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
 
 			// send the error response back
 			Response responseBody = new Response("Error in creating booking: ", input);
@@ -55,6 +57,8 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
 		} catch (JsonProcessingException ex) {
 			logger.error("Error in JSON processing" + ex);
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
 
 			// send the error response back
 			Response responseBody = new Response("Error in JSON processing: ", input);
@@ -66,6 +70,8 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
 		} catch (IOException ex) {
 			logger.error("Error: IOException" + ex);
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
 
 			// send the error response back
 			Response responseBody = new Response("Error in creating booking due to I/O: ", input);
@@ -77,6 +83,8 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
 		}catch (Exception ex){
             logger.error("Error unknown Exception" + ex);
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
 
             // send the error response back
             Response responseBody = new Response("Error in creating booking due to unknown exception: ", input);

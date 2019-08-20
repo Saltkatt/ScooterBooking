@@ -30,9 +30,11 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 
 		} catch(UnableToListBookingsException ex){
 			logger.error("Error in listing bookings: " + ex);
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error in listing bookings: ", input);
+			Response responseBody = new Response("Error in listing bookings due to state: ", input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
@@ -41,6 +43,8 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 
 		}catch (IOException ex){
 			logger.error("Error in listing bookings due to I/O: " + ex);
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
 
 			// send the error response back
 			Response responseBody = new Response("Error in I/O when listing bookings: ", input);
@@ -52,6 +56,8 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 
 		} catch(Exception ex) {
 			logger.error("Error in listing users: " + ex);
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
 
 			// send the error response back
 			Response responseBody = new Response("Error in listing bookings: ", input);
