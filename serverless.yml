@@ -77,8 +77,8 @@ resources:
             AttributeType: S
           - AttributeName: startTime
             AttributeType: S
-#          - AttributeName: endTime
-#            AttributeType: S
+          - AttributeName: endTime
+            AttributeType: S
 
         KeySchema:
           - AttributeName: bookingId
@@ -91,8 +91,8 @@ resources:
             KeySchema:
               - AttributeName: startTime
                 KeyType: HASH
-#              - AttributeName: endTime
-#                KeyType: RANGE
+              - AttributeName: endTime
+                KeyType: RANGE
             Projection:
               ProjectionType: KEYS_ONLY
             ProvisionedThroughput:
