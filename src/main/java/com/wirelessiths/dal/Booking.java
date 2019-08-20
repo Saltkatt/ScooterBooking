@@ -67,7 +67,7 @@ public class Booking {
 
 
     @DynamoDBTypeConverted( converter = LocalDateTimeConverter.class )
-    @DynamoDBAttribute(attributeName = "startTime")
+    @DynamoDBIndexHashKey(attributeName = "startTime", globalSecondaryIndexName = "timeIndex")
     public LocalDateTime getStartTime() {
         return startTime;
     }
@@ -76,7 +76,7 @@ public class Booking {
     }
 
     @DynamoDBTypeConverted( converter = LocalDateTimeConverter.class )
-    @DynamoDBAttribute(attributeName = "endTime")
+    @DynamoDBIndexRangeKey(attributeName = "endTime", globalSecondaryIndexName = "timeIndex")
     public LocalDateTime getEndTime() {
         return endTime;
     }

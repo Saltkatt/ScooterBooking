@@ -51,7 +51,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
           logger.error("error:" + ex.getMessage());
 
           // send the error response back
-    			Response responseBody = new Response("Error in saving user: ", input);
+    			Response responseBody = new Response("Error: " + ex.getMessage() + " in saving user: ", input);
     			return ApiGatewayResponse.builder()
     					.setStatusCode(500)
     					.setObjectBody(responseBody)
