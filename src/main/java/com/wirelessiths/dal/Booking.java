@@ -3,7 +3,8 @@ package com.wirelessiths.dal;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -20,7 +21,7 @@ public class Booking {
     private final AmazonDynamoDB client;
     private final DynamoDBMapper mapper;
 
-    private Logger logger = Logger.getLogger(this.getClass());
+    private final Logger logger = LogManager.getLogger(this.getClass());
 
     private String bookingId;
     private String scooterId;

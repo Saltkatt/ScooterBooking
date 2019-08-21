@@ -1,12 +1,10 @@
 package com.wirelessiths;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
-import com.amazonaws.services.dynamodbv2.document.Item;
-import com.wirelessiths.dal.DynamoDBAdapter;
-import org.apache.log4j.Logger;
 
-import java.math.BigDecimal;
+import com.amazonaws.services.dynamodbv2.document.Item;
+
+
+
 
 import static org.junit.Assert.*;
 

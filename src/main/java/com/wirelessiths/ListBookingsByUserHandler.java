@@ -1,10 +1,12 @@
 package com.wirelessiths;
 
 import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.wirelessiths.dal.Booking;
 import com.wirelessiths.exception.UnableToListBookingsException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -13,13 +15,25 @@ import java.util.Map;
 
 public class ListBookingsByUserHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
-    private final Logger logger = Logger.getLogger(this.getClass());
+    private final Logger logger = LogManager.getLogger(this.getClass());
 
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
         try {
 
-            logger.error(context.toString());
+            LambdaLogger logger = context.getLogger();
+
+
+            final Map<String, Object> requestContext = (Map<String, Object>) input.get("requestContext");
+            logger.log(requestContext.toString());
+            final Map<String, Object> authorizer = (Map<String, Object>) requestContext.get("authorizer");
+            logger.log(authorizer.toString());
+            final Map<String, Object> claims  = (Map<String, Object>) authorizer.get("claims");
+            logger.log(claims.toString());
+            final String sub  = (String)claims.get("sub");
+
+            logger.log(sub);
+
             // get all users
             List<Booking> bookings = new Booking().list();
 
