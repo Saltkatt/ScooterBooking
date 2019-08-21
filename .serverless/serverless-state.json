@@ -164,7 +164,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/bookings-api/dev/1566377176022-2019-08-21T08:46:16.022Z/target/bookings-api-dev.jar"
+                "S3Key": "serverless/bookings-api/dev/1566377780603-2019-08-21T08:56:20.603Z/target/bookings-api-dev.jar"
               },
               "FunctionName": "bookings-api-dev-listBookings",
               "Handler": "com.wirelessiths.ListBookingHandler",
@@ -188,14 +188,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "ListBookingsLambdaVersionP57njFjEFcV2vhw5o2Cs1JfnsXh60KRvR8AAN5p4GeQ": {
+          "ListBookingsLambdaVersionl0No0zXNtryFekotir6CQQ0YtZJsMAMVL36aNflNFs": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "ListBookingsLambdaFunction"
               },
-              "CodeSha256": "3cEQATuaulTaVk/usUPPKdbJXQYy156UpxYvsqh0vOI="
+              "CodeSha256": "HHT8sqZVaewOZEFXa0zDL+0vk4gTzs9cxadNMoh4998="
             }
           },
           "GetBookingLambdaFunction": {
@@ -205,7 +205,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/bookings-api/dev/1566377176022-2019-08-21T08:46:16.022Z/target/bookings-api-dev.jar"
+                "S3Key": "serverless/bookings-api/dev/1566377780603-2019-08-21T08:56:20.603Z/target/bookings-api-dev.jar"
               },
               "FunctionName": "bookings-api-dev-getBooking",
               "Handler": "com.wirelessiths.GetBookingHandler",
@@ -229,14 +229,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "GetBookingLambdaVersion79QWz4d9bUcuQyAtM0dfoburR2pT82IMGuKSGEWPU": {
+          "GetBookingLambdaVersionl4VxJRaZ82EV9ywftZaYeLFJiPZHNRF2qV4J6cGgQ8": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "GetBookingLambdaFunction"
               },
-              "CodeSha256": "3cEQATuaulTaVk/usUPPKdbJXQYy156UpxYvsqh0vOI="
+              "CodeSha256": "HHT8sqZVaewOZEFXa0zDL+0vk4gTzs9cxadNMoh4998="
             }
           },
           "CreateBookingLambdaFunction": {
@@ -246,7 +246,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/bookings-api/dev/1566377176022-2019-08-21T08:46:16.022Z/target/bookings-api-dev.jar"
+                "S3Key": "serverless/bookings-api/dev/1566377780603-2019-08-21T08:56:20.603Z/target/bookings-api-dev.jar"
               },
               "FunctionName": "bookings-api-dev-createBooking",
               "Handler": "com.wirelessiths.CreateBookingHandler",
@@ -270,14 +270,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "CreateBookingLambdaVersion2RcYjRUoGEBMtu0ZG7O4OsoY2FjcHjuetyI6lgfek": {
+          "CreateBookingLambdaVersion2t0FJ6waOyehHznMtVrUIctt3divOIiRrKctP5WJAtg": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "CreateBookingLambdaFunction"
               },
-              "CodeSha256": "3cEQATuaulTaVk/usUPPKdbJXQYy156UpxYvsqh0vOI="
+              "CodeSha256": "HHT8sqZVaewOZEFXa0zDL+0vk4gTzs9cxadNMoh4998="
             }
           },
           "DeleteBookingLambdaFunction": {
@@ -287,7 +287,7 @@
                 "S3Bucket": {
                   "Ref": "ServerlessDeploymentBucket"
                 },
-                "S3Key": "serverless/bookings-api/dev/1566377176022-2019-08-21T08:46:16.022Z/target/bookings-api-dev.jar"
+                "S3Key": "serverless/bookings-api/dev/1566377780603-2019-08-21T08:56:20.603Z/target/bookings-api-dev.jar"
               },
               "FunctionName": "bookings-api-dev-deleteBooking",
               "Handler": "com.wirelessiths.DeleteBookingHandler",
@@ -311,14 +311,14 @@
               "IamRoleLambdaExecution"
             ]
           },
-          "DeleteBookingLambdaVersionqHv7k6qeNxoa7PGPebCBdjfN3Dv93s6ToaEfgOKcU": {
+          "DeleteBookingLambdaVersionarvG9HqfOegMjB4XxDrZ5satc6cXkzWzrA0wEQoyUY": {
             "Type": "AWS::Lambda::Version",
             "DeletionPolicy": "Retain",
             "Properties": {
               "FunctionName": {
                 "Ref": "DeleteBookingLambdaFunction"
               },
-              "CodeSha256": "3cEQATuaulTaVk/usUPPKdbJXQYy156UpxYvsqh0vOI="
+              "CodeSha256": "HHT8sqZVaewOZEFXa0zDL+0vk4gTzs9cxadNMoh4998="
             }
           },
           "ApiGatewayRestApi": {
@@ -531,7 +531,7 @@
               "MethodResponses": []
             }
           },
-          "ApiGatewayDeployment1566377174655": {
+          "ApiGatewayDeployment1566377779182": {
             "Type": "AWS::ApiGateway::Deployment",
             "Properties": {
               "RestApiId": {
@@ -784,25 +784,25 @@
           "ListBookingsLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "ListBookingsLambdaVersionP57njFjEFcV2vhw5o2Cs1JfnsXh60KRvR8AAN5p4GeQ"
+              "Ref": "ListBookingsLambdaVersionl0No0zXNtryFekotir6CQQ0YtZJsMAMVL36aNflNFs"
             }
           },
           "GetBookingLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "GetBookingLambdaVersion79QWz4d9bUcuQyAtM0dfoburR2pT82IMGuKSGEWPU"
+              "Ref": "GetBookingLambdaVersionl4VxJRaZ82EV9ywftZaYeLFJiPZHNRF2qV4J6cGgQ8"
             }
           },
           "CreateBookingLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "CreateBookingLambdaVersion2RcYjRUoGEBMtu0ZG7O4OsoY2FjcHjuetyI6lgfek"
+              "Ref": "CreateBookingLambdaVersion2t0FJ6waOyehHznMtVrUIctt3divOIiRrKctP5WJAtg"
             }
           },
           "DeleteBookingLambdaFunctionQualifiedArn": {
             "Description": "Current Lambda function version",
             "Value": {
-              "Ref": "DeleteBookingLambdaVersionqHv7k6qeNxoa7PGPebCBdjfN3Dv93s6ToaEfgOKcU"
+              "Ref": "DeleteBookingLambdaVersionarvG9HqfOegMjB4XxDrZ5satc6cXkzWzrA0wEQoyUY"
             }
           },
           "ServiceEndpoint": {
@@ -1026,7 +1026,7 @@
     "layers": {}
   },
   "package": {
-    "artifactDirectoryName": "serverless/bookings-api/dev/1566377176022-2019-08-21T08:46:16.022Z",
+    "artifactDirectoryName": "serverless/bookings-api/dev/1566377780603-2019-08-21T08:56:20.603Z",
     "artifact": "target/bookings-api-dev.jar"
   }
 }
