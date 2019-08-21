@@ -42,6 +42,9 @@ public class GetBookingHandler implements RequestHandler<Map<String, Object>, Ap
 
 		} catch (BookingDoesNotExistException ex) {
 			logger.error("Error in retrieving Booking as booking  is null: " + ex);
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
+
 			// send the error response back
 			Response responseBody = new Response("Error in retrieving Booking: ", input);
 			return ApiGatewayResponse.builder()
@@ -52,6 +55,8 @@ public class GetBookingHandler implements RequestHandler<Map<String, Object>, Ap
 
 		} catch(IOException ex) {
 			logger.error("Error in retrieving booking due to I/O: " + ex);
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
 
 			// send the error response back
 			Response responseBody = new Response("Error in I/O when retrieving booking: ", input);
@@ -63,6 +68,8 @@ public class GetBookingHandler implements RequestHandler<Map<String, Object>, Ap
 
 		}catch (Exception ex) {
 			logger.error("Error in retrieving Booking: " + ex);
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
 
 			// send the error response back
 			Response responseBody = new Response("Unknown error in retrieving Booking: ", input);
