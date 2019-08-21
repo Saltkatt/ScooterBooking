@@ -144,6 +144,26 @@ public class Booking {
         return user;
     }
 
+    public List<Booking> getByUserId(String userId) throws IOException {
+        Booking user = null;
+
+        HashMap<String, AttributeValue> av = new HashMap<String, AttributeValue>();
+        av.put(":v1", new AttributeValue().withS(userId));
+
+        DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<Booking>()
+                .withKeyConditionExpression("userId = :v1")
+                .withExpressionAttributeValues(av);
+
+        List<Booking> result = this.mapper.query(Booking.class, queryExp);
+        if (result.size() > 0) {
+            user = result.get(0);
+            logger.info("Booking - get(): booking - " + user.toString());
+        } else {
+            logger.info("Booking - get(): booking - Not Found.");
+        }
+        return result;
+    }
+
     public void save(Booking booking) throws IOException {
         logger.info("Booking - save(): " + booking.toString());
         this.mapper.save(booking);

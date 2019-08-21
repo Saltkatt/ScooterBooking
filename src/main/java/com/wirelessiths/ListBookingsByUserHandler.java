@@ -9,6 +9,7 @@ import com.wirelessiths.exception.UnableToListBookingsException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.print.Book;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -21,24 +22,10 @@ public class ListBookingsByUserHandler implements RequestHandler<Map<String, Obj
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
         try {
-
-            LambdaLogger logger = context.getLogger();
-
-            logger.log("getUSerinfo yields sub: " + AuthService.getUserInfo(input, "sub"));
-
-
-            final Map<String, Object> requestContext = (Map<String, Object>) input.get("requestContext");
-            logger.log(requestContext.toString());
-            final Map<String, Object> authorizer = (Map<String, Object>) requestContext.get("authorizer");
-            logger.log(authorizer.toString());
-            final Map<String, Object> claims  = (Map<String, Object>) authorizer.get("claims");
-            logger.log(claims.toString());
-            final String sub  = (String)claims.get("sub");
-
-            logger.log(sub);
-
-            // get all users
-            List<Booking> bookings = new Booking().list();
+            //LambdaLogger logger = context.getLogger();
+            //logger.log("getUSerinfo yields sub: " + AuthService.getUserInfo(input, "sub"));
+            Booking booking = new Booking();
+            List<Booking> bookings = booking.getByUserId(AuthService.getUserInfo(input, "sub"));
 
             // send the response back
             return ApiGatewayResponse.builder()

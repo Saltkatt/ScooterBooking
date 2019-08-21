@@ -29,10 +29,23 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void yieldsEmptyStringWhenInmostIsNUll() {
+    public void yieldsEmptyStringWhenInmostIsNull() {
 
         innerMost.put(null, null);
         middle.put("three", innerMost);
+        middleOut.put("four", middle);
+        mostOut.put("five", middleOut);
+
+        String result = Optional.ofNullable(mostOut.get("five")).map(m -> m.get("four")).map(m -> m.get("three")).map(m -> m.get("one")).orElse("");
+        assertEquals("", result);
+
+    }
+
+    @Test
+    public void yieldsEmptyStringWhenMiddleIsNull() {
+
+        innerMost.put("one", "two");
+        middle.put("three", null);
         middleOut.put("four", middle);
         mostOut.put("five", middleOut);
 
