@@ -17,3 +17,5 @@ target/
 #serverless folder
 .serverless
 .serverless/*
+node_modules
+node_modules/*
