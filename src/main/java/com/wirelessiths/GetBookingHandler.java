@@ -46,7 +46,7 @@ public class GetBookingHandler implements RequestHandler<Map<String, Object>, Ap
             ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error in retrieving Booking: ", input);
+			Response responseBody = new Response("Error in retrieving Booking: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
@@ -59,7 +59,7 @@ public class GetBookingHandler implements RequestHandler<Map<String, Object>, Ap
             ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error in I/O when retrieving booking: ", input);
+			Response responseBody = new Response("Error in I/O when retrieving booking: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
@@ -72,7 +72,7 @@ public class GetBookingHandler implements RequestHandler<Map<String, Object>, Ap
             ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Unknown error in retrieving Booking: ", input);
+			Response responseBody = new Response("Unknown error in retrieving Booking: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)

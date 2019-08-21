@@ -44,7 +44,7 @@ public class DeleteBookingHandler implements RequestHandler<Map<String, Object>,
 			ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error in deleting booking, state is null: ", input);
+			Response responseBody = new Response("Error in deleting booking, state is null: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
@@ -56,7 +56,7 @@ public class DeleteBookingHandler implements RequestHandler<Map<String, Object>,
 			ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error in I/O: ", input);
+			Response responseBody = new Response("Error in I/O: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
@@ -69,7 +69,7 @@ public class DeleteBookingHandler implements RequestHandler<Map<String, Object>,
             ex.printStackTrace();
 
         // send the error response back
-        Response responseBody = new Response("Unknown error in deleting Booking: ", input);
+        Response responseBody = new Response("Unknown error in deleting Booking: " + ex.getMessage(), input);
         return ApiGatewayResponse.builder()
                 .setStatusCode(500)
                 .setObjectBody(responseBody)

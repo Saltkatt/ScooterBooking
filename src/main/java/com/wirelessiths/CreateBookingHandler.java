@@ -48,7 +48,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
             ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error: " + ex.getMessage() , input);
+			Response responseBody = new Response("Error: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
@@ -61,7 +61,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
             ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error in JSON processing: ", input);
+			Response responseBody = new Response("Error in JSON processing: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
@@ -74,7 +74,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
             ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error in creating booking due to I/O: ", input);
+			Response responseBody = new Response("Error in creating booking due to I/O: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
@@ -87,7 +87,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
             ex.printStackTrace();
 
             // send the error response back
-            Response responseBody = new Response("Error in creating booking due to unknown exception: ", input);
+            Response responseBody = new Response("Error in creating booking due to unknown exception: " + ex.getMessage(), input);
             return ApiGatewayResponse.builder()
                     .setStatusCode(500)
                     .setObjectBody(responseBody)

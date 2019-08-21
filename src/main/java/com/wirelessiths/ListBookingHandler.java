@@ -34,7 +34,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
             ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error in listing bookings due to state: ", input);
+			Response responseBody = new Response("Error in listing bookings due to state: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
@@ -47,7 +47,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
             ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error in I/O when listing bookings: ", input);
+			Response responseBody = new Response("Error in I/O when listing bookings: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
@@ -60,7 +60,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
             ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error in listing bookings: ", input);
+			Response responseBody = new Response("Error in listing bookings: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
