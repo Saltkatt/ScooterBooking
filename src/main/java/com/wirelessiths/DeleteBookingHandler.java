@@ -10,10 +10,20 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * This class handles delete requests and implements RequestHandler and ApiGatewayResponse.
+ */
 public class DeleteBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
+
+	/**
+	 * This method connects to the ApiGatewayResponse and request handler to allow the deletion of individual bookings.
+	 * @param input contains path parameters that allow users to delete bookings connected to a bookingId.
+	 * @param context
+	 * @return
+	 */
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 

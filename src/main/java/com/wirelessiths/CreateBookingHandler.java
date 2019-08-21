@@ -14,10 +14,19 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * This class handles save requests and implements RequestHandler and ApiGatewayResponse.
+ */
 public class CreateBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
+	/**
+	 * This method connects to the ApiGatewayResponse and request handler to allow the creation of individual bookings.
+	 * @param input contains the body of information required for the booking.
+	 * @param context
+	 * @return
+	 */
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 

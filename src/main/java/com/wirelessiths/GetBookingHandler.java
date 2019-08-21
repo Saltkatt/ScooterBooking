@@ -9,11 +9,20 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
-
+/**
+ * This class handles get requests and implements RequestHandler and ApiGatewayResponse.
+ */
 public class GetBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
+
+	/**
+	 * This method connects to the ApiGatewayResponse and request handler to allow the retrieval of individual bookings.
+	 * @param input contains path parameters that allow users to retrieve bookings connected to a bookingId.
+	 * @param context
+	 * @return
+	 */
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
