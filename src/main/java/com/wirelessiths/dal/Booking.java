@@ -89,8 +89,8 @@ public class Booking {
     public Booking() {
         // build the mapper config
         DynamoDBMapperConfig mapperConfig = DynamoDBMapperConfig.builder()
-            .withTableNameOverride(new DynamoDBMapperConfig.TableNameOverride(BOOKINGS_TABLE_NAME))
-            .build();
+                .withTableNameOverride(new DynamoDBMapperConfig.TableNameOverride(BOOKINGS_TABLE_NAME))
+                .build();
         // get the db adapter
         this.db_adapter = DynamoDBAdapter.getInstance();
         this.client = this.db_adapter.getDbClient();
@@ -115,12 +115,12 @@ public class Booking {
     }
 
     public List<Booking> list() throws IOException {
-      DynamoDBScanExpression scanExp = new DynamoDBScanExpression();
-      List<Booking> results = this.mapper.scan(Booking.class, scanExp);
-      for (Booking p : results) {
-        logger.info("Booking - list(): " + p.toString());
-      }
-      return results;
+        DynamoDBScanExpression scanExp = new DynamoDBScanExpression();
+        List<Booking> results = this.mapper.scan(Booking.class, scanExp);
+        for (Booking p : results) {
+            logger.info("Booking - list(): " + p.toString());
+        }
+        return results;
     }
 
     public Booking get(String id) throws IOException {
@@ -130,35 +130,34 @@ public class Booking {
         av.put(":v1", new AttributeValue().withS(id));
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<Booking>()
-            .withKeyConditionExpression("bookingId = :v1")
-            .withExpressionAttributeValues(av);
+                .withKeyConditionExpression("bookingId = :v1")
+                .withExpressionAttributeValues(av);
 
         PaginatedQueryList<Booking> result = this.mapper.query(Booking.class, queryExp);
         if (result.size() > 0) {
-          user = result.get(0);
-          logger.info("Booking - get(): booking - " + user.toString());
+            user = result.get(0);
+            logger.info("Booking - get(): booking - " + user.toString());
         } else {
-          logger.info("Booking - get(): booking - Not Found.");
+            logger.info("Booking - get(): booking - Not Found.");
         }
         return user;
     }
 
-    public void save(Booking user) throws IOException {
-        logger.info("Booking - save(): " + user.toString());
-        this.mapper.save(user);
+    public void save(Booking booking) throws IOException {
+        logger.info("Booking - save(): " + booking.toString());
+        this.mapper.save(booking);
     }
 
     public Boolean delete(String id) throws IOException {
         Booking booking = null;
-
         // get product if exists
         booking = get(id);
         if (booking != null) {
-          logger.info("Booking - delete(): " + booking.toString());
-          this.mapper.delete(booking);
+            logger.info("Booking - delete(): " + booking.toString());
+            this.mapper.delete(booking);
         } else {
-          logger.info("Booking - delete(): booking - does not exist.");
-          return false;
+            logger.info("Booking - delete(): booking - does not exist.");
+            return false;
         }
         return true;
     }

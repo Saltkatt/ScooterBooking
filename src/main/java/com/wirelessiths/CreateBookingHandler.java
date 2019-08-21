@@ -2,11 +2,14 @@ package com.wirelessiths;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.dal.Booking;
+import com.wirelessiths.exception.CouldNotCreateBookingException;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
@@ -17,6 +20,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
+
 
       try {
           // get the 'body' from input
@@ -38,17 +42,57 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
       				.setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
       				.build();
 
-      } catch (Exception ex) {
-          logger.error("Error in saving user: " + ex);
-          logger.error("error:" + ex.getMessage());
+      } catch (CouldNotCreateBookingException ex) {
+			logger.error("Error in creating booking: " + ex);
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
 
-          // send the error response back
-    			Response responseBody = new Response("Error: " + ex.getMessage() + " in saving user: ", input);
-    			return ApiGatewayResponse.builder()
-    					.setStatusCode(500)
-    					.setObjectBody(responseBody)
-    					.setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
-    					.build();
-      }
+			// send the error response back
+			Response responseBody = new Response("Error in creating booking: ", input);
+			return ApiGatewayResponse.builder()
+					.setStatusCode(500)
+					.setObjectBody(responseBody)
+					.setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
+					.build();
+
+		} catch (JsonProcessingException ex) {
+			logger.error("Error in JSON processing" + ex);
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
+
+			// send the error response back
+			Response responseBody = new Response("Error in JSON processing: ", input);
+			return ApiGatewayResponse.builder()
+					.setStatusCode(500)
+					.setObjectBody(responseBody)
+					.setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
+					.build();
+
+		} catch (IOException ex) {
+			logger.error("Error: IOException" + ex);
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
+
+			// send the error response back
+			Response responseBody = new Response("Error in creating booking due to I/O: ", input);
+			return ApiGatewayResponse.builder()
+					.setStatusCode(500)
+					.setObjectBody(responseBody)
+					.setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
+					.build();
+
+		}catch (Exception ex){
+            logger.error("Error unknown Exception" + ex);
+            logger.error(ex.getMessage());
+            ex.printStackTrace();
+
+            // send the error response back
+            Response responseBody = new Response("Error in creating booking due to unknown exception: ", input);
+            return ApiGatewayResponse.builder()
+                    .setStatusCode(500)
+                    .setObjectBody(responseBody)
+                    .setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
+                    .build();
+        }
 	}
 }
