@@ -56,7 +56,7 @@ public class Booking {
     }
 
 
-    @DynamoDBAttribute(attributeName = "userId")
+    @DynamoDBIndexHashKey(attributeName = "userId", globalSecondaryIndexName = "nameIndex")
     public String getUserId() {
         return userId;
     }

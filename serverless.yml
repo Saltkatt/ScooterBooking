@@ -79,6 +79,8 @@ resources:
             AttributeType: S
           - AttributeName: endTime
             AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
 
         KeySchema:
           - AttributeName: bookingId
@@ -93,6 +95,17 @@ resources:
                 KeyType: HASH
               - AttributeName: endTime
                 KeyType: RANGE
+            Projection:
+              ProjectionType: KEYS_ONLY
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+
+          - IndexName: userIndex
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+
             Projection:
               ProjectionType: KEYS_ONLY
             ProvisionedThroughput:
