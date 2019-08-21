@@ -3,6 +3,7 @@ package com.wirelessiths;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.wirelessiths.dal.AuthService;
 import com.wirelessiths.dal.Booking;
 import com.wirelessiths.exception.UnableToListBookingsException;
 import org.apache.logging.log4j.LogManager;
@@ -22,6 +23,8 @@ public class ListBookingsByUserHandler implements RequestHandler<Map<String, Obj
         try {
 
             LambdaLogger logger = context.getLogger();
+
+            logger.log("getUSerinfo yields sub: " + AuthService.getUserInfo(input, "sub"));
 
 
             final Map<String, Object> requestContext = (Map<String, Object>) input.get("requestContext");
