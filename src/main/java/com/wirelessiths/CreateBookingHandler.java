@@ -12,7 +12,6 @@ import org.apache.log4j.Logger;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Map;
 
 public class CreateBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
@@ -22,27 +21,28 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
-		try {
-			// get the 'body' from input
-			JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
 
-			// create the Booking object for post
-			Booking booking = new Booking();
-			// set userID
-			//booking.setUserId(userId);
-			// set message
-			booking.setMessage(body.get("message").asText());
-			//
-			booking.save(booking);
+      try {
+          // get the 'body' from input
+          JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
+          Booking booking = new Booking();
 
-			// send the response back
-			return ApiGatewayResponse.builder()
-					.setStatusCode(200)
-					.setObjectBody(booking)
-					.setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
-					.build();
+		  booking.setScooterId(body.get("scooterId").asText());
+		  booking.setUserId(body.get("userId").asText());
+		  booking.setStartTime(LocalDateTime.parse(body.get("startTime").asText()));
+          booking.setEndTime(LocalDateTime.parse(body.get("endTime").asText()));
+		  booking.setMessage(body.get("message").asText());
 
-		} catch (CouldNotCreateBookingException ex) {
+          booking.save(booking);
+
+          // send the response back
+      		return ApiGatewayResponse.builder()
+      				.setStatusCode(200)
+      				.setObjectBody(booking)
+      				.setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
+      				.build();
+
+      } catch (CouldNotCreateBookingException ex) {
 			logger.error("Error in creating booking: " + ex);
             logger.error(ex.getMessage());
             ex.printStackTrace();

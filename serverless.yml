@@ -75,12 +75,42 @@ resources:
             AttributeType: S
           - AttributeName: message
             AttributeType: S
+          - AttributeName: startTime
+            AttributeType: S
+          - AttributeName: endTime
+            AttributeType: S
+          - AttributeName: userId
+            AttributeType: S
 
         KeySchema:
           - AttributeName: bookingId
             KeyType: HASH
           - AttributeName: message
             KeyType: RANGE
+
+        GlobalSecondaryIndexes:
+          - IndexName: timeIndex
+            KeySchema:
+              - AttributeName: startTime
+                KeyType: HASH
+              - AttributeName: endTime
+                KeyType: RANGE
+            Projection:
+              ProjectionType: KEYS_ONLY
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+
+          - IndexName: userIndex
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+
+            Projection:
+              ProjectionType: KEYS_ONLY
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
