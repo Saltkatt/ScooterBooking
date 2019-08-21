@@ -139,9 +139,9 @@ public class Booking {
         return user;
     }
 
-    public void save(Booking user) throws IOException {
-        logger.info("Booking - save(): " + user.toString());
-        this.mapper.save(user);
+    public void save(Booking booking) throws IOException {
+        logger.info("Booking - save(): " + booking.toString());
+        this.mapper.save(booking);
     }
 
     public Boolean delete(String id) throws IOException {
