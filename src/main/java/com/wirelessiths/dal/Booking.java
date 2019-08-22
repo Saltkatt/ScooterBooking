@@ -125,7 +125,7 @@ public class Booking {
     }
 
     public Booking get(String id) throws IOException {
-        Booking user = null;
+        Booking booking = null;
 
         HashMap<String, AttributeValue> av = new HashMap<String, AttributeValue>();
         av.put(":v1", new AttributeValue().withS(id));
@@ -136,16 +136,16 @@ public class Booking {
 
         PaginatedQueryList<Booking> result = this.mapper.query(Booking.class, queryExp);
         if (result.size() > 0) {
-            user = result.get(0);
-            logger.info("Booking - get(): booking - " + user.toString());
+            booking = result.get(0);
+            logger.info("Booking - get(): booking - " +booking.toString());
         } else {
             logger.info("Booking - get(): booking - Not Found.");
         }
-        return user;
+        return booking;
     }
 
     public List<Booking> getByUserId(String userId) throws IOException {
-        Booking user = null;
+        Booking booking = null;
 
         HashMap<String, AttributeValue> av = new HashMap<String, AttributeValue>();
         av.put(":v1", new AttributeValue().withS(userId));
@@ -156,8 +156,8 @@ public class Booking {
 
         List<Booking> result = this.mapper.query(Booking.class, queryExp);
         if (result.size() > 0) {
-            user = result.get(0);
-            logger.info("Booking - get(): booking - " + user.toString());
+            booking = result.get(0);
+            logger.info("Booking - get(): booking - " + booking.toString());
         } else {
             logger.info("Booking - get(): booking - Not Found.");
         }
