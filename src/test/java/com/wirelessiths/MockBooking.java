@@ -20,12 +20,11 @@ public class MockBooking {
     private final AmazonDynamoDB client;
     private final DynamoDBMapper mapper;
 
-    private Logger logger = Logger.getLogger(this.getClass());
+    //private Logger logger = Logger.getLogger(this.getClass());
 
     private String bookingId;
     private String scooterId;
     private String userId;
-    //private String message;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
@@ -63,15 +62,6 @@ public class MockBooking {
     public void setScooterId(String scooterId) {
         this.scooterId = scooterId;
     }
-
-//    @DynamoDBRangeKey(attributeName = "message")
-//    public String getMessage() {
-//        return message;
-//    }
-//    public void setMessage(String message) {
-//        this.message = message;
-//    }
-
 
     @DynamoDBIndexHashKey(attributeName = "userId", globalSecondaryIndexName = "nameIndex")
     public String getUserId() {

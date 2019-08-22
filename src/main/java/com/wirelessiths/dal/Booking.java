@@ -1,19 +1,14 @@
 package com.wirelessiths.dal;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.Endpoint;
 import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
 
 
 
@@ -66,14 +61,6 @@ public class Booking {
         this.scooterId = scooterId;
     }
 
-//    @DynamoDBRangeKey(attributeName = "message")
-//    public String getMessage() {
-//        return message;
-//    }
-//    public void setMessage(String message) {
-//        this.message = message;
-//    }
-
 
     @DynamoDBIndexHashKey(attributeName = "userId", globalSecondaryIndexName = "nameIndex")
     public String getUserId() {
@@ -105,18 +92,13 @@ public class Booking {
     }
 
 
-
-
-
-
-
     @Override
     public String toString() {
         return "Booking{" +
                 ", scooterId='" + scooterId + '\'' +
                 ", userId='" + userId + '\'' +
-//                ", startTime=" + startTime +
-//                ", endTime=" + endTime +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
                 '}';
     }
 
