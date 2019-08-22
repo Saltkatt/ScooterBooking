@@ -1,22 +1,30 @@
 package com.wirelessiths.dal;
 
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
+import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 
 public class DynamoDBAdapter {
 
     private static DynamoDBAdapter db_adapter = null;
     private final AmazonDynamoDB client;
     private DynamoDBMapper mapper;
+    private DynamoDB dynamoDB;
 
     private DynamoDBAdapter() {
         // create the client
+        //for cloud client
         this.client = AmazonDynamoDBClientBuilder.standard()
                 .withRegion(Regions.US_EAST_1)
                 .build();
+        // For local client
+        // this.client =  AmazonDynamoDBClientBuilder.standard().withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://localhost:8000", "us-east-1")).build();
+
+        this.dynamoDB = new DynamoDB(this.client);
     }
 
     public static DynamoDBAdapter getInstance() {
@@ -25,6 +33,7 @@ public class DynamoDBAdapter {
 
         return db_adapter;
     }
+    public DynamoDB getDynamoDB() { return this.dynamoDB; }
 
     public AmazonDynamoDB getDbClient() {
         return this.client;

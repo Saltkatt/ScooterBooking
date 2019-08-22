@@ -32,6 +32,11 @@ provider:
         - dynamodb:DeleteItem
       Resource:
         - { "Fn::GetAtt": ["BookingsDynamoDBTable", "Arn" ] }
+        - Fn::Join:
+              - "/"
+              -
+                - { "Fn::GetAtt": ["BookingsDynamoDBTable", "Arn" ] }
+                - "index/*"
   environment:
     BOOKINGS_TABLE_NAME: ${self:custom.bookingsTableName}
 
@@ -109,7 +114,7 @@ resources:
                 KeyType: HASH
 
             Projection:
-              ProjectionType: KEYS_ONLY
+              ProjectionType: ALL
             ProvisionedThroughput:
               ReadCapacityUnits: 1
               WriteCapacityUnits: 1
