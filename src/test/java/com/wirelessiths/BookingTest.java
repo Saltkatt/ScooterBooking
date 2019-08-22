@@ -1,17 +1,24 @@
 package com.wirelessiths;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.document.Item;
-import com.wirelessiths.dal.DynamoDBAdapter;
-import org.apache.log4j.Logger;
+import com.wirelessiths.dal.Booking;
+import org.junit.Test;
 
-import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import static org.junit.Assert.*;
 
 
 public class BookingTest {
+
+    private String bookingId;
+    private String scooterId;
+    private String userId;
+    private String message;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
+
+    private Booking book = new Booking();
 
 
     /**
@@ -24,12 +31,27 @@ public class BookingTest {
         assertNotNull(bookingId);
         assertTrue(bookingId.contains("-"));
 
+        assertTrue(body.hasAttribute("scooterId"));
+        String scooterId = body.getString("scooterId");
+        assertNotNull(scooterId);
+        assertTrue(scooterId.contains("-"));
+
         assertTrue(body.hasAttribute("userId"));
         String userId = body.getString("userId");
         assertEquals("foo", userId);
 
         assertTrue(body.hasAttribute("message"));
         String message = body.getString("message");
-        
+
+        /*LocalDateTime startTime = LocalDateTime.now();
+        assertThat(startTime).isBetween(startTime.minusSeconds(1), startTime.plusSeconds(1))
+                .isBetween(startTime, startTime.plusSeconds(1))
+                .isBetween(startTime.minusSeconds(1), startTime)
+                .isBetween(startTime, startTime)
+                .isStrictlyBetween(startTime.minusSeconds(1), startTime.plusSeconds(1));*/
+
+
     }
+
+
 }
