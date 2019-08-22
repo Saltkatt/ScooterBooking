@@ -1,5 +1,8 @@
 package com.wirelessiths;
 
+import com.amazonaws.services.dynamodbv2.document.Item;
+import com.amazonaws.services.dynamodbv2.document.ItemCollection;
+import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.wirelessiths.dal.AuthService;
@@ -10,6 +13,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -21,13 +25,16 @@ public class ListBookingsByUserHandler implements RequestHandler<Map<String, Obj
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
         try {
 
+            context.getLogger().log("userID: " + AuthService.getUserInfo(input, "sub"));
+
             Booking booking = new Booking();
-            List<Booking> bookings = booking.getByUserId(AuthService.getUserInfo(input, "sub"));
+            List<String> results = booking.getByUserId(AuthService.getUserInfo(input, "sub"));
+
 
             // send the response back
             return ApiGatewayResponse.builder()
                     .setStatusCode(200)
-                    .setObjectBody(bookings)
+                    .setObjectBody(results)
                     .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
                     .build();
 
@@ -63,7 +70,7 @@ public class ListBookingsByUserHandler implements RequestHandler<Map<String, Obj
             ex.printStackTrace();
 
             // send the error response back
-            Response responseBody = new Response("Error in listing bookings: ", input);
+            Response responseBody = new Response("Error in listing bookings: " + ex.getMessage(), input);
             return ApiGatewayResponse.builder()
                     .setStatusCode(500)
                     .setObjectBody(responseBody)

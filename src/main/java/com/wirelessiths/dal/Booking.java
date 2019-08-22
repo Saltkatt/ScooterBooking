@@ -2,13 +2,22 @@ package com.wirelessiths.dal;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
+import com.amazonaws.services.dynamodbv2.document.*;
+import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
+import com.amazonaws.services.dynamodbv2.document.utils.NameMap;
+import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.print.Book;
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -26,6 +35,7 @@ public class Booking {
     private static DynamoDBAdapter db_adapter;
     private final AmazonDynamoDB client;
     private final DynamoDBMapper mapper;
+    private final DynamoDB dynamoDB;
 
     private final Logger logger = LogManager.getLogger(this.getClass());
 
@@ -47,6 +57,7 @@ public class Booking {
         // get the db adapter
         this.db_adapter = DynamoDBAdapter.getInstance();
         this.client = this.db_adapter.getDbClient();
+        this.dynamoDB = this.db_adapter.getDynamoDB();
         // create the mapper with config
         this.mapper = this.db_adapter.createDbMapper(mapperConfig);
     }
@@ -70,7 +81,7 @@ public class Booking {
     }
 
 
-    @DynamoDBIndexHashKey(attributeName = "userId", globalSecondaryIndexName = "nameIndex")
+    @DynamoDBIndexHashKey(attributeName = "userId", globalSecondaryIndexName = "userIndex")
     public String getUserId() {
         return userId;
     }
@@ -155,24 +166,29 @@ public class Booking {
         return booking;
     }
 
-    public List<Booking> getByUserId(String userId) throws IOException {
-        Booking booking = null;
+    public List<String> getByUserId(String userId) throws IOException {
 
-        HashMap<String, AttributeValue> av = new HashMap<String, AttributeValue>();
-        av.put(":v1", new AttributeValue().withS(userId));
+            Table table = dynamoDB.getTable(BOOKINGS_TABLE_NAME);
+            Index index = table.getIndex("userIndex");
 
-        DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<Booking>()
-                .withKeyConditionExpression("userId = :v1")
-                .withExpressionAttributeValues(av);
+            QuerySpec spec = new QuerySpec()
+                    .withKeyConditionExpression("#d = :v_user_id")
+                    .withNameMap(new NameMap()
+                            .with("#d", "userId"))
+                    .withValueMap(new ValueMap()
+                                    .withString(":v_user_id",userId)
+                            //.withNumber(":v_precip",0)
+                    );
 
-        List<Booking> result = this.mapper.query(Booking.class, queryExp);
-        if (result.size() > 0) {
-            booking = result.get(0);
-            logger.info("Booking - get(): booking - " + booking.toString());
-        } else {
-            logger.info("Booking - get(): booking - Not Found.");
+            ItemCollection<QueryOutcome> items = index.query(spec);
+            List<String> result = new ArrayList<>();
+        Iterator<Item> iter = items.iterator();
+        while (iter.hasNext()) {
+          result.add(iter.next().toJSONPretty());
         }
-        return result;
+
+            return result;
+
     }
 
     /**
