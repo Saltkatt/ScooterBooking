@@ -4,7 +4,8 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.wirelessiths.dal.Booking;
 import com.wirelessiths.exception.BookingDoesNotExistException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -14,7 +15,7 @@ import java.util.Map;
  */
 public class GetBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
-	private final Logger logger = Logger.getLogger(this.getClass());
+	private final Logger logger = LogManager.getLogger(this.getClass());
 
 
 	/**

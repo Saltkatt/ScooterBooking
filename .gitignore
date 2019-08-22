@@ -10,6 +10,12 @@
 log/
 target/
 
-Key files:
+#Key files:
 *.pem
 *.csv
+
+#serverless folder
+.serverless
+.serverless/*
+node_modules
+node_modules/*

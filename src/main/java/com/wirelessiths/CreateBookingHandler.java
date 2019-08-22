@@ -7,7 +7,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.dal.Booking;
 import com.wirelessiths.exception.CouldNotCreateBookingException;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -19,9 +20,9 @@ import java.util.Map;
  */
 public class CreateBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
-	private final Logger logger = Logger.getLogger(this.getClass());
+    private final Logger logger = LogManager.getLogger(this.getClass());
 
-	/**
+    /**
 	 * This method connects to the ApiGatewayResponse and request handler to allow the creation of individual bookings.
 	 * @param input contains the body of information required for the booking.
 	 * @param context

@@ -3,7 +3,8 @@ package com.wirelessiths.dal;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import org.apache.log4j.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -26,7 +27,7 @@ public class Booking {
     private final AmazonDynamoDB client;
     private final DynamoDBMapper mapper;
 
-    private Logger logger = Logger.getLogger(this.getClass());
+    private final Logger logger = LogManager.getLogger(this.getClass());
 
     private String bookingId;
     private String scooterId;
@@ -135,7 +136,7 @@ public class Booking {
      * @throws IOException
      */
     public Booking get(String id) throws IOException {
-        Booking user = null;
+        Booking booking = null;
 
         HashMap<String, AttributeValue> av = new HashMap<String, AttributeValue>();
         av.put(":v1", new AttributeValue().withS(id));
@@ -146,12 +147,32 @@ public class Booking {
 
         PaginatedQueryList<Booking> result = this.mapper.query(Booking.class, queryExp);
         if (result.size() > 0) {
-            user = result.get(0);
-            logger.info("Booking - get(): booking - " + user.toString());
+            booking = result.get(0);
+            logger.info("Booking - get(): booking - " +booking.toString());
         } else {
             logger.info("Booking - get(): booking - Not Found.");
         }
-        return user;
+        return booking;
+    }
+
+    public List<Booking> getByUserId(String userId) throws IOException {
+        Booking booking = null;
+
+        HashMap<String, AttributeValue> av = new HashMap<String, AttributeValue>();
+        av.put(":v1", new AttributeValue().withS(userId));
+
+        DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<Booking>()
+                .withKeyConditionExpression("userId = :v1")
+                .withExpressionAttributeValues(av);
+
+        List<Booking> result = this.mapper.query(Booking.class, queryExp);
+        if (result.size() > 0) {
+            booking = result.get(0);
+            logger.info("Booking - get(): booking - " + booking.toString());
+        } else {
+            logger.info("Booking - get(): booking - Not Found.");
+        }
+        return result;
     }
 
     /**

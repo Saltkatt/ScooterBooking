@@ -45,6 +45,12 @@ functions:
       - http:
           path: /bookings
           method: get
+  listBookingsByUser:
+    handler: com.wirelessiths.ListBookingsByUserHandler
+    events:
+      - http:
+          path: /bookings-by-user
+          method: get
   getBooking:
     handler: com.wirelessiths.GetBookingHandler
     events:
