@@ -10,10 +10,20 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * This class handles delete requests and implements RequestHandler and ApiGatewayResponse.
+ */
 public class DeleteBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
+
+	/**
+	 * This method connects to the ApiGatewayResponse and request handler to allow the deletion of individual bookings.
+	 * @param input contains path parameters that allow users to delete bookings connected to a bookingId.
+	 * @param context
+	 * @return
+	 */
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
@@ -44,7 +54,7 @@ public class DeleteBookingHandler implements RequestHandler<Map<String, Object>,
 			ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error in deleting booking, state is null: ", input);
+			Response responseBody = new Response("Error in deleting booking, state is null: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
@@ -56,7 +66,7 @@ public class DeleteBookingHandler implements RequestHandler<Map<String, Object>,
 			ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error in I/O: ", input);
+			Response responseBody = new Response("Error in I/O: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
@@ -69,7 +79,7 @@ public class DeleteBookingHandler implements RequestHandler<Map<String, Object>,
             ex.printStackTrace();
 
         // send the error response back
-        Response responseBody = new Response("Unknown error in deleting Booking: ", input);
+        Response responseBody = new Response("Unknown error in deleting Booking: " + ex.getMessage(), input);
         return ApiGatewayResponse.builder()
                 .setStatusCode(500)
                 .setObjectBody(responseBody)

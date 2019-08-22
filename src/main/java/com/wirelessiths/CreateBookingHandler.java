@@ -14,10 +14,19 @@ import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * This class handles save requests and implements RequestHandler and ApiGatewayResponse.
+ */
 public class CreateBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
+	/**
+	 * This method connects to the ApiGatewayResponse and request handler to allow the creation of individual bookings.
+	 * @param input contains the body of information required for the booking.
+	 * @param context
+	 * @return
+	 */
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
@@ -48,7 +57,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
             ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error: " + ex.getMessage() , input);
+			Response responseBody = new Response("Error: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
@@ -61,7 +70,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
             ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error in JSON processing: ", input);
+			Response responseBody = new Response("Error in JSON processing: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
@@ -74,7 +83,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
             ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error in creating booking due to I/O: ", input);
+			Response responseBody = new Response("Error in creating booking due to I/O: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
@@ -87,7 +96,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
             ex.printStackTrace();
 
             // send the error response back
-            Response responseBody = new Response("Error in creating booking due to unknown exception: ", input);
+            Response responseBody = new Response("Error in creating booking due to unknown exception: " + ex.getMessage(), input);
             return ApiGatewayResponse.builder()
                     .setStatusCode(500)
                     .setObjectBody(responseBody)

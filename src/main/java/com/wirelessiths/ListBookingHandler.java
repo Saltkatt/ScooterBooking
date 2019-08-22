@@ -11,10 +11,20 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+
+/**
+ *This class allows users or admin to retrieve a list of all existing bookings.
+ */
 public class ListBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private final Logger logger = Logger.getLogger(this.getClass());
 
+	/**
+	 * This method connects to the ApiGatewayResponse and request handler to allow the retrieval of all bookings.
+	 * @param input contains all booking information.
+	 * @param context
+	 * @return
+	 */
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 		try {
@@ -34,7 +44,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
             ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error in listing bookings due to state: ", input);
+			Response responseBody = new Response("Error in listing bookings due to state: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
@@ -47,7 +57,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
             ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error in I/O when listing bookings: ", input);
+			Response responseBody = new Response("Error in I/O when listing bookings: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
@@ -60,7 +70,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
             ex.printStackTrace();
 
 			// send the error response back
-			Response responseBody = new Response("Error in listing bookings: ", input);
+			Response responseBody = new Response("Error in listing bookings: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
 					.setObjectBody(responseBody)
