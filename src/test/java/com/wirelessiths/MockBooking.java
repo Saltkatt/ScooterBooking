@@ -5,10 +5,8 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
-import com.wirelessiths.dal.Booking;
-import com.wirelessiths.dal.DynamoDBAdapter;
+
 import com.wirelessiths.dal.LocalDateTimeConverter;
-import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
