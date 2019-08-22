@@ -184,7 +184,8 @@ public class Booking {
             List<String> result = new ArrayList<>();
         Iterator<Item> iter = items.iterator();
         while (iter.hasNext()) {
-          result.add(iter.next().toJSONPretty().replace("\n", "").replace("\\", ""));
+          String text = iter.next().toJSONPretty().replace("\n", "").replaceAll("\\\\", "");
+          result.add(text);
         }
 
             return result;
