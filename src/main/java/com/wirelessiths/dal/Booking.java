@@ -204,6 +204,20 @@ public class Booking {
         this.mapper.save(booking);
     }
 
+    //TODO: Använda table?
+    public void update(Booking booking) throws  IOException {   //TODO:  throw IOException/try&catch?
+
+        logger.info("User - update(): " + booking.toString());
+        //TODO: Optimistic Locking och Condition Expressions???
+
+        DynamoDBMapperConfig dynamoDBMapperConfig = new DynamoDBMapperConfig.Builder()
+                .withConsistentReads(DynamoDBMapperConfig.ConsistentReads.CONSISTENT)
+                .withSaveBehavior(DynamoDBMapperConfig.SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES)
+                .build();
+        this.mapper.save(booking, dynamoDBMapperConfig);
+
+    }
+
     /**
      * This method deletes a booking based on the booking id.
      * @param id

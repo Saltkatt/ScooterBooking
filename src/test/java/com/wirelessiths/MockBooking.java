@@ -6,10 +6,12 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 
+import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.wirelessiths.dal.LocalDateTimeConverter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 
 @DynamoDBTable(tableName = "bookings-test")
@@ -99,8 +101,37 @@ public class MockBooking {
         return results;
     }
 
+    public MockBooking get(String id) throws IOException {
+        MockBooking mock = null;
+
+        HashMap<String, AttributeValue> av = new HashMap<String, AttributeValue>();
+        av.put(":v1", new AttributeValue().withS(id));
+
+        DynamoDBQueryExpression<MockBooking> queryExp = new DynamoDBQueryExpression<MockBooking>()
+                .withKeyConditionExpression("bookingId = :v1")
+                .withExpressionAttributeValues(av);
+
+        PaginatedQueryList<MockBooking> result = this.mapper.query(MockBooking.class, queryExp);
+        if (result.size() > 0) {
+            mock = result.get(0);
+
+        } else {
+
+        }
+        return mock;
+    }
+
     public void save(MockBooking booking) throws IOException {
         //logger.info("Booking - save(): " + booking.toString());
             this.mapper.save(booking);
+    }
+
+    public void update(MockBooking mockBooking) throws  IOException {
+
+        DynamoDBMapperConfig dynamoDBMapperConfig = new DynamoDBMapperConfig.Builder()
+                .withConsistentReads(DynamoDBMapperConfig.ConsistentReads.CONSISTENT)
+                .withSaveBehavior(DynamoDBMapperConfig.SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES)
+                .build();
+        this.mapper.save(mockBooking, dynamoDBMapperConfig);
     }
 }
