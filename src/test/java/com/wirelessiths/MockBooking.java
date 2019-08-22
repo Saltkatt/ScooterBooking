@@ -6,10 +6,17 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 
+import com.amazonaws.services.dynamodbv2.document.*;
+import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
+import com.amazonaws.services.dynamodbv2.document.utils.NameMap;
+import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
+import com.wirelessiths.dal.Booking;
 import com.wirelessiths.dal.LocalDateTimeConverter;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Iterator;
 import java.util.List;
 
 @DynamoDBTable(tableName = "bookings-test")
@@ -102,5 +109,27 @@ public class MockBooking {
     public void save(MockBooking booking) throws IOException {
         //logger.info("Booking - save(): " + booking.toString());
             this.mapper.save(booking);
+    }
+
+    public void validateBooking(MockBooking booking){
+        DynamoDB db = new DynamoDB(client);
+        Table table = db.getTable("bookings-test");
+        Index index = table.getIndex("userIndex");
+
+        QuerySpec spec = new QuerySpec()
+                .withKeyConditionExpression("#d = :v_user_id")
+                .withNameMap(new NameMap()
+                        .with("#d", "userId"))
+                .withValueMap(new ValueMap()
+                        .withString(":v_user_id","mfcymfy")
+                        //.withNumber(":v_precip",0)
+                );
+
+        ItemCollection<QueryOutcome> items = index.query(spec);
+        Iterator<Item> iter = items.iterator();
+        while (iter.hasNext()) {
+            System.out.println(iter.next().toJSONPretty());
+        }
+
     }
 }

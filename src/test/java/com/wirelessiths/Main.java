@@ -9,7 +9,7 @@ public class Main {
         MockBooking mock = new MockBooking();
         //mock.setBookingId("7");
         mock.setScooterId("3");
-        mock.setUserId("2");
+        mock.setUserId("mfcymfy");
         mock.setStartTime(LocalDateTime.parse("2019-08-22T12:15:15.592"));
         mock.setEndTime(LocalDateTime.parse("2019-08-22T12:15:20.592"));
 
@@ -20,6 +20,7 @@ public class Main {
         try{
             mock.save(mock);
             list = mock.list();
+            mock.validateBooking(mock);
 
         }catch(Exception e){
             System.out.println(e.getMessage());
