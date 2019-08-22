@@ -10,6 +10,7 @@ public class LocalDateTimeConverter implements DynamoDBTypeConverter<String, Loc
     public String convert( final LocalDateTime time ) {
 
         return time.toString();
+        //return time.
     }
 
     @Override

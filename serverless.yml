@@ -73,8 +73,6 @@ resources:
         AttributeDefinitions:
           - AttributeName: bookingId
             AttributeType: S
-          - AttributeName: message
-            AttributeType: S
           - AttributeName: startTime
             AttributeType: S
           - AttributeName: endTime
@@ -85,8 +83,6 @@ resources:
         KeySchema:
           - AttributeName: bookingId
             KeyType: HASH
-          - AttributeName: message
-            KeyType: RANGE
 
         GlobalSecondaryIndexes:
           - IndexName: timeIndex
