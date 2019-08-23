@@ -1,4 +1,4 @@
-package com.wirelessiths.dal;
+package com.wirelessiths;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
