@@ -50,7 +50,7 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                     logger.error("Error in retrieving product: " + e);
 
                     // send the error response back
-                    Response responseBody = new Response("Error in updating product: ", input);
+                    Response responseBody = new Response("Error in updating product: " + e.getMessage(), input);
                     return ApiGatewayResponse.builder()
                             .setStatusCode(500)
                             .setObjectBody(responseBody)

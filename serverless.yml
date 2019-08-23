@@ -74,6 +74,12 @@ functions:
       - http:
           path: /bookings/{id}
           method: delete
+  updateBooking:
+    handler: com.wirelessiths.UpdateBookingHandler
+    events:
+      - http:
+          path: /bookings/{id}
+          method: put
 
 resources:
   Resources:
