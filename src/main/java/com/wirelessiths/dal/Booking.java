@@ -166,29 +166,23 @@ public class Booking {
         return booking;
     }
 
-    public List<String> getByUserId(String userId) throws IOException {
+    public List<Booking> getByUserId(String userId) throws IOException {
 
-            Table table = dynamoDB.getTable(BOOKINGS_TABLE_NAME);
-            Index index = table.getIndex("userIndex");
+        // Query with mapper
+        // Create Booking object with user id
+        Booking booking = new Booking();
+        booking.setUserId(userId);
 
-            QuerySpec spec = new QuerySpec()
-                    .withKeyConditionExpression("#d = :v_user_id")
-                    .withNameMap(new NameMap()
-                            .with("#d", "userId"))
-                    .withValueMap(new ValueMap()
-                                    .withString(":v_user_id",userId)
-                            //.withNumber(":v_precip",0)
-                    );
+        //Input this and the gsi index name in query expression
+        DynamoDBQueryExpression<Booking> queryExpression =
+                new DynamoDBQueryExpression<>();
+        queryExpression.setHashKeyValues(booking);
+        queryExpression.setIndexName("userIndex");
+        queryExpression.setConsistentRead(false);
+        final List<Booking> results =
+                mapper.query(Booking.class, queryExpression);
 
-            ItemCollection<QueryOutcome> items = index.query(spec);
-            List<String> result = new ArrayList<>();
-        Iterator<Item> iter = items.iterator();
-        while (iter.hasNext()) {
-          result.add(iter.next().toJSONPretty());
-        }
-
-            return result;
-
+        return results;
     }
 
     /**
