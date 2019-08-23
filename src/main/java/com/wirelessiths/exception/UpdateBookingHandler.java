@@ -38,11 +38,11 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
             if (booking != null) {
 
                 try {
-                    booking.setBookingId(String.valueOf(Optional.ofNullable(body.get("username").asText())));
-                    booking.setScooterId(String.valueOf(Optional.ofNullable(body.get("firstName").asText())));
-                    booking.setUserId(String.valueOf(Optional.ofNullable(body.get("lastName").asText())));
-                    booking.setStartTime(LocalDateTime.parse(String.valueOf(Optional.ofNullable(body.get("email").asText()))));
-                    booking.setEndTime(LocalDateTime.parse(String.valueOf(Optional.ofNullable(body.get("password").asText()))));
+                    booking.setBookingId(String.valueOf(Optional.ofNullable(body.get("bookingId").asText())));
+                    booking.setScooterId(String.valueOf(Optional.ofNullable(body.get("scooterId").asText())));
+                    booking.setUserId(String.valueOf(Optional.ofNullable(body.get("userId").asText())));
+                    booking.setStartTime(LocalDateTime.parse(String.valueOf(Optional.ofNullable(body.get("startTime").asText()))));
+                    booking.setEndTime(LocalDateTime.parse(String.valueOf(Optional.ofNullable(body.get("endTime").asText()))));
                     booking.update(booking);
 
                 } catch (Exception e) {
