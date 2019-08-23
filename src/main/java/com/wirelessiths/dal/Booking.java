@@ -166,7 +166,7 @@ public class Booking {
         return booking;
     }
 
-    public List<String> getByUserId(String userId) throws IOException {
+    public List<Booking> getByUserId(String userId) throws IOException {
 
         // Query with mapper
         // Create Booking object with user id
@@ -179,32 +179,10 @@ public class Booking {
         queryExpression.setHashKeyValues(booking);
         queryExpression.setIndexName("userIndex");
         queryExpression.setConsistentRead(false);
-        final PaginatedQueryList<Booking> results =
+        final List<Booking> results =
                 mapper.query(Booking.class, queryExpression);
 
-        //Query med item
-        Table table = dynamoDB.getTable(BOOKINGS_TABLE_NAME);
-        Index index = table.getIndex("userIndex");
-
-            QuerySpec spec = new QuerySpec()
-                    .withKeyConditionExpression("#d = :v_user_id")
-                    .withNameMap(new NameMap()
-                            .with("#d", "userId"))
-                    .withValueMap(new ValueMap()
-                                    .withString(":v_user_id",userId)
-                            //.withNumber(":v_precip",0)
-                    );
-
-            ItemCollection<QueryOutcome> items = index.query(spec);
-            List<String> result = new ArrayList<>();
-        Iterator<Item> iter = items.iterator();
-        while (iter.hasNext()) {
-          String text = iter.next().toJSONPretty().replace("\n", "").replaceAll("\\\\", "");
-          result.add(text);
-        }
-
-            return result;
-
+        return results;
     }
 
     /**
