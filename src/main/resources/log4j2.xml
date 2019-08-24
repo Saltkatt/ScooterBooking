@@ -1,17 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Configuration status="WARN">
+<Configuration packages="com.amazonaws.services.lambda.runtime.log4j2">
     <Appenders>
-        <Console name="ConsoleAppender" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{YYYY-MM-dd HH:mm:ss} [%t] %5p %c:%F:%L - %m%n" />
-        </Console>
+        <Lambda name="Lambda">
+            <PatternLayout>
+                <pattern>%d{yyyy-MM-dd HH:mm:ss} %X{AWSRequestId} %-5p %c{1}:%L - %m%n</pattern>
+            </PatternLayout>
+        </Lambda>
     </Appenders>
-
     <Loggers>
-        <Root level="WARN">
-            <AppenderRef ref="ConsoleAppender"/>
+        <Root level="debug">
+            <AppenderRef ref="Lambda" />
         </Root>
-        <Logger name="software.amazon.awssdk" level="WARN" />
-        <Logger name="software.amazon.awssdk.request" level="DEBUG" />
-        <Logger name="org.apache.http.wire" level="DEBUG" />
     </Loggers>
 </Configuration>
