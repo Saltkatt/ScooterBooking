@@ -1,9 +1,19 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: 'AWS::Serverless-2016-10-31'
 Description: 'SAM template for Serverless framework service: '
+
+Globals:
+  Function:
+    Timeout: 20
+    Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+      Variables:
+        BOOKINGS_TABLE_NAME: sam-bookings-api-dev
+
 Resources:
   BookingsDynamoDBTable:
+    Type: AWS::DynamoDB::Table
     Properties:
+      TableName: sam-bookings-api-dev
       AttributeDefinitions:
         - AttributeName: bookingId
           AttributeType: S
@@ -40,12 +50,13 @@ Resources:
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
-  BookingsApiNullListBookings:
+
+  BookingsApiListBookings:
     Type: 'AWS::Serverless::Function'
     Properties:
       Handler: com.wirelessiths.ListBookingHandler
       Runtime: java8
-      CodeUri: /home/adam/IdeaProjects/ScooterBooking/.serverless/bookings-api.zip
+      CodeUri: target/bookings-api-adam-dev.jar
       MemorySize: 128
       Timeout: 3
       Policies:
@@ -69,8 +80,6 @@ Resources:
                           - BookingsDynamoDBTable
                           - Arn
                       - index/*
-      Environment:
-        Variables: {}
       Events:
         Event1:
           Type: Api
@@ -96,7 +105,7 @@ Resources:
                 type: aws_proxy
                 uri:
                   'Fn::Sub': >-
-                    arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${BookingsApiNullListBookings.Arn}/invocations
+                    arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${BookingsApiListBookings.Arn}/invocations
               responses: {}
             post:
               x-amazon-apigateway-integration:
@@ -104,7 +113,7 @@ Resources:
                 type: aws_proxy
                 uri:
                   'Fn::Sub': >-
-                    arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${BookingsApiNullCreateBooking.Arn}/invocations
+                    arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${BookingsApiCreateBooking.Arn}/invocations
               responses: {}
           /bookings-by-user:
             get:
@@ -113,7 +122,7 @@ Resources:
                 type: aws_proxy
                 uri:
                   'Fn::Sub': >-
-                    arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${BookingsApiNullListBookingsByUser.Arn}/invocations
+                    arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${BookingsApiListBookingsByUser.Arn}/invocations
               responses: {}
           '/bookings/{id}':
             get:
@@ -122,7 +131,7 @@ Resources:
                 type: aws_proxy
                 uri:
                   'Fn::Sub': >-
-                    arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${BookingsApiNullGetBooking.Arn}/invocations
+                    arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${BookingsApiGetBooking.Arn}/invocations
               responses: {}
             delete:
               x-amazon-apigateway-integration:
@@ -130,23 +139,23 @@ Resources:
                 type: aws_proxy
                 uri:
                   'Fn::Sub': >-
-                    arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${BookingsApiNullDeleteBooking.Arn}/invocations
+                    arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${BookingsApiDeleteBooking.Arn}/invocations
               responses: {}
-  BookingsApiNullListBookingsLambdaPermission:
+  BookingsApiListBookingsLambdaPermission:
     Type: 'AWS::Lambda::Permission'
     DependsOn:
-      - BookingsApiNullListBookings
+      - "BookingsApiListBookings"
     Properties:
       Action: 'lambda:InvokeFunction'
       FunctionName:
-        Ref: BookingsApiNullListBookings
+        Ref: "BookingsApiListBookings"
       Principal: apigateway.amazonaws.com
-  BookingsApiNullListBookingsByUser:
+  BookingsApiListBookingsByUser:
     Type: 'AWS::Serverless::Function'
     Properties:
       Handler: com.wirelessiths.ListBookingsByUserHandler
       Runtime: java8
-      CodeUri: /home/adam/IdeaProjects/ScooterBooking/.serverless/bookings-api.zip
+      CodeUri: target/bookings-api-adam-dev.jar
       MemorySize: 128
       Timeout: 3
       Policies:
@@ -170,8 +179,6 @@ Resources:
                           - BookingsDynamoDBTable
                           - Arn
                       - index/*
-      Environment:
-        Variables: {}
       Events:
         Event1:
           Type: Api
@@ -180,21 +187,21 @@ Resources:
             Method: get
             RestApiId:
               Ref: BookingsApi
-  BookingsApiNullListBookingsByUserLambdaPermission:
+  BookingsApiListBookingsByUserLambdaPermission:
     Type: 'AWS::Lambda::Permission'
     DependsOn:
-      - BookingsApiNullListBookingsByUser
+      - BookingsApiListBookingsByUser
     Properties:
       Action: 'lambda:InvokeFunction'
       FunctionName:
-        Ref: BookingsApiNullListBookingsByUser
+        Ref: BookingsApiListBookingsByUser
       Principal: apigateway.amazonaws.com
-  BookingsApiNullGetBooking:
+  BookingsApiGetBooking:
     Type: 'AWS::Serverless::Function'
     Properties:
       Handler: com.wirelessiths.GetBookingHandler
       Runtime: java8
-      CodeUri: /home/adam/IdeaProjects/ScooterBooking/.serverless/bookings-api.zip
+      CodeUri: target/bookings-api-adam-dev.jar
       MemorySize: 128
       Timeout: 3
       Policies:
@@ -218,8 +225,6 @@ Resources:
                           - BookingsDynamoDBTable
                           - Arn
                       - index/*
-      Environment:
-        Variables: {}
       Events:
         Event1:
           Type: Api
@@ -228,21 +233,21 @@ Resources:
             Method: get
             RestApiId:
               Ref: BookingsApi
-  BookingsApiNullGetBookingLambdaPermission:
+  BookingsApiGetBookingLambdaPermission:
     Type: 'AWS::Lambda::Permission'
     DependsOn:
-      - BookingsApiNullGetBooking
+      - "BookingsApiGetBooking"
     Properties:
       Action: 'lambda:InvokeFunction'
       FunctionName:
-        Ref: BookingsApiNullGetBooking
+        Ref: "BookingsApiGetBooking"
       Principal: apigateway.amazonaws.com
-  BookingsApiNullCreateBooking:
+  BookingsApiCreateBooking:
     Type: 'AWS::Serverless::Function'
     Properties:
       Handler: com.wirelessiths.CreateBookingHandler
       Runtime: java8
-      CodeUri: /home/adam/IdeaProjects/ScooterBooking/.serverless/bookings-api.zip
+      CodeUri: target/bookings-api-adam-dev.jar
       MemorySize: 128
       Timeout: 3
       Policies:
@@ -266,8 +271,6 @@ Resources:
                           - BookingsDynamoDBTable
                           - Arn
                       - index/*
-      Environment:
-        Variables: {}
       Events:
         Event1:
           Type: Api
@@ -276,21 +279,21 @@ Resources:
             Method: post
             RestApiId:
               Ref: BookingsApi
-  BookingsApiNullCreateBookingLambdaPermission:
+  BookingsApiCreateBookingLambdaPermission:
     Type: 'AWS::Lambda::Permission'
     DependsOn:
-      - BookingsApiNullCreateBooking
+      - BookingsApiCreateBooking
     Properties:
       Action: 'lambda:InvokeFunction'
       FunctionName:
-        Ref: BookingsApiNullCreateBooking
+        Ref: BookingsApiCreateBooking
       Principal: apigateway.amazonaws.com
-  BookingsApiNullDeleteBooking:
+  BookingsApiDeleteBooking:
     Type: 'AWS::Serverless::Function'
     Properties:
       Handler: com.wirelessiths.DeleteBookingHandler
       Runtime: java8
-      CodeUri: /home/adam/IdeaProjects/ScooterBooking/.serverless/bookings-api.zip
+      CodeUri: target/bookings-api-adam-dev.jar
       MemorySize: 128
       Timeout: 3
       Policies:
@@ -314,8 +317,6 @@ Resources:
                           - BookingsDynamoDBTable
                           - Arn
                       - index/*
-      Environment:
-        Variables: {}
       Events:
         Event1:
           Type: Api
@@ -324,12 +325,12 @@ Resources:
             Method: delete
             RestApiId:
               Ref: BookingsApi
-  BookingsApiNullDeleteBookingLambdaPermission:
+  BookingsApiDeleteBookingLambdaPermission:
     Type: 'AWS::Lambda::Permission'
     DependsOn:
-      - BookingsApiNullDeleteBooking
+      - BookingsApiDeleteBooking
     Properties:
       Action: 'lambda:InvokeFunction'
       FunctionName:
-        Ref: BookingsApiNullDeleteBooking
+        Ref: BookingsApiDeleteBooking
       Principal: apigateway.amazonaws.com
