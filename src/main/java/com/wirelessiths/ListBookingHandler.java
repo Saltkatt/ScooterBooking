@@ -7,10 +7,16 @@ import com.wirelessiths.exception.UnableToListBookingsException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.ResourceBundle;
 
 
 /**
@@ -18,8 +24,8 @@ import java.util.Map;
  */
 public class ListBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
-	private final Logger logger = LogManager.getLogger(this.getClass());
 
+	private final Logger logger = LogManager.getLogger(this.getClass());
 	/**
 	 * This method connects to the ApiGatewayResponse and request handler to allow the retrieval of all bookings.
 	 * @param input contains all booking information.
@@ -28,6 +34,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 	 */
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
+
 		try {
 			// get all users
 			List<Booking> bookings = new Booking().list();
