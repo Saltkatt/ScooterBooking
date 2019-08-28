@@ -45,31 +45,31 @@ package:
 
 functions:
   listBookings:
-    handler: com.wirelessiths.ListBookingHandler
+    handler: ListBookingHandler
     events:
       - http:
           path: /bookings
           method: get
   listBookingsByUser:
-    handler: com.wirelessiths.ListBookingsByUserHandler
+    handler: ListBookingsByUserHandler
     events:
       - http:
           path: /bookings-by-user
           method: get
   getBooking:
-    handler: com.wirelessiths.GetBookingHandler
+    handler: GetBookingHandler
     events:
       - http:
           path: /bookings/{id}
           method: get
   createBooking:
-    handler: com.wirelessiths.CreateBookingHandler
+    handler: CreateBookingHandler
     events:
       - http:
           path: /bookings
           method: post
   deleteBooking:
-    handler: com.wirelessiths.DeleteBookingHandler
+    handler: DeleteBookingHandler
     events:
       - http:
           path: /bookings/{id}

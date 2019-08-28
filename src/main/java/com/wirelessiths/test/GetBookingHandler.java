@@ -1,9 +1,9 @@
-package com.wirelessiths;
+package com.wirelessiths.test;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.wirelessiths.dal.Booking;
-import com.wirelessiths.exception.BookingDoesNotExistException;
+import com.wirelessiths.test.dal.Booking;
+import com.wirelessiths.test.exception.BookingDoesNotExistException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

@@ -1,23 +1,16 @@
-package com.wirelessiths.dal;
+package com.wirelessiths.test.dal;
 
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
-import com.amazonaws.services.dynamodbv2.document.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.spec.QuerySpec;
-import com.amazonaws.services.dynamodbv2.document.utils.NameMap;
-import com.amazonaws.services.dynamodbv2.document.utils.ValueMap;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.print.Book;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
+import java.time.LocalTime;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 
 
@@ -42,14 +35,18 @@ public class Booking {
     private String bookingId;
     private String scooterId;
     private String userId;
-    //private String message;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    private LocalTime time;
+    private String validationKey;
+    private String open;
+    private static StringBuilder sb = new StringBuilder();
 
    /**
      *This method connects to DynamoDB, creates a table with a mapperConfig.
      */
     public Booking() {
+        this.validationKey = composeValidationKey();
         // build the mapper config
         DynamoDBMapperConfig mapperConfig = DynamoDBMapperConfig.builder()
                 .withTableNameOverride(new DynamoDBMapperConfig.TableNameOverride(BOOKINGS_TABLE_NAME))
@@ -60,6 +57,15 @@ public class Booking {
         this.dynamoDB = this.db_adapter.getDynamoDB();
         // create the mapper with config
         this.mapper = this.db_adapter.createDbMapper(mapperConfig);
+    }
+
+    private String composeValidationKey(){
+        sb.append(scooterId)
+                .append("#")
+                .append(startTime)
+                .append("#")
+                .append(endTime);
+        return sb.toString();
     }
 
     @DynamoDBHashKey(attributeName = "bookingId")

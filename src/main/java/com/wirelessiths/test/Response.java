@@ -1,4 +1,4 @@
-package com.wirelessiths;
+package com.wirelessiths.test;
 
 import java.util.Map;
 
