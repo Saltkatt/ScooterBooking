@@ -1,0 +1,159 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  sam-app
+
+  Sample SAM Template for sam-app
+Parameters:
+  TableName:
+    Type: String
+    Default: sam-bookings-api-dev
+# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+Globals:
+  Function:
+    Timeout: 20
+    MemorySize: 1024
+    Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
+      Variables:
+        BOOKINGS_TABLE_NAME: !Ref TableName
+
+Resources:
+  GetBookingFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: target/bookings-api-adam-dev.jar
+      Handler: com.wirelessiths.GetBookingHandler::handleRequest
+      Runtime: java8
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref TableName
+      Events:
+        GetBooking:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /bookings/{booking_id}
+            Method: get
+  ListBookingFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: target/bookings-api-adam-dev.jar
+      Handler: com.wirelessiths.ListBookingHandler::handleRequest
+      Runtime: java8
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref TableName
+      Events:
+        GetBookings:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /bookings
+            Method: get
+  ListBookingsByUserFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: target/bookings-api-adam-dev.jar
+      Handler: com.wirelessiths.ListBookingsByUserHandler::handleRequest
+      Runtime: java8
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref TableName
+      Events:
+        GetBooking:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /bookings-by-user
+            Method: get
+  DeleteBookingFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: target/bookings-api-adam-dev.jar
+      Handler: com.wirelessiths.DeleteBookingHandler::handleRequest
+      Runtime: java8
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TableName
+      Events:
+        DeleteBooking:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /bookings/{booking_id}
+            Method: delete
+  CreateBookingFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: target/bookings-api-adam-dev.jar
+      Handler: com.wirelessiths.CreateBookingHandler::handleRequest
+      Runtime: java8
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TableName
+      Events:
+        CreateBooking:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /bookings
+            Method: post
+
+  BookingsDynamoDBTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: sam-bookings-api-dev
+      AttributeDefinitions:
+        - AttributeName: bookingId
+          AttributeType: S
+        - AttributeName: startTime
+          AttributeType: S
+        - AttributeName: endTime
+          AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: bookingId
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: timeIndex
+          KeySchema:
+            - AttributeName: startTime
+              KeyType: HASH
+            - AttributeName: endTime
+              KeyType: RANGE
+          Projection:
+            ProjectionType: KEYS_ONLY
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: userIndex
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
+
+Outputs:
+  GetBookingFunction:
+    Description: "GetBooking Lambda Function ARN"
+    Value: !GetAtt GetBookingFunction.Arn
+
+  ListBookingFunction:
+    Description: "ListBooking Lambda Function ARN"
+    Value: !GetAtt ListBookingFunction.Arn
+
+  ListBookingsByUserFunction:
+    Description: "ListBookingsByUser Lambda Function ARN"
+    Value: !GetAtt ListBookingsByUserFunction.Arn
+
+  DeleteBookingFunction:
+    Description: "DeleteBooking Lambda Function ARN"
+    Value: !GetAtt DeleteBookingFunction.Arn
+
+  CreateBookingFunction:
+    Description: "CreateBooking Lambda Function ARN"
+    Value: !GetAtt CreateBookingFunction.Arn
+
+
