@@ -19,3 +19,10 @@ target/
 .serverless/*
 node_modules
 node_modules/*
+*/node_modules
+*/node_modules/*
+
+#enviromental variables for vue
+.env
+*.env
+.env*
