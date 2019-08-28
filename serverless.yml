@@ -121,3 +121,9 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+
+
+plugins:
+  - serverless-sam
+
+frameworkVersion: ">=1.1.0 <2.0.0"
