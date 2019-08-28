@@ -24,12 +24,12 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
 
         try {
 
-            // get the 'body' from input
-            JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
-
             // get the 'pathParameters' from input
             Map<String,String> pathParameters =  (Map<String,String>)input.get("pathParameters");
             String productId = pathParameters.get("id");
+
+            // get the 'body' from input
+            JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
 
             // get the Product by id
             Booking booking = new Booking().get(productId);

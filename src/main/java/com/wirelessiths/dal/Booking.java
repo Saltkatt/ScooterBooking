@@ -198,8 +198,8 @@ public class Booking {
         this.mapper.save(booking);
     }
 
-    //TODO: Använda table?
-    public void update(Booking booking) throws  IOException {   //TODO:  throw IOException/try&catch?
+
+    public void update(Booking booking) throws  IOException {
 
         logger.info("User - update(): " + booking.toString());
         //TODO: Optimistic Locking och Condition Expressions???
@@ -209,6 +209,8 @@ public class Booking {
                 .withSaveBehavior(DynamoDBMapperConfig.SaveBehavior.UPDATE_SKIP_NULL_ATTRIBUTES)
                 .build();
         this.mapper.save(booking, dynamoDBMapperConfig);
+
+        System.out.println(booking);
 
     }
 
