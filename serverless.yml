@@ -11,10 +11,10 @@
 #
 # Happy Coding!
 
-service: bookings-api
+service: bookings-api-adam
 
 custom:
-  bookingsTableName: 'bookings-${self:provider.stage}'
+  bookingsTableName: 'bookings-adam${self:provider.stage}'
 
 provider:
   name: aws
@@ -121,3 +121,9 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
+
+
+plugins:
+  - serverless-sam
+
+frameworkVersion: ">=1.1.0 <2.0.0"
