@@ -1,10 +1,12 @@
-package com.wirelessiths;
+package com.wirelessiths.handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wirelessiths.ApiGatewayResponse;
+import com.wirelessiths.Response;
 import com.wirelessiths.dal.Booking;
 import com.wirelessiths.exception.CouldNotCreateBookingException;
 import org.apache.logging.log4j.LogManager;

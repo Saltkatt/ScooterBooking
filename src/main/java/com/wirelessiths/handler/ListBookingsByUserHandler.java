@@ -1,10 +1,12 @@
-package com.wirelessiths;
+package com.wirelessiths.handler;
 
 import com.amazonaws.services.dynamodbv2.document.Item;
 import com.amazonaws.services.dynamodbv2.document.ItemCollection;
 import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.wirelessiths.ApiGatewayResponse;
+import com.wirelessiths.Response;
 import com.wirelessiths.dal.AuthService;
 import com.wirelessiths.dal.Booking;
 import com.wirelessiths.exception.UnableToListBookingsException;
