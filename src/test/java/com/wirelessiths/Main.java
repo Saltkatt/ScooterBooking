@@ -9,27 +9,25 @@ import java.util.List;
 public class Main {
 
     public static void main(String[] args) {
-       /* MockBooking mock = new MockBooking();
+        MockBooking mock = new MockBooking();
         //mock.setBookingId("7");
         mock.setScooterId("3");
         mock.setUserId("2");
         mock.setStartTime(LocalDateTime.parse("2019-08-22T12:15:15.592"));
         mock.setEndTime(LocalDateTime.parse("2019-08-22T12:15:20.592"));
 
-
-        //mock.save(mock);
-        System.out.println("done");*/
         List<MockBooking> list = null;
-        /*try{
+        try{
             mock.save(mock);
             list = mock.list();
+            System.out.println("done");
 
         }catch(Exception e){
             System.out.println(e.getMessage());
+        }
 
-        }*/
 
-        MockBooking mock = null;
+        /*
 
         try {
 
@@ -42,19 +40,18 @@ public class Main {
 
 
         try {
-
-
             mock.setScooterId("42");
             mock.update(mock);
             list = mock.list();
+            System.out.println("done");
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
 
 
-        System.out.println("done");
+
         System.out.println(list.size());
-        list.forEach(System.out::println);
+        list.forEach(System.out::println);*/
 
     }
 }
