@@ -7,6 +7,7 @@ import LogoutSuccess from '@/components/LogoutSuccess';
 import UserInfoStore from './app/user-info-store';
 import UserInfoApi from './app/user-info-api';
 import ErrorComponent from '@/components/Error';
+import DeleteUser from "./components/DeleteUser";
 
 Vue.use(Router)
 
@@ -36,6 +37,12 @@ export default new Router({
       path: '/',
       name: 'Home',
       component: Home,
+      beforeEnter: requireAuth
+    },
+    {
+      path: '/',
+      name: 'DeleteUser',
+      component: DeleteUser,
       beforeEnter: requireAuth
     },
     {

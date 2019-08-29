@@ -3,14 +3,26 @@
         <div>
             <h1>Delete Account</h1>
         </div>
+        <div class="alert alert-info">
+            {{userInfo}}
+        </div>
+        <router-link to="/delete">
+            Delete!!
+        </router-link>
 
 
     </div>
 </template>
 
 <script>
+    import UserInfoStore from '../app/user-info-store';
     export default {
-        name: "DeleteUser"
+        name: "DeleteUser",
+        data: function() {
+            return{
+                userInfo: UserInfoStore.state.cognitoInfo
+            }
+        }
     }
 </script>
 
