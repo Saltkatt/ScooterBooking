@@ -31,7 +31,7 @@ Resources:
         GetBooking:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /bookings/{booking_id}
+            Path: /bookings/{id}
             Method: get
   ListBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -76,7 +76,7 @@ Resources:
         DeleteBooking:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /bookings/{booking_id}
+            Path: /bookings/{id}
             Method: delete
   CreateBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
