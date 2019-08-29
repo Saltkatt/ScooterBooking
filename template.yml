@@ -93,21 +93,21 @@ Resources:
           Properties:
             Path: /bookings
             Method: post
-UpdateBookingFunction:
-  Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-  Properties:
-    CodeUri: target/bookings-api-adam-dev.jar
-    Handler: com.wirelessiths.UpdateBookingHandler::handleRequest
-    Runtime: java8
-    Policies:
-      - DynamoDBCrudPolicy:
-          TableName: !Ref TableName
-    Events:
-      CreateBooking:
-        Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-        Properties:
-          Path: /bookings/{booking_id}
-          Method: PUT
+  UpdateBookingFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: target/bookings-api-adam-dev.jar
+      Handler: com.wirelessiths.UpdateBookingHandler::handleRequest
+      Runtime: java8
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TableName
+      Events:
+        UpdateBooking:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /bookings/{id}
+            Method: put
 
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
