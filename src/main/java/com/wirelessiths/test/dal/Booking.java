@@ -57,7 +57,6 @@ public class Booking {
         this.mapper = this.db_adapter.createDbMapper(mapperConfig);
     }
 
-
     @DynamoDBHashKey(attributeName = "scooterId")
     public String getScooterId() {
         return this.scooterId;
@@ -66,6 +65,24 @@ public class Booking {
         this.scooterId = scooterId;
     }
 
+    @DynamoDBRangeKey(attributeName = "end")
+    @DynamoDBTypeConverted( converter = LocalTimeConverter.class )
+    public Instant getEnd() {
+        return end;
+    }
+
+    @DynamoDBAttribute(attributeName = "start")
+    @DynamoDBTypeConverted( converter = LocalTimeConverter.class )
+    public Instant getStart() {
+        return start;
+    }
+    public void setStart(Instant start) {
+        this.start = start;
+    }
+
+    public void setEnd(Instant end) {
+        this.end = end;
+    }
 
     @DynamoDBTypeConverted( converter = LocalDateConverter.class )
     @DynamoDBIndexHashKey(attributeName = "date", globalSecondaryIndexName = "dateIndex")
@@ -93,34 +110,15 @@ public class Booking {
         this.userId = userId;
     }
 
-    @DynamoDBAttribute(attributeName = "start")
-    @DynamoDBTypeConverted( converter = LocalTimeConverter.class )
-    public Instant getStart() {
-        return start;
-    }
-    public void setStart(Instant start) {
-        this.start = start;
-    }
-
-    @DynamoDBRangeKey(attributeName = "end")
-    @DynamoDBTypeConverted( converter = LocalTimeConverter.class )
-    public Instant getEnd() {
-        return end;
-    }
-
-    public void setEnd(Instant end) {
-        this.end = end;
-    }
-
     @Override
     public String toString() {
         return "Booking{" +
-                "date=" + date +
+                "scooterId='" + scooterId + '\'' +
+                ", bookingId='" + bookingId + '\'' +
+                ", userId='" + userId + '\'' +
                 ", start=" + start +
                 ", end=" + end +
-                ", bookingId='" + bookingId + '\'' +
-                ", scooterId='" + scooterId + '\'' +
-                ", userId='" + userId + '\'' +
+                ", date=" + date +
                 '}';
     }
 
@@ -158,7 +156,7 @@ public class Booking {
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<Booking>()
                 .withKeyConditionExpression("bookingId = :v1")
                 .withExpressionAttributeValues(av);
-
+        queryExp.setIndexName("bookingId");
         PaginatedQueryList<Booking> result = this.mapper.query(Booking.class, queryExp);
         if (result.size() > 0) {
             booking = result.get(0);
@@ -188,11 +186,6 @@ public class Booking {
         return results;
     }
 
-    /**
-     * This method saves a booking.
-     * @param booking
-     * @throws IOException
-     */
     public void save(Booking booking) throws IOException {
 
         logger.info("Booking - save(): " + booking.toString());
@@ -213,12 +206,6 @@ public class Booking {
 
     }
 
-    /**
-     * This method deletes a booking based on the booking id.
-     * @param id
-     * @return
-     * @throws IOException
-     */
     public Boolean delete(String id) throws IOException {
         Booking booking = null;
         // get product if exists
