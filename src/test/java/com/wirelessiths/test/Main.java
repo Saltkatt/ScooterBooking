@@ -70,8 +70,8 @@ public class Main {
         //mock.setBookingId("7");
         mock.setScooterId("3");
         mock.setUserId("2");
-        mock.setStartTime(LocalDateTime.parse("2019-08-22T12:15:15.592"));
-        mock.setEndTime(LocalDateTime.parse("2019-08-22T12:15:20.592"));
+        mock.setStart(LocalDateTime.parse("2019-08-22T12:15:15.592"));
+        mock.setEnd(LocalDateTime.parse("2019-08-22T12:15:20.592"));
 
 
         //mock.save(mock);

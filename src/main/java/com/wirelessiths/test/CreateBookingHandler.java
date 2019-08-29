@@ -11,7 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 
@@ -39,8 +39,8 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
 		  booking.setScooterId(body.get("scooterId").asText());
 		  booking.setUserId(body.get("userId").asText());
-		  booking.setStartTime(LocalDateTime.parse(body.get("startTime").asText()));
-          booking.setEndTime(LocalDateTime.parse(body.get("endTime").asText()));
+		  booking.setStart(Instant.parse(body.get("startTime").asText()));
+          booking.setEnd(Instant.parse(body.get("endTime").asText()));
 
           booking.save(booking);
 
