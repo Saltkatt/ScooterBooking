@@ -27,7 +27,8 @@ public class ListBookingsByUserHandler implements RequestHandler<Map<String, Obj
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
         try {
 
-            context.getLogger().log("userID: " + AuthService.getUserInfo(input, "sub"));
+
+            logger.info("is admin?:" + AuthService.isAdmin(input));
 
             Booking booking = new Booking();
             List<Booking> results = booking.getByUserId(AuthService.getUserInfo(input, "sub"));
