@@ -1,4 +1,4 @@
-package com.wirelessiths.exception;
+package com.wirelessiths.handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
