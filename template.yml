@@ -22,7 +22,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: target/bookings-api-adam-dev.jar
-      Handler: com.wirelessiths.GetBookingHandler::handleRequest
+      Handler: com.wirelessiths.handler.GetBookingHandler::handleRequest
       Runtime: java8
       Policies:
         - DynamoDBReadPolicy:
@@ -37,7 +37,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: target/bookings-api-adam-dev.jar
-      Handler: com.wirelessiths.ListBookingHandler::handleRequest
+      Handler: com.wirelessiths.handler.ListBookingHandler::handleRequest
       Runtime: java8
       Policies:
         - DynamoDBReadPolicy:
@@ -52,7 +52,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: target/bookings-api-adam-dev.jar
-      Handler: com.wirelessiths.ListBookingsByUserHandler::handleRequest
+      Handler: com.wirelessiths.handler.ListBookingsByUserHandler::handleRequest
       Runtime: java8
       Policies:
         - DynamoDBReadPolicy:
@@ -67,7 +67,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: target/bookings-api-adam-dev.jar
-      Handler: com.wirelessiths.DeleteBookingHandler::handleRequest
+      Handler: com.wirelessiths.handler.DeleteBookingHandler::handleRequest
       Runtime: java8
       Policies:
         - DynamoDBCrudPolicy:
@@ -82,7 +82,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: target/bookings-api-adam-dev.jar
-      Handler: com.wirelessiths.CreateBookingHandler::handleRequest
+      Handler: com.wirelessiths.handler.CreateBookingHandler::handleRequest
       Runtime: java8
       Policies:
         - DynamoDBCrudPolicy:

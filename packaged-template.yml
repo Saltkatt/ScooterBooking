@@ -22,7 +22,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: s3://bookings-sam-bucket/c1728163ed9a42e1d923c80c33492cdd
-      Handler: com.wirelessiths.GetBookingHandler::handleRequest
+      Handler: com.wirelessiths.handler.GetBookingHandler::handleRequest
       Runtime: java8
       Policies:
       - DynamoDBReadPolicy:
@@ -38,7 +38,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: s3://bookings-sam-bucket/c1728163ed9a42e1d923c80c33492cdd
-      Handler: com.wirelessiths.ListBookingHandler::handleRequest
+      Handler: com.wirelessiths.handler.ListBookingHandler::handleRequest
       Runtime: java8
       Policies:
       - DynamoDBReadPolicy:
@@ -54,7 +54,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: s3://bookings-sam-bucket/c1728163ed9a42e1d923c80c33492cdd
-      Handler: com.wirelessiths.ListBookingsByUserHandler::handleRequest
+      Handler: com.wirelessiths.handler.ListBookingsByUserHandler::handleRequest
       Runtime: java8
       Policies:
       - DynamoDBReadPolicy:
@@ -70,7 +70,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: s3://bookings-sam-bucket/c1728163ed9a42e1d923c80c33492cdd
-      Handler: com.wirelessiths.DeleteBookingHandler::handleRequest
+      Handler: com.wirelessiths.handler.DeleteBookingHandler::handleRequest
       Runtime: java8
       Policies:
       - DynamoDBCrudPolicy:
@@ -86,7 +86,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: s3://bookings-sam-bucket/c1728163ed9a42e1d923c80c33492cdd
-      Handler: com.wirelessiths.CreateBookingHandler::handleRequest
+      Handler: com.wirelessiths.handler.CreateBookingHandler::handleRequest
       Runtime: java8
       Policies:
       - DynamoDBCrudPolicy:
