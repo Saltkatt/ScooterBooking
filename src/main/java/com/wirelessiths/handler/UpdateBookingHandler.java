@@ -10,7 +10,7 @@ import com.wirelessiths.dal.Booking;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -41,8 +41,8 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                     booking.setBookingId(String.valueOf(Optional.ofNullable(body.get("username").asText())));
                     booking.setScooterId(String.valueOf(Optional.ofNullable(body.get("firstName").asText())));
                     booking.setUserId(String.valueOf(Optional.ofNullable(body.get("lastName").asText())));
-                    booking.setStartTime(LocalDateTime.parse(String.valueOf(Optional.ofNullable(body.get("email").asText()))));
-                    booking.setEndTime(LocalDateTime.parse(String.valueOf(Optional.ofNullable(body.get("password").asText()))));
+                    booking.setStartTime(Instant.parse(String.valueOf(Optional.ofNullable(body.get("email").asText()))));
+                    booking.setEndTime(Instant.parse(String.valueOf(Optional.ofNullable(body.get("password").asText()))));
                     booking.update(booking);
 
                 } catch (Exception e) {

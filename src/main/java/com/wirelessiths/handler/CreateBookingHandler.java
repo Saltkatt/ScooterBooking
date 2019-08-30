@@ -7,14 +7,14 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
-import com.wirelessiths.dal.Booking;
 import com.wirelessiths.exception.CouldNotCreateBookingException;
+import com.wirelessiths.dal.Booking;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-
 import java.io.IOException;
-import java.time.LocalDateTime;
+import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
 
@@ -42,9 +42,9 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
 		  booking.setScooterId(body.get("scooterId").asText());
 		  booking.setUserId(body.get("userId").asText());
-		  booking.setStartTime(LocalDateTime.parse(body.get("startTime").asText()));
-          booking.setEndTime(LocalDateTime.parse(body.get("endTime").asText()));
-
+		  booking.setStartTime(Instant.parse(body.get("startTime").asText()));
+          booking.setEndTime(Instant.parse(body.get("endTime").asText()));
+		  booking.setDate(LocalDate.parse(body.get("date").asText()));
           booking.save(booking);
 
           // send the response back
