@@ -1,4 +1,4 @@
-package com.wirelessiths.test.dal;
+package com.wirelessiths.dal;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;

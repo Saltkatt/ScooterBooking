@@ -1,4 +1,4 @@
-package com.wirelessiths.test;
+package com.wirelessiths;
 
 import static org.junit.Assert.assertTrue;
 

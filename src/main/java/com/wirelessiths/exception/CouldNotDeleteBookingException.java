@@ -1,4 +1,4 @@
-package com.wirelessiths.test.exception;
+package com.wirelessiths.exception;
 
 public class CouldNotDeleteBookingException extends IllegalStateException {
     public CouldNotDeleteBookingException(String message) {

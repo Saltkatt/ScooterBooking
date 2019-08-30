@@ -1,4 +1,4 @@
-package com.wirelessiths.test;
+package com.wirelessiths;
 
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
@@ -7,10 +7,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.wirelessiths.test.dal.LocalDateConverter;
-import com.wirelessiths.test.dal.LocalDateTimeConverter;
-import com.wirelessiths.test.dal.LocalTimeConverter;
-import org.mockito.Mock;
+import com.wirelessiths.dal.InstantConverter;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -115,7 +112,7 @@ public class MockBooking {
 
 
 
-    @DynamoDBTypeConverted( converter = LocalTimeConverter.class )
+    @DynamoDBTypeConverted( converter = InstantConverter.class )
     //@DynamoDBIndexHashKey(attributeName = "startTime", globalSecondaryIndexName = "timeIndex")
     @DynamoDBAttribute(attributeName = "startTime")
     public LocalTime getStartTime() {
@@ -125,7 +122,7 @@ public class MockBooking {
         this.startTime = startTime;
     }
 
-    @DynamoDBTypeConverted( converter = LocalTimeConverter.class )
+    @DynamoDBTypeConverted( converter = InstantConverter.class )
     //@DynamoDBIndexRangeKey(attributeName = "endTime", globalSecondaryIndexName = "timeIndex")
     @DynamoDBAttribute(attributeName = "endTime")
     public LocalTime getEndTime() {

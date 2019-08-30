@@ -1,4 +1,4 @@
-package com.wirelessiths.test;
+package com.wirelessiths;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

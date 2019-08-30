@@ -1,12 +1,12 @@
-package com.wirelessiths.test.exception;
+package com.wirelessiths.exception;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.wirelessiths.test.ApiGatewayResponse;
-import com.wirelessiths.test.Response;
-import com.wirelessiths.test.dal.Booking;
+import com.wirelessiths.ApiGatewayResponse;
+import com.wirelessiths.Response;
+import com.wirelessiths.dal.Booking;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

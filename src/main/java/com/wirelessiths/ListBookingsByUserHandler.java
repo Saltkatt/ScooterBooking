@@ -1,10 +1,10 @@
-package com.wirelessiths.test;
+package com.wirelessiths;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.wirelessiths.test.dal.AuthService;
-import com.wirelessiths.test.dal.Booking;
-import com.wirelessiths.test.exception.UnableToListBookingsException;
+import com.wirelessiths.exception.UnableToListBookingsException;
+import com.wirelessiths.dal.AuthService;
+import com.wirelessiths.dal.Booking;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

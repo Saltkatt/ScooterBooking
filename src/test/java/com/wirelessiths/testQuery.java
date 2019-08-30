@@ -1,4 +1,4 @@
-package com.wirelessiths.test;
+package com.wirelessiths;
 
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 

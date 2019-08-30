@@ -1,4 +1,4 @@
-package com.wirelessiths.test.exception;
+package com.wirelessiths.exception;
 
 public class UnableToListBookingsException extends IllegalStateException {
     public UnableToListBookingsException(String message) {

@@ -1,9 +1,8 @@
-package com.wirelessiths.test.dal;
+package com.wirelessiths.dal;
 
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 public class LocalDateConverter implements DynamoDBTypeConverter<String, LocalDate> {
 

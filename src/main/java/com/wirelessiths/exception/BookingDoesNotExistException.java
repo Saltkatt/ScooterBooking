@@ -1,4 +1,4 @@
-package com.wirelessiths.test.exception;
+package com.wirelessiths.exception;
 
 public class BookingDoesNotExistException extends IllegalArgumentException {
 

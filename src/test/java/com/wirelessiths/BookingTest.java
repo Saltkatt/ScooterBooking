@@ -1,7 +1,7 @@
-package com.wirelessiths.test;
+package com.wirelessiths;
 
 import com.amazonaws.services.dynamodbv2.document.Item;
-import com.wirelessiths.test.dal.Booking;
+import com.wirelessiths.dal.Booking;
 
 import java.time.LocalDateTime;
 

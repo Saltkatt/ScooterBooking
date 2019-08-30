@@ -1,4 +1,4 @@
-package com.wirelessiths.test;
+package com.wirelessiths;
 
 import java.time.LocalDate;
 import java.time.LocalTime;

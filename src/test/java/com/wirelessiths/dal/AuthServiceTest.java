@@ -1,4 +1,4 @@
-package com.wirelessiths.test.dal;
+package com.wirelessiths.dal;
 
 import org.junit.Test;
 
