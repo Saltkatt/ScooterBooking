@@ -7,7 +7,9 @@ import LogoutSuccess from '@/components/LogoutSuccess';
 import UserInfoStore from './app/user-info-store';
 import UserInfoApi from './app/user-info-api';
 import ErrorComponent from '@/components/Error';
-import DeleteUser from "./components/DeleteUser";
+import DeleteUser from '@/components/DeleteUser';
+import DeleteUserInfo from './app/delete-user-info';
+
 
 Vue.use(Router)
 
@@ -40,12 +42,6 @@ export default new Router({
       beforeEnter: requireAuth
     },
     {
-      path: '/',
-      name: 'DeleteUser',
-      component: DeleteUser,
-      beforeEnter: requireAuth
-    },
-    {
       path: '/login', beforeEnter(to, from, next){
         auth.auth.getSession();
       }
@@ -64,8 +60,19 @@ export default new Router({
         auth.logout();
         next();
       }
+    },
+    {
+      path: '/delete',
+      component: DeleteUser,
+    },
+    {
+      path: '/deleteUser', component: DeleteUser, beforeEnter(to, from, next){
+        auth.delete();
+        next();
+    }
 
     },
+
     {
       path: '/error', component: ErrorComponent
     }

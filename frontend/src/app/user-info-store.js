@@ -18,6 +18,11 @@ function setCognitoInfo(newValue){
     state.cognitoInfo = newValue;
 }
 
+function setDeletedUser(){
+    state.loggedIn = false;
+    state.cognitoInfo = {};
+}
+
 export default {
     state: state,
     setLoggedIn: setLoggedIn,
