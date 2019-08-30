@@ -41,8 +41,8 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                     booking.setBookingId(String.valueOf(Optional.ofNullable(body.get("username").asText())));
                     booking.setScooterId(String.valueOf(Optional.ofNullable(body.get("firstName").asText())));
                     booking.setUserId(String.valueOf(Optional.ofNullable(body.get("lastName").asText())));
-                    booking.setStart(Instant.parse(String.valueOf(Optional.ofNullable(body.get("email").asText()))));
-                    booking.setEnd(Instant.parse(String.valueOf(Optional.ofNullable(body.get("password").asText()))));
+                    booking.setStartTime(Instant.parse(String.valueOf(Optional.ofNullable(body.get("email").asText()))));
+                    booking.setEndTime(Instant.parse(String.valueOf(Optional.ofNullable(body.get("password").asText()))));
                     booking.update(booking);
 
                 } catch (Exception e) {

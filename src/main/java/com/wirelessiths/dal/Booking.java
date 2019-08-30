@@ -30,8 +30,8 @@ public class Booking {
     private String bookingId;
     private String userId;
 
-    private Instant start;
-    private Instant end;
+    private Instant startTime;
+    private Instant endTime;
     private LocalDate date;
 
     private static DynamoDBAdapter db_adapter;
@@ -66,27 +66,28 @@ public class Booking {
         this.scooterId = scooterId;
     }
 
-    @DynamoDBRangeKey(attributeName = "end")
+    @DynamoDBRangeKey(attributeName = "endTime")
     @DynamoDBTypeConverted( converter = InstantConverter.class )
-    public Instant getEnd() {
-        return end;
+    public Instant getEndTime() {
+        return endTime;
+    }
+    public void setEndTime(Instant endTime) {
+        this.endTime = endTime;
     }
 
-    @DynamoDBAttribute(attributeName = "start")
+
+    @DynamoDBIndexRangeKey(attributeName = "startTime", globalSecondaryIndexName = "dateIndex")
     @DynamoDBTypeConverted( converter = InstantConverter.class )
-    public Instant getStart() {
-        return start;
+    public Instant getStartTime() {
+        return startTime;
     }
-    public void setStart(Instant start) {
-        this.start = start;
-    }
-
-    public void setEnd(Instant end) {
-        this.end = end;
+    public void setStartTime(Instant startTime) {
+        this.startTime = startTime;
     }
 
-    @DynamoDBTypeConverted( converter = LocalDateConverter.class )
+
     @DynamoDBIndexHashKey(attributeName = "date", globalSecondaryIndexName = "dateIndex")
+    @DynamoDBTypeConverted( converter = LocalDateConverter.class )
     public LocalDate getDate() {
         return date;
     }
@@ -117,8 +118,8 @@ public class Booking {
                 "scooterId='" + scooterId + '\'' +
                 ", bookingId='" + bookingId + '\'' +
                 ", userId='" + userId + '\'' +
-                ", start=" + start +
-                ", end=" + end +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
                 ", date=" + date +
                 '}';
     }
@@ -126,8 +127,8 @@ public class Booking {
     private boolean validateBooking(Booking booking) throws IOException{
 
         int maxDurationSeconds = 60 * 60 * 2;//temporary hardcoding of 2 hour max booking length
-        String startRange = booking.getStart().toString();
-        String endRange = booking.getEnd().plusSeconds(maxDurationSeconds).toString();
+        String startRange = booking.getStartTime().toString();
+        String endRange = booking.getEndTime().plusSeconds(maxDurationSeconds).toString();
 
         Map<String, AttributeValue> values = new HashMap<>();
         values.put(":val1", new AttributeValue().withS(booking.getScooterId()));
@@ -135,7 +136,7 @@ public class Booking {
         values.put(":val3", new AttributeValue().withS(endRange));
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
-        queryExp.withKeyConditionExpression("scooterId = :val1 and validationKey between :val2 and :val3")
+        queryExp.withKeyConditionExpression("scooterId = :val1 and endTime between :val2 and :val3")
                 .withExpressionAttributeValues(values);
         queryExp.setConsistentRead(true);
 
@@ -196,6 +197,7 @@ public class Booking {
                 new DynamoDBQueryExpression<>();
         queryExpression.setHashKeyValues(booking);
         queryExpression.setIndexName("userIndex");
+        queryExpression.setConsistentRead(false);
         final List<Booking> results =
                 mapper.query(Booking.class, queryExpression);
 
@@ -210,8 +212,6 @@ public class Booking {
         }else{
             logger.info("Booking already exists at given interval: " + booking.toString());
         }
-
-
     }
 
     public void update(Booking booking) throws  IOException {   //TODO:  throw IOException/try&catch?

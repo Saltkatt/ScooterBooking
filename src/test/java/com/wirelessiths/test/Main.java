@@ -1,5 +1,8 @@
-package com.wirelessiths;
+package com.wirelessiths.test;
 
+import com.wirelessiths.MockBooking;
+
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -13,6 +16,13 @@ public class Main {
         LocalDate date = LocalDate.now();
         LocalTime start = LocalTime.parse("14:10:00");
         LocalTime end = LocalTime.parse("14:30:00");
+        Instant instant = Instant.now();
+        System.out.println(start);
+        LocalDate date2 = LocalDate.now();
+
+        System.out.println(date2);
+
+        //System.out.println(instant);
 //        System.out.println("localDate: " + date);
 //        System.out.println("startTime: " + start);
 //        System.out.println("endTime: " + end);
@@ -70,8 +80,8 @@ public class Main {
         //mock.setBookingId("7");
         mock.setScooterId("3");
         mock.setUserId("2");
-        mock.setStart(LocalDateTime.parse("2019-08-22T12:15:15.592"));
-        mock.setEnd(LocalDateTime.parse("2019-08-22T12:15:20.592"));
+        mock.setStartTime(LocalDateTime.parse("2019-08-22T12:15:15.592"));
+        mock.setEndTime(LocalDateTime.parse("2019-08-22T12:15:20.592"));
 
 
         //mock.save(mock);

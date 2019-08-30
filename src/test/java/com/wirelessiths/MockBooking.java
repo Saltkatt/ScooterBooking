@@ -8,6 +8,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.wirelessiths.dal.InstantConverter;
+import com.wirelessiths.dal.LocalDateConverter;
 
 import java.io.IOException;
 import java.time.LocalDate;
