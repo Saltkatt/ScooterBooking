@@ -4,53 +4,111 @@ import org.junit.Test;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 import static org.junit.Assert.*;
 
 public class AuthServiceTest {
 
-    Map<String, Map<String, Map<String, Map<String, String>>>> mostOut = new HashMap<>();
-    Map<String, Map<String, Map<String, String>>> middleOut = new HashMap<>();
-    Map<String, Map<String, String>> middle = new HashMap<>();
-    Map<String, String> innerMost = new HashMap<>();
+
+   private Map<String, Object> mostOut = new HashMap<>();
+   private Map<String, Object> middleOut = new HashMap<>();
+   private Map<String, Object> middle = new HashMap<>();
+   private Map<String, String> innerMost = new HashMap<>();
+
 
     @Test
     public void yieldsInmostString() {
 
-        innerMost.put("one", "two");
-        middle.put("three", innerMost);
-        middleOut.put("four", middle);
-        mostOut.put("five", middleOut);
+        innerMost.put("sub", "1234");
+        middle.put("claims", innerMost);
+        middleOut.put("authorizer", middle);
+        mostOut.put("requestContext", middleOut);
 
-        String result = Optional.ofNullable(mostOut.get("five")).map(m -> m.get("four")).map(m -> m.get("three")).map(m -> m.get("one")).orElse("");
-        assertEquals("two", result);
+        String result = AuthService.getUserInfo(mostOut, "sub");
+        assertEquals("1234", result);
 
     }
 
     @Test
     public void yieldsEmptyStringWhenInmostIsNull() {
 
-        innerMost.put(null, null);
-        middle.put("three", innerMost);
-        middleOut.put("four", middle);
-        mostOut.put("five", middleOut);
 
-        String result = Optional.ofNullable(mostOut.get("five")).map(m -> m.get("four")).map(m -> m.get("three")).map(m -> m.get("one")).orElse("");
+        innerMost.put(null, null);
+        middle.put("claims", innerMost);
+        middleOut.put("authorizer", middle);
+        mostOut.put("requestContext", middleOut);
+
+        String result = AuthService.getUserInfo(mostOut, "sub");
         assertEquals("", result);
 
     }
 
     @Test
-    public void yieldsEmptyStringWhenMiddleIsNull() {
+    public void yieldsEmptyStringWhenFieldInMiddleHashMapIsNull() {
 
-        innerMost.put("one", "two");
-        middle.put("three", null);
-        middleOut.put("four", middle);
-        mostOut.put("five", middleOut);
+        innerMost.put("sub", "1234");
+        middle.put("claims", null);
+        middleOut.put("authorizer", middle);
+        mostOut.put("requestContext", middleOut);
 
-        String result = Optional.ofNullable(mostOut.get("five")).map(m -> m.get("four")).map(m -> m.get("three")).map(m -> m.get("one")).orElse("");
+        String result = AuthService.getUserInfo(mostOut, "sub");
         assertEquals("", result);
 
     }
+
+    @Test
+    public void yieldsEmptyStringWhenHashMapsThemselvesAreNull() {
+
+        innerMost.put("sub", "1234");
+        middle.put("claims", innerMost);
+        middleOut.put("authorizer", middle);
+        mostOut.put("requestContext", middleOut);
+
+        innerMost = null;
+        middle = null;
+        middleOut = null;
+        mostOut = null;
+
+        String result = AuthService.getUserInfo(mostOut, "sub");
+        assertEquals("", result);
+    }
+
+    @Test
+    public void isAdminReturnsTrueWhenAdmin() {
+
+        innerMost.put("cognito:groups", "admin");
+        middle.put("claims", innerMost);
+        middleOut.put("authorizer", middle);
+        mostOut.put("requestContext", middleOut);
+
+        boolean result = AuthService.isAdmin(mostOut);
+        assertTrue(result);
+
+    }
+
+    @Test
+    public void isAdminReturnsFalseWhenUser() {
+
+        innerMost.put("cognito:groups", "user");
+        middle.put("claims", innerMost);
+        middleOut.put("authorizer", middle);
+        mostOut.put("requestContext", middleOut);
+
+        boolean result = AuthService.isAdmin(mostOut);
+        assertFalse(result);
+
+    }
+
+    @Test
+    public void isAdminReturnsFalseWhenNull() {
+
+        middle.put("claims", null);
+        middleOut.put("authorizer", middle);
+        mostOut.put("requestContext", middleOut);
+
+        boolean result = AuthService.isAdmin(mostOut);
+        assertFalse(result);
+
+    }
+
 }

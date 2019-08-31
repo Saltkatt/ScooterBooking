@@ -11,14 +11,20 @@ public class AuthService {
 
     /**
      * Looks in nested request Map for user claims. "sub" as input for userId, "username" as input for username.
-     * @param input The request from a lambda
+     * @param input The request from lambda
      * @param field The key in the claims map
      * @return corresponding value from claims map, if none found return ""
      */
     public static String getUserInfo(Map<String, Object> input, String field) {
-        return Optional.ofNullable((Map<String, Map>)input.get("requestContext")).map(m -> (Map<String, Map>)m.get("authorizer")).map(m -> (Map<String, String>)m.get("claims")).map(m -> m.get(field)).orElse("");
+        return Optional.ofNullable(input).map(m -> (Map<String, Map>)m.get(("requestContext"))).map(m -> (Map<String, Map>)m.get("authorizer")).map(m -> (Map<String, String>)m.get("claims")).map(m -> m.get(field)).orElse("");
+
     }
 
+    /**
+     * Checks in request if user has admin privileges
+     * @param input The request from a lambda
+     * @return True if admin, false if not admin
+     */
     public static boolean isAdmin(Map<String, Object> input) {
         return getUserInfo(input, "cognito:groups").equals("admin");
     }
