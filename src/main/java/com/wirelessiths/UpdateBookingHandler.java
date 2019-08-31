@@ -41,9 +41,9 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                     booking.setBookingId(String.valueOf(Optional.ofNullable(body.get("bookingId").asText())));
                     booking.setScooterId(String.valueOf(Optional.ofNullable(body.get("scooterId").asText())));
                     booking.setUserId(String.valueOf(Optional.ofNullable(body.get("userId").asText())));
-                    booking.setStartTime(LocalDateTime.parse(String.valueOf(Optional.ofNullable(body.get("startTime").asText()))));
-                    booking.setEndTime(LocalDateTime.parse(String.valueOf(Optional.ofNullable(body.get("endTime").asText()))));
-                    booking.update(booking);
+                    //booking.setStartTime(LocalDateTime.parse(String.valueOf(Optional.ofNullable(body.get("startTime").asText()))));
+                    //booking.setEndTime(LocalDateTime.parse(String.valueOf(Optional.ofNullable(body.get("endTime").asText()))));
+                    //booking.update(booking);
 
                 } catch (Exception e) {
 
