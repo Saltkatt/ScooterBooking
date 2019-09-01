@@ -8,7 +8,10 @@ Description: 'sam-app
 Parameters:
   TableName:
     Type: String
-    Default: sam-bookings-api-dev
+    Default: adam-bookings-api-dev
+  CodeUri:
+    Type: String
+    Default: target/bookings-api-dev.jar
 Globals:
   Function:
     Timeout: 20
@@ -21,7 +24,7 @@ Resources:
   GetBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://bookings-sam-bucket/c1728163ed9a42e1d923c80c33492cdd
+      CodeUri: s3://bookings-sam-bucket/fcaf394dabddd7ddd1d073e150496df0
       Handler: com.wirelessiths.handler.GetBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -32,12 +35,12 @@ Resources:
         GetBooking:
           Type: Api
           Properties:
-            Path: /bookings/{booking_id}
+            Path: /bookings/{id}
             Method: get
   ListBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://bookings-sam-bucket/c1728163ed9a42e1d923c80c33492cdd
+      CodeUri: s3://bookings-sam-bucket/fcaf394dabddd7ddd1d073e150496df0
       Handler: com.wirelessiths.handler.ListBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -53,7 +56,7 @@ Resources:
   ListBookingsByUserFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://bookings-sam-bucket/c1728163ed9a42e1d923c80c33492cdd
+      CodeUri: s3://bookings-sam-bucket/fcaf394dabddd7ddd1d073e150496df0
       Handler: com.wirelessiths.handler.ListBookingsByUserHandler::handleRequest
       Runtime: java8
       Policies:
@@ -69,7 +72,7 @@ Resources:
   DeleteBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://bookings-sam-bucket/c1728163ed9a42e1d923c80c33492cdd
+      CodeUri: s3://bookings-sam-bucket/fcaf394dabddd7ddd1d073e150496df0
       Handler: com.wirelessiths.handler.DeleteBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -80,12 +83,12 @@ Resources:
         DeleteBooking:
           Type: Api
           Properties:
-            Path: /bookings/{booking_id}
+            Path: /bookings/{id}
             Method: delete
   CreateBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://bookings-sam-bucket/c1728163ed9a42e1d923c80c33492cdd
+      CodeUri: s3://bookings-sam-bucket/fcaf394dabddd7ddd1d073e150496df0
       Handler: com.wirelessiths.handler.CreateBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -98,46 +101,82 @@ Resources:
           Properties:
             Path: /bookings
             Method: post
+  UpdateBookingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://bookings-sam-bucket/fcaf394dabddd7ddd1d073e150496df0
+      Handler: com.wirelessiths.UpdateBookingHandler::handleRequest
+      Runtime: java8
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: TableName
+      Events:
+        UpdateBooking:
+          Type: Api
+          Properties:
+            Path: /bookings/{id}
+            Method: put
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: sam-bookings-api-dev
+      TableName:
+        Ref: TableName
       AttributeDefinitions:
-      - AttributeName: bookingId
-        AttributeType: S
-      - AttributeName: startTime
+      - AttributeName: scooterId
         AttributeType: S
       - AttributeName: endTime
         AttributeType: S
+      - AttributeName: bookingId
+        AttributeType: S
       - AttributeName: userId
         AttributeType: S
+      - AttributeName: date
+        AttributeType: S
+      - AttributeName: startTime
+        AttributeType: S
       KeySchema:
-      - AttributeName: bookingId
+      - AttributeName: scooterId
         KeyType: HASH
+      - AttributeName: endTime
+        KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: timeIndex
-        KeySchema:
-        - AttributeName: startTime
-          KeyType: HASH
-        - AttributeName: endTime
-          KeyType: RANGE
-        Projection:
-          ProjectionType: KEYS_ONLY
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
       - IndexName: userIndex
         KeySchema:
         - AttributeName: userId
           KeyType: HASH
+        - AttributeName: startTime
+          KeyType: RANGE
         Projection:
           ProjectionType: ALL
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      - IndexName: bookingIndex
+        KeySchema:
+        - AttributeName: bookingId
+          KeyType: HASH
+        - AttributeName: startTime
+          KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: dateIndex
+        KeySchema:
+        - AttributeName: date
+          KeyType: HASH
+        - AttributeName: scooterId
+          KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
 Outputs:
   GetBookingFunction:
     Description: GetBooking Lambda Function ARN
@@ -168,4 +207,10 @@ Outputs:
     Value:
       Fn::GetAtt:
       - CreateBookingFunction
+      - Arn
+  UpdateBookingFunction:
+    Description: UpdateBooking Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - UpdateBookingFunction
       - Arn

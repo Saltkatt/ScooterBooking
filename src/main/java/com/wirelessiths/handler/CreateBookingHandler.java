@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
+import com.wirelessiths.dal.AuthService;
 import com.wirelessiths.exception.CouldNotCreateBookingException;
 import com.wirelessiths.dal.Booking;
 import org.apache.logging.log4j.LogManager;
@@ -17,6 +18,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This class handles save requests and implements RequestHandler and ApiGatewayResponse.
