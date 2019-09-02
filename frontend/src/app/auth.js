@@ -3,6 +3,7 @@ import {CognitoAuth, StorageHelper} from 'amazon-cognito-auth-js';
 import IndexRouter from '../router.js';
 import UserInfoStore from './user-info-store';
 import UserInfoApi from './user-info-api';
+import DeleteUserInfo from './delete-user-info';
 
 
 const CLIENT_ID = process.env.VUE_APP_COGNITO_CLIENT_ID;
@@ -45,6 +46,14 @@ function getUserInfoStorageKey(){
     return userInfoKey;
 }
 
+function deleteUserFromCognito(){
+    console.log("On Success result");
+    DeleteUserInfo.removeUserInfo().then(response =>{
+        IndexRouter.push('/');
+    });
+
+}
+
 var storageHelper = new StorageHelper();
 var storage = storageHelper.getStorage();
 export default{
@@ -60,6 +69,17 @@ export default{
             storage.removeItem(userInfoKey);
         }
     },
+    delete(){
+        if(auth.isUserSignedIn()){
+            var userInfoKey = this.getUserInfoStorageKey();
+            console.log("in delete()")
+            deleteUserFromCognito();
+            storage.removeItem((userInfoKey))
+
+        }
+    },
     getUserInfoStorageKey,
+
+
 
 }

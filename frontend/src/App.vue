@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
+    <img alt="Vue logo" src="./assets/scooter.png">
     <div class="contents">
       <router-view/>
     </div>
@@ -8,12 +8,9 @@
 </template>
 
 <script>
-  import Home from './components/Home.vue'
   export default {
     name: 'app',
-    components: {
-      Home,
-    }
+
   }
 </script>
 
@@ -25,5 +22,10 @@
     text-align: center;
     color: #2c3e50;
     margin-top: 60px;
+  }
+
+  img{
+    width: 25%;
+    height: 25%;
   }
 </style>

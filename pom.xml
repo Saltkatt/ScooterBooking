@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.wireless</groupId>
-  <artifactId>bookings-api-adam</artifactId>
+  <artifactId>bookings-api-elin</artifactId>
   <packaging>jar</packaging>
   <version>dev</version>
   <name>bookings-api</name>
