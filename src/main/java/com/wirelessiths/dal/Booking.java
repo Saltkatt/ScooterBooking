@@ -75,6 +75,12 @@ public class Booking {
         //this.logger = LogManager.getLogger(this.getClass());
     }
 
+    public Booking(AmazonDynamoDB client, DynamoDBMapper mapper){
+        this.client = client;
+        this.dynamoDB = new DynamoDB(client);
+        this.mapper = mapper;
+    }
+
     @DynamoDBHashKey(attributeName = "scooterId")
     public String getScooterId() {
         return this.scooterId;
@@ -175,7 +181,6 @@ public class Booking {
                 .withFilterExpression("startTime < :end");
         queryExp.setConsistentRead(true);
 
-        //List<Booking> bookings = mapper.query(Booking.class, queryExp);
         return mapper.query(Booking.class, queryExp);
     }
 
