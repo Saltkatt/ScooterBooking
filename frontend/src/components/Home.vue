@@ -7,11 +7,9 @@
         <nav class="nav-bar">
           <ul>
             <li><router-link to="/logout"><button class="btn">Logout</button></router-link></li>
-            <!--<li><router-link to="/delete"><button class="btn">Delete</button></router-link></li>-->
+            <li><router-link to="/delete"><button class="btn">Delete</button></router-link></li>
               <li>Stats</li>
               <li>Trips</li>
-
-
           </ul>
         </nav>
 
@@ -21,16 +19,16 @@
         </div>
 
         </header>
-
+      <div class="bookings">
         <div class="current-bookings">
-            <h2>Current Bookings</h2>
+          <h2>Current Bookings</h2>
         </div>
 
         <div class="expired-bookings">
-            <h2>Expired Bookings</h2>
+          <h2>Expired Bookings</h2>
         </div>
 
-
+      </div>
 
     </div>
   </div>
@@ -49,7 +47,6 @@
 <style>
   .nav-bar{
     background-color: azure;
-
   }
   ul{
     list-style-type: none;
@@ -66,9 +63,18 @@
       margin-right: 5px;
       float: right;
   }
-
   .alert{
       color: black;
+  }
+  .bookings {
+    display: grid;
+    grid-auto-columns: auto auto;
+  }
+  .current-bookings {
+    grid-column: 1;
+  }
+  .expired-bookings {
+    grid-column: 2;
   }
 
 

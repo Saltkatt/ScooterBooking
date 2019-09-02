@@ -18,10 +18,10 @@ function setCognitoInfo(newValue){
     state.cognitoInfo = newValue;
 }
 
-function setDeletedUser(){
+/*function setDeletedUser(){
     state.loggedIn = false;
     state.cognitoInfo = {};
-}
+}*/
 
 export default {
     state: state,

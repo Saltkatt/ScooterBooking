@@ -46,13 +46,13 @@ function getUserInfoStorageKey(){
     return userInfoKey;
 }
 
-function deleteUserFromCognito(){
+/*function deleteUserFromCognito(){
     console.log("On Success result");
     DeleteUserInfo.removeUserInfo().then(response =>{
         IndexRouter.push('/');
     });
 
-}
+}*/
 
 var storageHelper = new StorageHelper();
 var storage = storageHelper.getStorage();
@@ -69,7 +69,7 @@ export default{
             storage.removeItem(userInfoKey);
         }
     },
-    delete(){
+  /*  delete(){
         if(auth.isUserSignedIn()){
             var userInfoKey = this.getUserInfoStorageKey();
             console.log("in delete()")
@@ -77,7 +77,7 @@ export default{
             storage.removeItem((userInfoKey))
 
         }
-    },
+    },*/
     getUserInfoStorageKey,
 
 
