@@ -17,7 +17,8 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
+import java.util.Objects;
 
 
 /**
@@ -47,7 +48,7 @@ public class Booking {
     private final DynamoDBMapper mapper;
     private final DynamoDB dynamoDB;
 
-    private final Logger logger = LogManager.getLogger(this.getClass());
+    private final Logger logger;
     private static StringBuilder sb = new StringBuilder();
 
    /**
@@ -64,12 +65,16 @@ public class Booking {
         this.dynamoDB = this.db_adapter.getDynamoDB();
         // create the mapper with config
         this.mapper = this.db_adapter.createDbMapper(mapperConfig);
+
+        this.logger = LogManager.getLogger(this.getClass());
     }
 
     public Booking(AmazonDynamoDB client, DynamoDBMapperConfig config){
         this.client = client;
         this.dynamoDB = new DynamoDB(client);
         this.mapper = new DynamoDBMapper(client, config);
+        //this.logger = logger;
+        this.logger = LogManager.getLogger(this.getClass());
     }
 
     @DynamoDBHashKey(attributeName = "scooterId")
@@ -149,7 +154,7 @@ public class Booking {
                 '}';
     }
 
-    private boolean validateBooking(Booking booking) throws IOException{
+    private List<Booking> validateBooking(Booking booking) throws IOException{
 
         int maxDurationSeconds = 60 * 60 * 2;//temporary hardcoding of 2 hour max booking length
         String startRange = booking.getStartTime().toString();
@@ -167,7 +172,8 @@ public class Booking {
 
         List<Booking> bookings = mapper.query(Booking.class, queryExp);
 
-        return bookings.size() == 0;
+        //return bookings.size() == 0;
+        return bookings;
     }
 
         // methods
@@ -192,15 +198,16 @@ public class Booking {
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<Booking>()
                 .withKeyConditionExpression("bookingId = :v1")
-                .withExpressionAttributeValues(av);
-        queryExp.setIndexName("bookingId");
+                .withExpressionAttributeValues(av)
+                .withConsistentRead(false);
+        queryExp.setIndexName("bookingIndex");
 
         PaginatedQueryList<Booking> result = this.mapper.query(Booking.class, queryExp);
         if (result.size() > 0) {
             booking = result.get(0);
-            logger.info("Booking - get(): booking - " + booking.toString());
+            //logger.info("Booking - get(): booking - " + booking.toString());
         } else {
-            logger.info("Booking - get(): booking - Not Found.");
+            //logger.info("Booking - get(): booking - Not Found.");
         }
         return booking;
     }
@@ -224,13 +231,15 @@ public class Booking {
         return results;
     }
 
-    public void save(Booking booking) throws IOException {
+    public Booking save(Booking booking) throws IOException {
 
-        if(validateBooking(booking)){
-            logger.info("Booking - save(): " + booking.toString());
+        if(validateBooking(booking).size() == 0){
+            //logger.info("Booking - save(): " + booking.toString());
             this.mapper.save(booking);
+            return booking;
         }else{
-            logger.info("Booking already exists at given interval: " + booking.toString());
+            //logger.info("Booking already exists at given interval: " + booking.toString());
+            return null;
         }
     }
 
@@ -252,13 +261,30 @@ public class Booking {
         // get product if exists
         booking = get(id);
         if (booking != null) {
-            logger.info("Booking - delete(): " + booking.toString());
+            //logger.info("Booking - delete(): " + booking.toString());
             this.mapper.delete(booking);
         } else {
-            logger.info("Booking - delete(): booking - does not exist.");
+            //logger.info("Booking - delete(): booking - does not exist.");
             return false;
         }
         return true;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Booking booking = (Booking) o;
+        return scooterId.equals(booking.scooterId) &&
+                bookingId.equals(booking.bookingId) &&
+                userId.equals(booking.userId) &&
+                startTime.equals(booking.startTime) &&
+                endTime.equals(booking.endTime) &&
+                date.equals(booking.date);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(scooterId, bookingId, userId, startTime, endTime, date);
+    }
 }

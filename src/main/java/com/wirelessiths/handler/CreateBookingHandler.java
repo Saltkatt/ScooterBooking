@@ -47,13 +47,14 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 		  booking.setStartTime(Instant.parse(body.get("startTime").asText()));
 		  booking.setEndTime(Instant.parse(body.get("endTime").asText()));
 		  booking.setDate(LocalDate.parse(body.get("date").asText()));
+
 		  booking.setTripStatus(TripStatus.valueOf(body.get("tripStatus").asText()));
-		  booking.save(booking);
+          Booking savedBooking = booking.save(booking);//get hold of the returned booking with auto-generated bookingId
 
           // send the response back
       		return ApiGatewayResponse.builder()
       				.setStatusCode(200)
-      				.setObjectBody(booking)
+      				.setObjectBody(savedBooking)
       				.setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
       				.build();
 
