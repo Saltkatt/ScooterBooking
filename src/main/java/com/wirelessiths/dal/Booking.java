@@ -66,6 +66,12 @@ public class Booking {
         this.mapper = this.db_adapter.createDbMapper(mapperConfig);
     }
 
+    public Booking(AmazonDynamoDB client, DynamoDBMapper mapper){
+        this.client = client;
+        this.dynamoDB = new DynamoDB(client);
+        this.mapper = mapper;
+    }
+
     @DynamoDBHashKey(attributeName = "scooterId")
     public String getScooterId() {
         return this.scooterId;
@@ -162,11 +168,6 @@ public class Booking {
         List<Booking> bookings = mapper.query(Booking.class, queryExp);
 
         return bookings.size() == 0;
-
-//        System.out.println("Infringing bookings:");
-//        for (Booking returnedBooking : bookings) {
-//            System.out.println(returnedBooking.toString());
-//        }
     }
 
         // methods
