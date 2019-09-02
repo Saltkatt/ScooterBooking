@@ -34,19 +34,108 @@ public class BookingTest2 {
     }
 
 
-    //@Before//run before test
-    public void populateLocalTable(){
+    @Before
+    public void populateForOkValidationTest(){
+        Booking b1 = new Booking(client, mapperConfig );
+        Booking b2 = new Booking(client, mapperConfig);
 
+        b1.setScooterId("2");
+        b1.setUserId("ok-cases");
+        b1.setStartTime(Instant.parse("2019-09-02T13:20:00.000Z"));
+        b1.setEndTime(Instant.parse("2019-09-02T13:45:00.000Z"));
+        b1.setDate(LocalDate.parse("2019-09-02"));
+
+        b2.setScooterId("2");
+        b2.setUserId("ok-cases");
+        b2.setStartTime(Instant.parse("2019-09-02T15:10:00.000Z"));
+        b2.setEndTime(Instant.parse("2019-09-02T15:35:00.000Z"));
+        b2.setDate(LocalDate.parse("2019-09-02"));
+
+        try{
+            b1.save(b1);
+            b2.save(b2);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
-    public void populateForValidationTest(){
-        Booking booking = new Booking(this.client, this.mapperConfig );
+    @Test
+    public void bookingLogicValidationPassTest(){
+        Booking testCase = new Booking(client, mapperConfig);
 
-        booking.setScooterId("1");
-        booking.setUserId("test-1");
-        booking.setStartTime(Instant.parse("2019-09-02T14:00:00.000Z"));
-        booking.setEndTime(Instant.parse("2019-09-02T15:00:00.000Z"));
-        booking.setDate(LocalDate.parse("2019-09-02"));
+        testCase.setScooterId("2");
+        testCase.setUserId("before-and-after");
+        testCase.setStartTime(Instant.parse("2019-09-02T14:00:00.000Z"));
+        testCase.setEndTime(Instant.parse("2019-09-02T15:00:00.000Z"));
+        testCase.setDate(LocalDate.parse("2019-09-02"));
+
+        try{
+            List<Booking> bookings = testCase.validateBooking(testCase);
+            //bookings.forEach(System.out::println);
+            assert(bookings.size() == 0);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Before
+    public void populateForFailValidationTest(){
+        Booking b1 = new Booking(client, mapperConfig );
+        Booking b2 = new Booking(client, mapperConfig);
+        Booking b3 = new Booking(client, mapperConfig);
+        Booking b4 = new Booking(client, mapperConfig);
+
+        b1.setScooterId("3");
+        b1.setUserId("over");
+        b1.setStartTime(Instant.parse("2019-09-02T13:30:00.000Z"));
+        b1.setEndTime(Instant.parse("2019-09-02T15:45:00.000Z"));
+        b1.setDate(LocalDate.parse("2019-09-02"));
+
+        b2.setScooterId("3");
+        b2.setUserId("before-in");
+        b2.setStartTime(Instant.parse("2019-09-02T11:10:00.000Z"));
+        b2.setEndTime(Instant.parse("2019-09-02T14:35:00.000Z"));
+        b2.setDate(LocalDate.parse("2019-09-02"));
+
+        b3.setScooterId("3");
+        b3.setUserId("after-out");
+        b3.setStartTime(Instant.parse("2019-09-02T14:30:00.000Z"));
+        b3.setEndTime(Instant.parse("2019-09-02T15:30:00.000Z"));
+        b3.setDate(LocalDate.parse("2019-09-02"));
+
+        b4.setScooterId("3");
+        b4.setUserId("between");
+        b4.setStartTime(Instant.parse("2019-09-02T14:10:00.000Z"));
+        b4.setEndTime(Instant.parse("2019-09-02T14:40:00.000Z"));
+        b4.setDate(LocalDate.parse("2019-09-02"));
+
+        try{
+            b1.save(b1);
+            b2.save(b2);
+            b3.save(b3);
+            b4.save(b4);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @Test
+    public void bookingLogicValidationFailTest(){
+        Booking testCase = new Booking(client, mapperConfig);
+
+        testCase.setScooterId("3");
+        testCase.setUserId("testCase");
+        testCase.setStartTime(Instant.parse("2019-09-02T14:00:00.000Z"));
+        testCase.setEndTime(Instant.parse("2019-09-02T15:00:00.000Z"));
+        testCase.setDate(LocalDate.parse("2019-09-02"));
+
+        try{
+            List<Booking> bookings = testCase.validateBooking(testCase);
+            bookings.forEach(System.out::println);
+            assert(bookings.size() == 4);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
     }
 
 
@@ -56,8 +145,8 @@ public class BookingTest2 {
 
         booking.setScooterId("1");
         booking.setUserId("test-1");
-        booking.setStartTime(Instant.parse("2019-09-02T10:00:00.000Z"));
-        booking.setEndTime(Instant.parse("2019-09-02T11:00:00.000Z"));
+        booking.setStartTime(Instant.parse("2019-09-02T14:00:00.000Z"));
+        booking.setEndTime(Instant.parse("2019-09-02T15:00:00.000Z"));
         booking.setDate(LocalDate.parse("2019-09-02"));
 
         try{

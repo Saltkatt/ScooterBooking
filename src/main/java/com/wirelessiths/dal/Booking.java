@@ -4,13 +4,10 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.print.Book;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
@@ -154,7 +151,7 @@ public class Booking {
                 '}';
     }
 
-    private List<Booking> validateBooking(Booking booking) throws IOException{
+    public List<Booking> validateBooking(Booking booking) throws IOException{
 
         int maxDurationSeconds = 60 * 60 * 2;//temporary hardcoding of 2 hour max booking length
         String startRange = booking.getStartTime().toString();
@@ -233,14 +230,16 @@ public class Booking {
 
     public Booking save(Booking booking) throws IOException {
 
-        if(validateBooking(booking).size() == 0){
+        //if(validateBooking(booking).size() == 0) {
+
             //logger.info("Booking - save(): " + booking.toString());
             this.mapper.save(booking);
             return booking;
-        }else{
+        //}
+        ////////}else{
             //logger.info("Booking already exists at given interval: " + booking.toString());
-            return null;
-        }
+            //return null;
+        ////}
     }
 
     public void update(Booking booking) throws  IOException {   //TODO:  throw IOException/try&catch?
