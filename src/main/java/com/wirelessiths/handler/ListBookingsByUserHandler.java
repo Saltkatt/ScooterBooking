@@ -1,21 +1,17 @@
 package com.wirelessiths.handler;
 
-import com.amazonaws.services.dynamodbv2.document.Item;
-import com.amazonaws.services.dynamodbv2.document.ItemCollection;
-import com.amazonaws.services.dynamodbv2.document.QueryOutcome;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
+import com.wirelessiths.exception.UnableToListBookingsException;
 import com.wirelessiths.dal.AuthService;
 import com.wirelessiths.dal.Booking;
-import com.wirelessiths.exception.UnableToListBookingsException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
