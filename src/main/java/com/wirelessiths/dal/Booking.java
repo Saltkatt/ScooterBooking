@@ -157,8 +157,8 @@ public class Booking {
     }
     public List<Booking> validateBooking(Booking booking) throws IOException{
 
-        int maxDurationSeconds = 60 * 60 * 7;//temporary hardcoding of 7 hour max booking length
 
+        int maxDurationSeconds = 60 * 60 * 7;//temporary hardcoding of 7 hour max booking length
         String start = booking.getStartTime().toString();
         String end = booking.getEndTime().toString();
         String endPlusMaxDur = booking.getEndTime().plusSeconds(maxDurationSeconds).toString();
