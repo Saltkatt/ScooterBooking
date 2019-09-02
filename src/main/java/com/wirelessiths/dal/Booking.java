@@ -139,6 +139,7 @@ public class Booking {
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", date=" + date +
+                ", tripStatus=" + tripStatus +
                 '}';
     }
 
@@ -259,10 +260,13 @@ public class Booking {
         return true;
     }
 
-/*
-
- */
-    static Booking setBookingProperties(UpdateBookingRequest updateBookingRequest, Booking booking) {
+    /**
+     * Makes a booking object from updateBookingRequest. Should be used for updating object so that if no new info is inputted, the old information will persist.
+     * @param updateBookingRequest - the booking request in where the new information is stored.
+     * @param booking - the booking that you want to update.
+     * @return updated booking
+     */
+   public static Booking setBookingProperties(UpdateBookingRequest updateBookingRequest, Booking booking) {
 
         updateBookingRequest.getUserId().ifPresent(booking::setUserId);
         updateBookingRequest.getScooterId().ifPresent(booking::setScooterId);
@@ -293,6 +297,14 @@ public class Booking {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        });
+
+       updateBookingRequest.getTripStatus().ifPresent(n -> {
+           if(n.equals("WAITING_TO_START") || n.equals("IN_PROGRESS") || n.equals("COMPLETED") || n.equals("SCOOTER_NOT_RETURNED")) {
+               TripStatus tripStatus = TripStatus.valueOf(n);
+               booking.setTripStatus(tripStatus);
+           }
+
         });
 
         return booking;

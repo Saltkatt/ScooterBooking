@@ -2,6 +2,7 @@ package com.wirelessiths.handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.ApiGatewayResponse;
@@ -9,6 +10,7 @@ import com.wirelessiths.Response;
 import com.wirelessiths.dal.AuthService;
 import com.wirelessiths.dal.Booking;
 import com.wirelessiths.dal.TripStatus;
+import com.wirelessiths.dal.UpdateBookingRequest;
 import com.wirelessiths.exception.UnableToListBookingsException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,13 +35,25 @@ import java.util.Map;
         public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
             try {
 
+                ObjectMapper mapper = new ObjectMapper();
+
                 logger.info(input);
 
                 Booking booking = new Booking();
+                UpdateBookingRequest updateBookingRequest = null;
 
-                JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
+                JsonNode body = mapper.readTree((String) input.get("body"));
+                String bookingId = body.get("bookingId").asText();
+                booking.get(bookingId);
 
-                //setBookingProperties(booking, body);
+
+                try {
+                    updateBookingRequest =  mapper.treeToValue(body, UpdateBookingRequest.class);
+                } catch (JsonProcessingException e) {
+                    e.printStackTrace();
+                }
+
+                booking = Booking.setBookingProperties(updateBookingRequest, booking);
 
                 booking.setTripStatus(TripStatus.COMPLETED);
 

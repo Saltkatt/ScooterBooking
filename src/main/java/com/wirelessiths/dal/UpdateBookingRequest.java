@@ -17,7 +17,10 @@ public class UpdateBookingRequest {
     private String startTime;
     private String endTime;
     private String date;
-
+    private String tripStatus;
+/*
+TODO: Check how status is being saved in db. Might need to alter how enum is set.
+ */
 
     public UpdateBookingRequest() {
     }
@@ -70,22 +73,12 @@ public class UpdateBookingRequest {
         this.date = date;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        UpdateBookingRequest that = (UpdateBookingRequest) o;
-        return Objects.equals(scooterId, that.scooterId) &&
-                Objects.equals(bookingId, that.bookingId) &&
-                Objects.equals(userId, that.userId) &&
-                Objects.equals(startTime, that.startTime) &&
-                Objects.equals(endTime, that.endTime) &&
-                Objects.equals(date, that.date);
+    public Optional<String> getTripStatus() {
+        return Optional.ofNullable(tripStatus);
     }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(scooterId, bookingId, userId, startTime, endTime, date);
+    public void setTripStatus(String status) {
+        this.tripStatus = status;
     }
 
     @Override
@@ -94,9 +87,29 @@ public class UpdateBookingRequest {
                 "scooterId='" + scooterId + '\'' +
                 ", bookingId='" + bookingId + '\'' +
                 ", userId='" + userId + '\'' +
-                ", startTime=" + startTime +
-                ", endTime=" + endTime +
-                ", date=" + date +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                ", date='" + date + '\'' +
+                ", tripStatus='" + tripStatus + '\'' +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        UpdateBookingRequest that = (UpdateBookingRequest) o;
+        return Objects.equals(getScooterId(), that.getScooterId()) &&
+                Objects.equals(getBookingId(), that.getBookingId()) &&
+                Objects.equals(getUserId(), that.getUserId()) &&
+                Objects.equals(getStartTime(), that.getStartTime()) &&
+                Objects.equals(getEndTime(), that.getEndTime()) &&
+                Objects.equals(getDate(), that.getDate()) &&
+                Objects.equals(that.getTripStatus(), that.getTripStatus());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getScooterId(), getBookingId(), getUserId(), getStartTime(), getEndTime(), getDate(), getTripStatus());
     }
 }
