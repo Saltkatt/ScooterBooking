@@ -47,6 +47,7 @@ public class Booking {
 
     //private final Logger logger = LogManager.getLogger(this.getClass());
     private final LoggerAdapter logger;
+
     private static StringBuilder sb = new StringBuilder();
 
    /**
@@ -75,11 +76,6 @@ public class Booking {
         //this.logger = LogManager.getLogger(this.getClass());
     }
 
-    public Booking(AmazonDynamoDB client, DynamoDBMapperConfig config){
-        this.client = client;
-        this.dynamoDB = new DynamoDB(client);
-        this.mapper = new DynamoDBMapper(client, config);
-    }
 
     @DynamoDBHashKey(attributeName = "scooterId")
     public String getScooterId() {
@@ -159,8 +155,6 @@ public class Booking {
                 ", tripStatus=" + tripStatus +
                 '}';
     }
-
-
     public List<Booking> validateBooking(Booking booking) throws IOException{
 
         int maxDurationSeconds = 60 * 60 * 7;//temporary hardcoding of 7 hour max booking length
@@ -213,9 +207,9 @@ public class Booking {
         PaginatedQueryList<Booking> result = this.mapper.query(Booking.class, queryExp);
         if (result.size() > 0) {
             booking = result.get(0);
-            logger.info("Booking - get(): booking - " + booking.toString());
+            //logger.info("Booking - get(): booking - " + booking.toString());
         } else {
-            logger.info("Booking - get(): booking - Not Found.");
+            //logger.info("Booking - get(): booking - Not Found.");
         }
         return booking;
     }
@@ -241,16 +235,9 @@ public class Booking {
 
     public Booking save(Booking booking) throws IOException {
 
-        //if(validateBooking(booking).size() == 0) {
-
-            //logger.info("Booking - save(): " + booking.toString());
+            logger.info("Booking - save(): " + booking.toString());
             this.mapper.save(booking);
             return booking;
-        //}
-        ////////}else{
-            //logger.info("Booking already exists at given interval: " + booking.toString());
-            //return null;
-        ////}
     }
 
     public void update(Booking booking) throws  IOException {   //TODO:  throw IOException/try&catch?
@@ -271,10 +258,10 @@ public class Booking {
         // get product if exists
         booking = get(id);
         if (booking != null) {
-            logger.info("Booking - delete(): " + booking.toString());
+            //logger.info("Booking - delete(): " + booking.toString());
             this.mapper.delete(booking);
         } else {
-            logger.info("Booking - delete(): booking - does not exist.");
+            //logger.info("Booking - delete(): booking - does not exist.");
             return false;
         }
         return true;
