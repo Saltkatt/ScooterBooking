@@ -7,7 +7,7 @@ Description: >
 Parameters:
   TableName:
     Type: String
-    Default: master-bookings-api-dev
+    Default: bookings-api-dev-adam
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
@@ -128,6 +128,8 @@ Resources:
       - AttributeName: date
         AttributeType: S
       - AttributeName: startTime
+        AttributeType: S
+      - AttributeName: tripStatus
         AttributeType: S
       KeySchema:
       - AttributeName: scooterId

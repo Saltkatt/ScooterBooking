@@ -22,6 +22,7 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
+        logger.info(input);
         try {
 
             // get the 'pathParameters' from input

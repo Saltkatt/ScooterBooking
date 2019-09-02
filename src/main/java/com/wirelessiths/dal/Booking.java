@@ -4,15 +4,18 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.fasterxml.jackson.databind.JsonNode;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.print.Book;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -33,6 +36,9 @@ public class Booking {
     private Instant startTime;
     private Instant endTime;
     private LocalDate date;
+
+    private TripStatus tripStatus;
+
 
     private static DynamoDBAdapter db_adapter;
     private final AmazonDynamoDB client;
@@ -110,6 +116,16 @@ public class Booking {
     }
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    @DynamoDBTypeConvertedEnum
+    @DynamoDBAttribute(attributeName="tripStatus")
+    public TripStatus getTripStratus() {
+        return tripStatus;
+    }
+
+    public void setTripStatus(TripStatus tripStatus) {
+        this.tripStatus = tripStatus;
     }
 
     @Override
@@ -239,5 +255,21 @@ public class Booking {
             return false;
         }
         return true;
+    }
+
+
+    static Booking setBookingProperties(Booking booking, JsonNode body) {
+
+
+       // Optional<String> optScooterId = Optional.ofNullable(body.get("scooterId").asText()
+
+
+
+       // booking.setScooterId();
+        booking.setUserId(body.get("userId").asText());
+        booking.setStartTime(Instant.parse(body.get("startTime").asText()));
+        booking.setEndTime(Instant.parse(body.get("endTime").asText()));
+        booking.setDate(LocalDate.parse(body.get("date").asText()));
+        return booking;
     }
 }

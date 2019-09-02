@@ -40,12 +40,8 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
           JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
           Booking booking = new Booking();
 
-		  booking.setScooterId(body.get("scooterId").asText());
-		  booking.setUserId(body.get("userId").asText());
-		  booking.setStartTime(Instant.parse(body.get("startTime").asText()));
-          booking.setEndTime(Instant.parse(body.get("endTime").asText()));
-		  booking.setDate(LocalDate.parse(body.get("date").asText()));
-          booking.save(booking);
+		  ReturnScooterHandler.setBookingProperties(booking, body);
+		  booking.save(booking);
 
           // send the response back
       		return ApiGatewayResponse.builder()
