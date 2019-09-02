@@ -37,12 +37,44 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
             // send the response back
             if (booking != null) {
 
+                String temp = "temp ";
+
                 try {
-                    booking.setBookingId(String.valueOf(Optional.ofNullable(body.get("bookingId").asText())));
-                    booking.setScooterId(String.valueOf(Optional.ofNullable(body.get("scooterId").asText())));
-                    booking.setUserId(String.valueOf(Optional.ofNullable(body.get("userId").asText())));
-                    booking.setStartTime(LocalDateTime.parse(String.valueOf(Optional.ofNullable(body.get("startTime").asText()))));
-                    booking.setEndTime(LocalDateTime.parse(String.valueOf(Optional.ofNullable(body.get("endTime").asText()))));
+
+                   // booking.setScooterId(body.get("scooterId").asText());
+                    //temp = body.get("scooterId").asText();
+                    //booking.setBookingId(body.get("bookingId").asText());
+                    //booking.setBookingId(String.valueOf(Optional.ofNullable(body.get("bookingId").asText())));
+                    //booking.setScooterId(String.valueOf(Optional.ofNullable(body.get("scooterId").asText())));
+                    //booking.setUserId(String.valueOf(Optional.ofNullable(body.get("userId").asText())));
+                   // booking.setStartTime(LocalDateTime.parse(String.valueOf(Optional.ofNullable(body.get("startTime").asText()))));
+                   // booking.setEndTime(LocalDateTime.parse(String.valueOf(Optional.ofNullable(body.get("endTime").asText()))));
+
+
+                    //Optional<String> scooterId = Optional.ofNullable(body.get("scooterId").asText());
+                    //scooterId.ifPresent(n -> booking.setScooterId(n));
+
+
+                    if (body.has("bookingId") && !body.get("bookingId").asText().isEmpty()) {
+                        booking.setBookingId(body.get("bookingId").asText());
+                    }
+
+                    if (body.has("scooterId") && !body.get("scooterId").asText().isEmpty()) {
+                        booking.setScooterId(body.get("scooterId").asText());
+                    }
+
+                    if (body.has("userId") && !body.get("userId").asText().isEmpty()) {
+                        booking.setUserId(body.get("userId").asText());
+                    }
+
+                    if (body.has("startTime") && !body.get("startTime").asText().isEmpty()) {
+                        booking.setStartTime(LocalDateTime.parse(body.get("startTime").asText()));
+                    }
+
+                    if (body.has("endTime") && !body.get("endTime").asText().isEmpty()) {
+                        booking.setEndTime(LocalDateTime.parse(body.get("endTime").asText()));
+                    }
+
                     booking.update(booking);
 
                 } catch (Exception e) {
@@ -50,7 +82,7 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                     logger.error("Error in retrieving product: " + e);
 
                     // send the error response back
-                    Response responseBody = new Response("Error in updating product: " + e.getMessage(), input);
+                    Response responseBody = new Response(temp + "Error in updating product: " + e.getMessage(), input);
                     return ApiGatewayResponse.builder()
                             .setStatusCode(500)
                             .setObjectBody(responseBody)
