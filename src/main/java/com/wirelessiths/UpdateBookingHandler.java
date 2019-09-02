@@ -68,11 +68,11 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                     }
 
                     if (body.has("startTime") && !body.get("startTime").asText().isEmpty()) {
-                        booking.setStartTime(LocalDateTime.parse(body.get("startTime").asText()));
+                   //     booking.setStartTime(LocalDateTime.parse(body.get("startTime").asText()));
                     }
 
                     if (body.has("endTime") && !body.get("endTime").asText().isEmpty()) {
-                        booking.setEndTime(LocalDateTime.parse(body.get("endTime").asText()));
+                   //     booking.setEndTime(LocalDateTime.parse(body.get("endTime").asText()));
                     }
 
                     booking.update(booking);

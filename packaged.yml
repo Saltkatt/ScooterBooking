@@ -8,7 +8,10 @@ Description: 'sam-app
 Parameters:
   TableName:
     Type: String
-    Default: sam-bookings-api-dev-elin
+    Default: master-bookings-api-dev
+  CodeUri:
+    Type: String
+    Default: target/bookings-api-dev.jar
 Globals:
   Function:
     Timeout: 20
@@ -21,7 +24,7 @@ Resources:
   GetBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-elin-bucket/6ddf8530445b47acae632aa9e0ce93b3
+      CodeUri: s3://sam-bookings-master/227dd7e988a02974e7459df749dbb14b
       Handler: com.wirelessiths.handler.GetBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -37,7 +40,7 @@ Resources:
   ListBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-elin-bucket/6ddf8530445b47acae632aa9e0ce93b3
+      CodeUri: s3://sam-bookings-master/227dd7e988a02974e7459df749dbb14b
       Handler: com.wirelessiths.handler.ListBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -53,7 +56,7 @@ Resources:
   ListBookingsByUserFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-elin-bucket/6ddf8530445b47acae632aa9e0ce93b3
+      CodeUri: s3://sam-bookings-master/227dd7e988a02974e7459df749dbb14b
       Handler: com.wirelessiths.handler.ListBookingsByUserHandler::handleRequest
       Runtime: java8
       Policies:
@@ -69,7 +72,7 @@ Resources:
   DeleteBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-elin-bucket/6ddf8530445b47acae632aa9e0ce93b3
+      CodeUri: s3://sam-bookings-master/227dd7e988a02974e7459df749dbb14b
       Handler: com.wirelessiths.handler.DeleteBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -85,7 +88,7 @@ Resources:
   CreateBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-elin-bucket/6ddf8530445b47acae632aa9e0ce93b3
+      CodeUri: s3://sam-bookings-master/227dd7e988a02974e7459df749dbb14b
       Handler: com.wirelessiths.handler.CreateBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -101,7 +104,7 @@ Resources:
   UpdateBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-elin-bucket/6ddf8530445b47acae632aa9e0ce93b3
+      CodeUri: s3://sam-bookings-master/227dd7e988a02974e7459df749dbb14b
       Handler: com.wirelessiths.UpdateBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -117,43 +120,63 @@ Resources:
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
-      TableName: sam-bookings-api-dev
+      TableName:
+        Ref: TableName
       AttributeDefinitions:
-      - AttributeName: bookingId
-        AttributeType: S
-      - AttributeName: startTime
+      - AttributeName: scooterId
         AttributeType: S
       - AttributeName: endTime
         AttributeType: S
+      - AttributeName: bookingId
+        AttributeType: S
       - AttributeName: userId
         AttributeType: S
+      - AttributeName: date
+        AttributeType: S
+      - AttributeName: startTime
+        AttributeType: S
       KeySchema:
-      - AttributeName: bookingId
+      - AttributeName: scooterId
         KeyType: HASH
+      - AttributeName: endTime
+        KeyType: RANGE
+      ProvisionedThroughput:
+        ReadCapacityUnits: 1
+        WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: timeIndex
-        KeySchema:
-        - AttributeName: startTime
-          KeyType: HASH
-        - AttributeName: endTime
-          KeyType: RANGE
-        Projection:
-          ProjectionType: KEYS_ONLY
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
       - IndexName: userIndex
         KeySchema:
         - AttributeName: userId
           KeyType: HASH
+        - AttributeName: startTime
+          KeyType: RANGE
         Projection:
           ProjectionType: ALL
         ProvisionedThroughput:
           ReadCapacityUnits: 1
           WriteCapacityUnits: 1
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
+      - IndexName: bookingIndex
+        KeySchema:
+        - AttributeName: bookingId
+          KeyType: HASH
+        - AttributeName: startTime
+          KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+      - IndexName: dateIndex
+        KeySchema:
+        - AttributeName: date
+          KeyType: HASH
+        - AttributeName: scooterId
+          KeyType: RANGE
+        Projection:
+          ProjectionType: ALL
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
 Outputs:
   GetBookingFunction:
     Description: GetBooking Lambda Function ARN
