@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.dal.UpdateBookingRequest;
 import org.junit.Test;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 
@@ -42,6 +43,7 @@ public class Booking {
 
         System.out.println(updateBookingRequest.toString());
 
+        assertEquals(updateBookingRequest.getScooterId().orElse(""), "");
     }
 
 }

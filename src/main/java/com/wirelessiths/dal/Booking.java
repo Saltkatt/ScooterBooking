@@ -260,15 +260,41 @@ public class Booking {
     }
 
 /*
-All fields needs to be provided in json body otherwise e
+
  */
-    static Booking setBookingProperties(JsonNode body, Booking booking) {
+    static Booking setBookingProperties(UpdateBookingRequest updateBookingRequest, Booking booking) {
 
+        updateBookingRequest.getUserId().ifPresent(booking::setUserId);
+        updateBookingRequest.getScooterId().ifPresent(booking::setScooterId);
+        updateBookingRequest.getBookingId().ifPresent(booking::setBookingId);
 
-        booking.setUserId(body.get("userId").asText());
-        booking.setStartTime(Instant.parse(body.get("startTime").asText()));
-        booking.setEndTime(Instant.parse(body.get("endTime").asText()));
-        booking.setDate(LocalDate.parse(body.get("date").asText()));
+        updateBookingRequest.getDate().ifPresent(n -> {
+            try {
+                LocalDateConverter converter = new LocalDateConverter();
+                booking.setDate(converter.unconvert(n));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        updateBookingRequest.getStartTime().ifPresent(n -> {
+            try {
+                InstantConverter converter = new InstantConverter();
+                booking.setStartTime(converter.unconvert(n));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        updateBookingRequest.getEndTime().ifPresent(n -> {
+            try {
+                InstantConverter converter = new InstantConverter();
+                booking.setEndTime(converter.unconvert(n));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
         return booking;
     }
 }
