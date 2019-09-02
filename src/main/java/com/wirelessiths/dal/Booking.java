@@ -66,10 +66,10 @@ public class Booking {
         this.mapper = this.db_adapter.createDbMapper(mapperConfig);
     }
 
-    public Booking(AmazonDynamoDB client, DynamoDBMapper mapper){
+    public Booking(AmazonDynamoDB client, DynamoDBMapperConfig config){
         this.client = client;
         this.dynamoDB = new DynamoDB(client);
-        this.mapper = mapper;
+        this.mapper = new DynamoDBMapper(client, config);
     }
 
     @DynamoDBHashKey(attributeName = "scooterId")
