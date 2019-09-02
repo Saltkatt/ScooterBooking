@@ -4,7 +4,9 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -257,15 +259,12 @@ public class Booking {
         return true;
     }
 
-
-    static Booking setBookingProperties(Booking booking, JsonNode body) {
-
-
-       // Optional<String> optScooterId = Optional.ofNullable(body.get("scooterId").asText()
-
+/*
+All fields needs to be provided in json body otherwise e
+ */
+    static Booking setBookingProperties(JsonNode body, Booking booking) {
 
 
-       // booking.setScooterId();
         booking.setUserId(body.get("userId").asText());
         booking.setStartTime(Instant.parse(body.get("startTime").asText()));
         booking.setEndTime(Instant.parse(body.get("endTime").asText()));

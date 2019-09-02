@@ -40,7 +40,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
           JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
           Booking booking = new Booking();
 
-		  ReturnScooterHandler.setBookingProperties(booking, body);
+		 // ReturnScooterHandler.setBookingProperties(booking, body);
 		  booking.save(booking);
 
           // send the response back

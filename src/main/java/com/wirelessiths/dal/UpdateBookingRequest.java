@@ -14,9 +14,9 @@ public class UpdateBookingRequest {
     private String scooterId;
     private String bookingId;
     private String userId;
-    private Instant startTime;
-    private Instant endTime;
-    private LocalDate date;
+    private String startTime;
+    private String endTime;
+    private String date;
 
 
     public UpdateBookingRequest() {
@@ -30,8 +30,8 @@ public class UpdateBookingRequest {
         this.scooterId = scooterId;
     }
 
-    public String getBookingId() {
-        return bookingId;
+    public Optional<String>  getBookingId() {
+        return Optional.ofNullable(bookingId);
     }
 
     public void setBookingId(String bookingId) {
@@ -46,27 +46,27 @@ public class UpdateBookingRequest {
         this.userId = userId;
     }
 
-    public Optional<Instant> getStartTime() {
+    public Optional<String> getStartTime() {
         return Optional.ofNullable(startTime);
     }
 
-    public void setStartTime(Instant startTime) {
+    public void setStartTime(String startTime) {
         this.startTime = startTime;
     }
 
-    public Optional<Instant> getEndTime() {
+    public Optional<String> getEndTime() {
         return Optional.ofNullable(endTime);
     }
 
-    public void setEndTime(Instant endTime) {
+    public void setEndTime(String endTime) {
         this.endTime = endTime;
     }
 
-    public Optional<LocalDate> getDate() {
+    public Optional<String> getDate() {
         return Optional.ofNullable(date);
     }
 
-    public void setDate(LocalDate date) {
+    public void setDate(String date) {
         this.date = date;
     }
 
