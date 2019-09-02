@@ -124,6 +124,12 @@ public class Booking {
                 '}';
     }
 
+    /**
+     * This method validates Bookings. Checks if there are other bookings during the same time period for that scooterId.
+     * @param booking
+     * @return
+     * @throws IOException
+     */
     private boolean validateBooking(Booking booking) throws IOException{
 
         int maxDurationSeconds = 60 * 60 * 2;//temporary hardcoding of 2 hour max booking length
