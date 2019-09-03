@@ -9,7 +9,6 @@ import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.*;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -31,31 +30,39 @@ public class BookingTest2 {
     public static void setUpClientAndTable(){
         createClient();
         createTable();
+        populateForOkValidationTest();
+        populateForFailValidationTest();
     }
 
 
-    @Before
-    public void populateForOkValidationTest(){
+    //@Before
+    public static void populateForOkValidationTest(){
+        System.out.println("adding passing test cases to table..");
         Booking b1 = new Booking(client, mapperConfig );
         Booking b2 = new Booking(client, mapperConfig);
 
-        b1.setScooterId("2");
+        b1.setScooterId("3");
         b1.setUserId("ok-cases");
         b1.setStartTime(Instant.parse("2019-09-02T13:20:00.000Z"));
         b1.setEndTime(Instant.parse("2019-09-02T13:45:00.000Z"));
         b1.setDate(LocalDate.parse("2019-09-02"));
+        //b1.generateValidationKey();
 
-        b2.setScooterId("2");
+        b2.setScooterId("3");
         b2.setUserId("ok-cases");
         b2.setStartTime(Instant.parse("2019-09-02T15:10:00.000Z"));
         b2.setEndTime(Instant.parse("2019-09-02T15:35:00.000Z"));
         b2.setDate(LocalDate.parse("2019-09-02"));
+        //b2.generateValidationKey();
 
         try{
+            System.out.println("saving1");
             b1.save(b1);
+            System.out.println("saving2");
             b2.save(b2);
         }catch(Exception e){
-            System.out.println(e.getMessage());
+            System.out.println("error in populateForOkValidationTest()100");
+            System.out.println("msg: " + e.getMessage());
         }
     }
 
@@ -63,58 +70,89 @@ public class BookingTest2 {
     public void bookingLogicValidationPassTest(){
         Booking testCase = new Booking(client, mapperConfig);
 
-        testCase.setScooterId("2");
+        testCase.setScooterId("3");
         testCase.setUserId("before-and-after");
         testCase.setStartTime(Instant.parse("2019-09-02T14:00:00.000Z"));
         testCase.setEndTime(Instant.parse("2019-09-02T15:00:00.000Z"));
         testCase.setDate(LocalDate.parse("2019-09-02"));
+        //testCase.generateValidationKey();
 
         try{
             List<Booking> bookings = testCase.validateBooking(testCase);
-            //bookings.forEach(System.out::println);
+            System.out.println("pass test bookings:");
+            bookings.forEach(System.out::println);
+            System.out.println("pass test bookings.size(): " + bookings.size());
             assert(bookings.size() == 0);
         }catch(Exception e){
+            System.out.println("error in bookingLogicValidationPassTest()");
+
             System.out.println(e.getMessage());
         }
     }
 
-    @Before
-    public void populateForFailValidationTest(){
+    //@Before
+    public static void populateForFailValidationTest(){
+        System.out.println("adding fail validation test cases to table..");
+
         Booking b1 = new Booking(client, mapperConfig );
         Booking b2 = new Booking(client, mapperConfig);
         Booking b3 = new Booking(client, mapperConfig);
         Booking b4 = new Booking(client, mapperConfig);
+        Booking b5 = new Booking(client, mapperConfig);
+        Booking b6 = new Booking(client, mapperConfig);
 
-        b1.setScooterId("3");
+
+        b1.setScooterId("2");
         b1.setUserId("over");
         b1.setStartTime(Instant.parse("2019-09-02T13:30:00.000Z"));
         b1.setEndTime(Instant.parse("2019-09-02T15:45:00.000Z"));
         b1.setDate(LocalDate.parse("2019-09-02"));
+        //b1.generateValidationKey();
 
-        b2.setScooterId("3");
+        b2.setScooterId("2");
         b2.setUserId("before-in");
         b2.setStartTime(Instant.parse("2019-09-02T11:10:00.000Z"));
         b2.setEndTime(Instant.parse("2019-09-02T14:35:00.000Z"));
         b2.setDate(LocalDate.parse("2019-09-02"));
+        //b2.generateValidationKey();
 
-        b3.setScooterId("3");
+        b3.setScooterId("2");
         b3.setUserId("after-out");
         b3.setStartTime(Instant.parse("2019-09-02T14:30:00.000Z"));
         b3.setEndTime(Instant.parse("2019-09-02T15:30:00.000Z"));
         b3.setDate(LocalDate.parse("2019-09-02"));
+        //b3.generateValidationKey();
 
-        b4.setScooterId("3");
+        b4.setScooterId("2");
         b4.setUserId("between");
         b4.setStartTime(Instant.parse("2019-09-02T14:10:00.000Z"));
         b4.setEndTime(Instant.parse("2019-09-02T14:40:00.000Z"));
         b4.setDate(LocalDate.parse("2019-09-02"));
+        //b4.generateValidationKey();
+
+        b5.setScooterId("2");
+        b5.setUserId("ok-cases");
+        b5.setStartTime(Instant.parse("2019-09-02T13:20:00.000Z"));
+        b5.setEndTime(Instant.parse("2019-09-02T13:45:00.000Z"));
+        b5.setDate(LocalDate.parse("2019-09-02"));
+        //b5.generateValidationKey();
+
+        b6.setScooterId("2");
+        b6.setUserId("ok-cases");
+        b6.setStartTime(Instant.parse("2019-09-02T15:10:00.000Z"));
+        b6.setEndTime(Instant.parse("2019-09-02T15:35:00.000Z"));
+        b6.setDate(LocalDate.parse("2019-09-02"));
+        //b6.generateValidationKey();
 
         try{
             b1.save(b1);
             b2.save(b2);
             b3.save(b3);
             b4.save(b4);
+            b5.save(b5);
+            b6.save(b6);
         }catch(Exception e){
+            System.out.println("error in populateForFailValidationTest()");
             System.out.println(e.getMessage());
         }
     }
@@ -123,17 +161,22 @@ public class BookingTest2 {
     public void bookingLogicValidationFailTest(){
         Booking testCase = new Booking(client, mapperConfig);
 
-        testCase.setScooterId("3");
+        testCase.setScooterId("2");
         testCase.setUserId("testCase");
         testCase.setStartTime(Instant.parse("2019-09-02T14:00:00.000Z"));
         testCase.setEndTime(Instant.parse("2019-09-02T15:00:00.000Z"));
         testCase.setDate(LocalDate.parse("2019-09-02"));
+        //testCase.generateValidationKey();
 
         try{
             List<Booking> bookings = testCase.validateBooking(testCase);
+            System.out.println("fail test bookings.size(): " + bookings.size());
+
             bookings.forEach(System.out::println);
             assert(bookings.size() == 4);
         }catch(Exception e){
+            System.out.println("error in bookingLogicValidationFailTest()");
+
             System.out.println(e.getMessage());
         }
     }
@@ -141,13 +184,14 @@ public class BookingTest2 {
 
     @Test
     public void daoCrudTest(){
-        Booking booking = new Booking(this.client, this.mapperConfig );
+        Booking booking = new Booking(client, mapperConfig );
 
         booking.setScooterId("1");
         booking.setUserId("test-1");
         booking.setStartTime(Instant.parse("2019-09-02T14:00:00.000Z"));
         booking.setEndTime(Instant.parse("2019-09-02T15:00:00.000Z"));
         booking.setDate(LocalDate.parse("2019-09-02"));
+        //booking.generateValidationKey();
 
         try{
             //create booking
@@ -165,14 +209,6 @@ public class BookingTest2 {
         }
 
     }
-
-//
-//    @Test
-//    public void validationTestEdgeCases(){
-//
-//
-//    }
-
 
     @AfterClass
     public static void deleteTable(){

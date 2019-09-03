@@ -36,6 +36,7 @@ public class Booking {
     private Instant startTime;
     private Instant endTime;
     private LocalDate date;
+    private String test;
 
     private TripStatus tripStatus;
 
@@ -74,6 +75,15 @@ public class Booking {
         this.logger = LogManager.getLogger(this.getClass());
     }
 
+    @DynamoDBAttribute(attributeName = "test")
+    public String getTest() {
+        return test;
+    }
+
+    public void setTest(String test) {
+        this.test = test;
+    }
+
     @DynamoDBHashKey(attributeName = "scooterId")
     public String getScooterId() {
         return this.scooterId;
@@ -82,7 +92,9 @@ public class Booking {
         this.scooterId = scooterId;
     }
 
+
     @DynamoDBRangeKey(attributeName = "endTime")
+    @DynamoDBAttribute(attributeName = "endTime")
     @DynamoDBTypeConverted( converter = InstantConverter.class )
     public Instant getEndTime() {
         return endTime;
@@ -151,26 +163,29 @@ public class Booking {
                 '}';
     }
 
+
     public List<Booking> validateBooking(Booking booking) throws IOException{
 
-        int maxDurationSeconds = 60 * 60 * 2;//temporary hardcoding of 2 hour max booking length
-        String startRange = booking.getStartTime().toString();
-        String endRange = booking.getEndTime().plusSeconds(maxDurationSeconds).toString();
+        int maxDurationSeconds = 60 * 60 * 7;//temporary hardcoding of 7 hour max booking length
+
+        String start = booking.getStartTime().toString();
+        String end = booking.getEndTime().toString();
+        String endPlusMaxDur = booking.getEndTime().plusSeconds(maxDurationSeconds).toString();
 
         Map<String, AttributeValue> values = new HashMap<>();
-        values.put(":val1", new AttributeValue().withS(booking.getScooterId()));
-        values.put(":val2", new AttributeValue().withS(startRange));
-        values.put(":val3", new AttributeValue().withS(endRange));
+        values.put(":id", new AttributeValue().withS(booking.getScooterId()));
+        values.put(":start", new AttributeValue().withS(start));
+        values.put(":endPlusMaxDur", new AttributeValue().withS(endPlusMaxDur));
+        values.put(":end", new AttributeValue().withS(end));
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
-        queryExp.withKeyConditionExpression("scooterId = :val1 and endTime between :val2 and :val3")
-                .withExpressionAttributeValues(values);
+        queryExp.withKeyConditionExpression("scooterId = :id and endTime between :start and :endPlusMaxDur")
+                .withExpressionAttributeValues(values)
+                .withFilterExpression("startTime < :end");
         queryExp.setConsistentRead(true);
 
-        List<Booking> bookings = mapper.query(Booking.class, queryExp);
-
-        //return bookings.size() == 0;
-        return bookings;
+        //List<Booking> bookings = mapper.query(Booking.class, queryExp);
+        return mapper.query(Booking.class, queryExp);
     }
 
         // methods
