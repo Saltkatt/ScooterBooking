@@ -36,7 +36,6 @@ public class Booking {
     private Instant startTime;
     private Instant endTime;
     private LocalDate date;
-    private String test;
 
     private TripStatus tripStatus;
 

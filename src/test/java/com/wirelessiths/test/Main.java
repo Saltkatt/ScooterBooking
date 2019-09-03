@@ -4,6 +4,7 @@ public class Main {
 
     public static void main(String[] args) {
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 
 
@@ -126,5 +127,7 @@ public class Main {
 //        list.forEach(System.out::println);
 
 >>>>>>> add working booking validation logic
+=======
+>>>>>>> rename getter, remove unused code
     }
 }
