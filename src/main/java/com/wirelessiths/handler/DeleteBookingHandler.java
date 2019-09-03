@@ -35,6 +35,8 @@ public class DeleteBookingHandler implements RequestHandler<Map<String, Object>,
 			Map<String,String> pathParameters =  (Map<String,String>)input.get("pathParameters");
 			String userId = pathParameters.get("id");
 
+
+
 			// get the Booking by id
 			Boolean success = new Booking().delete(userId);
 

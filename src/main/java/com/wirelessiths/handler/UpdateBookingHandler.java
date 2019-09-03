@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
-import com.wirelessiths.dal.Booking;
+import com.wirelessiths.dal.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -18,6 +18,7 @@ import java.util.Optional;
 public class UpdateBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
+
 
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
@@ -88,4 +89,56 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                     .build();
         }
     }
+
+    /**
+     * Makes a booking object from updateBookingRequest. Should be used for updating object so that if no new info is inputted, the old information will persist.
+     * @param updateBookingRequest - the booking request in where the new information is stored.
+     * @param booking - the booking that you want to update.
+     * @return updated booking
+     */
+    public static Booking setBookingProperties(UpdateBookingRequest updateBookingRequest, Booking booking) {
+
+        updateBookingRequest.getUserId().ifPresent(booking::setUserId);
+        updateBookingRequest.getScooterId().ifPresent(booking::setScooterId);
+        updateBookingRequest.getBookingId().ifPresent(booking::setBookingId);
+
+        updateBookingRequest.getDate().ifPresent(n -> {
+            if(n.matches(""))
+                try {
+                    LocalDateConverter converter = new LocalDateConverter();
+                    booking.setDate(converter.unconvert(n));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+        });
+
+        updateBookingRequest.getStartTime().ifPresent(n -> {
+            try {
+                InstantConverter converter = new InstantConverter();
+                booking.setStartTime(converter.unconvert(n));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        updateBookingRequest.getEndTime().ifPresent(n -> {
+            try {
+                InstantConverter converter = new InstantConverter();
+                booking.setEndTime(converter.unconvert(n));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        updateBookingRequest.getTripStatus().ifPresent(n -> {
+            if(n.equals("WAITING_TO_START") || n.equals("IN_PROGRESS") || n.equals("COMPLETED") || n.equals("SCOOTER_NOT_RETURNED")) {
+                TripStatus tripStatus = TripStatus.valueOf(n);
+                booking.setTripStatus(tripStatus);
+            }
+
+        });
+
+        return booking;
+    }
+
 }

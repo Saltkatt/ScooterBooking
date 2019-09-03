@@ -15,10 +15,7 @@ import com.wirelessiths.exception.UnableToListBookingsException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.awt.print.Book;
 import java.io.IOException;
-import java.time.Instant;
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +42,7 @@ import java.util.Map;
                 JsonNode body = mapper.readTree((String) input.get("body"));
                 String bookingId = body.get("bookingId").asText();
                 booking.get(bookingId);
+                booking.setTripStatus(TripStatus.COMPLETED);
 
 
                 try {
@@ -53,7 +51,7 @@ import java.util.Map;
                     e.printStackTrace();
                 }
 
-                booking = Booking.setBookingProperties(updateBookingRequest, booking);
+                booking = UpdateBookingHandler.setBookingProperties(updateBookingRequest, booking);
 
                 booking.setTripStatus(TripStatus.COMPLETED);
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.dal.*;
+import com.wirelessiths.handler.UpdateBookingHandler;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -74,8 +75,7 @@ public class ReturnScooterHandler {
         booking.setScooterId("scooterino124");
 
 
-
-        booking.setBookingProperties(updateBookingRequest, booking);
+        UpdateBookingHandler.setBookingProperties(updateBookingRequest, booking);
 
        assertEquals(TripStatus.COMPLETED, booking.getTripStratus());
        assertEquals("83396a64-4a39-4c5f-b7e4-8e18b435b41e",booking.getUserId());
@@ -103,6 +103,7 @@ public class ReturnScooterHandler {
         } catch (JsonProcessingException e) {
             e.printStackTrace();
         }
+        System.out.println(updateBookingRequest);
 
         LocalDateConverter converter = new LocalDateConverter();
         InstantConverter instantConverter = new InstantConverter();
@@ -119,7 +120,7 @@ public class ReturnScooterHandler {
 
 
 
-        booking.setBookingProperties(updateBookingRequest, booking);
+        UpdateBookingHandler.setBookingProperties(updateBookingRequest, booking);
 
         assertEquals("2019-08-25",booking.getDate().toString());
 
@@ -161,7 +162,7 @@ public class ReturnScooterHandler {
         booking.setScooterId("scooterino124");
 
 
-        booking.setBookingProperties(updateBookingRequest, booking);
+        UpdateBookingHandler.setBookingProperties(updateBookingRequest, booking);
 
         assertEquals("scooterino124",booking.getScooterId());
 
