@@ -111,7 +111,21 @@ Resources:
           Properties:
             Path: /bookings/{id}
             Method: put
-
+  ReturnBookingFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: target/bookings-api-dev.jar
+      Handler: com.wirelessiths.ReturnBookingHandler::handleRequest
+      Runtime: java8
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TableName
+      Events:
+        UpdateForReturnScooterBooking:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /bookings/return/{id}
+            Method: put
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:

@@ -24,7 +24,7 @@ Resources:
   GetBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/70ec3ee963c0b406058f0a8d3a880ee2
+      CodeUri: s3://sam-bookings-adam/b3059f8ab6c2aa6da5551710fcc428e3
       Handler: com.wirelessiths.handler.GetBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -40,7 +40,7 @@ Resources:
   ListBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/70ec3ee963c0b406058f0a8d3a880ee2
+      CodeUri: s3://sam-bookings-adam/b3059f8ab6c2aa6da5551710fcc428e3
       Handler: com.wirelessiths.handler.ListBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -56,7 +56,7 @@ Resources:
   ListBookingsByUserFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/70ec3ee963c0b406058f0a8d3a880ee2
+      CodeUri: s3://sam-bookings-adam/b3059f8ab6c2aa6da5551710fcc428e3
       Handler: com.wirelessiths.handler.ListBookingsByUserHandler::handleRequest
       Runtime: java8
       Policies:
@@ -72,7 +72,7 @@ Resources:
   DeleteBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/70ec3ee963c0b406058f0a8d3a880ee2
+      CodeUri: s3://sam-bookings-adam/b3059f8ab6c2aa6da5551710fcc428e3
       Handler: com.wirelessiths.handler.DeleteBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -88,7 +88,7 @@ Resources:
   CreateBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/70ec3ee963c0b406058f0a8d3a880ee2
+      CodeUri: s3://sam-bookings-adam/b3059f8ab6c2aa6da5551710fcc428e3
       Handler: com.wirelessiths.handler.CreateBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -104,7 +104,7 @@ Resources:
   UpdateBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/70ec3ee963c0b406058f0a8d3a880ee2
+      CodeUri: s3://sam-bookings-adam/b3059f8ab6c2aa6da5551710fcc428e3
       Handler: com.wirelessiths.UpdateBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -116,6 +116,22 @@ Resources:
           Type: Api
           Properties:
             Path: /bookings/{id}
+            Method: put
+  ReturnBookingFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://sam-bookings-adam/b3059f8ab6c2aa6da5551710fcc428e3
+      Handler: com.wirelessiths.ReturnBookingHandler::handleRequest
+      Runtime: java8
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: TableName
+      Events:
+        UpdateForReturnScooterBooking:
+          Type: Api
+          Properties:
+            Path: /bookings/return/{id}
             Method: put
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table

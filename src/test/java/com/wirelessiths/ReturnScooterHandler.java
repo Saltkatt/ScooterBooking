@@ -170,4 +170,50 @@ public class ReturnScooterHandler {
 
     }
 
+    @Test
+    public void UpdateRequestIsNull() {
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode jsonNode = null;
+
+        try {
+            jsonNode = mapper.readTree(jsonString);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        UpdateBookingRequest updateBookingRequest = new UpdateBookingRequest();
+
+        try {
+            updateBookingRequest =  mapper.treeToValue(jsonNode, UpdateBookingRequest.class);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        updateBookingRequest = null;
+
+
+        LocalDateConverter converter = new LocalDateConverter();
+        InstantConverter instantConverter = new InstantConverter();
+
+        Booking booking = new Booking();
+        booking.setTripStatus(TripStatus.WAITING_TO_START);
+        booking.setUserId("123abc");
+        booking.setDate(converter.unconvert("2019-08-25"));
+        booking.setStartTime(instantConverter.unconvert("2019-08-30T15:00:36.739Z"));
+        booking.setEndTime(instantConverter.unconvert("2019-08-30T16:00:36.739Z"));
+        booking.setUserId("abcdgwhwer23");
+        booking.setBookingId("myb00kingid");
+        booking.setScooterId("scooterino124");
+
+
+
+        UpdateBookingHandler.setBookingProperties(updateBookingRequest, booking);
+
+        assertEquals("2019-08-25",booking.getDate().toString());
+
+
+
+    }
+
 }
