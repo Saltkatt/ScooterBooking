@@ -46,14 +46,12 @@ public class BookingTest2 {
         b1.setStartTime(Instant.parse("2019-09-02T13:20:00.000Z"));
         b1.setEndTime(Instant.parse("2019-09-02T13:45:00.000Z"));
         b1.setDate(LocalDate.parse("2019-09-02"));
-        //b1.generateValidationKey();
 
         b2.setScooterId("3");
         b2.setUserId("ok-cases");
         b2.setStartTime(Instant.parse("2019-09-02T15:10:00.000Z"));
         b2.setEndTime(Instant.parse("2019-09-02T15:35:00.000Z"));
         b2.setDate(LocalDate.parse("2019-09-02"));
-        //b2.generateValidationKey();
 
         try{
             System.out.println("saving1");
@@ -108,42 +106,36 @@ public class BookingTest2 {
         b1.setStartTime(Instant.parse("2019-09-02T13:30:00.000Z"));
         b1.setEndTime(Instant.parse("2019-09-02T15:45:00.000Z"));
         b1.setDate(LocalDate.parse("2019-09-02"));
-        //b1.generateValidationKey();
 
         b2.setScooterId("2");
         b2.setUserId("before-in");
         b2.setStartTime(Instant.parse("2019-09-02T11:10:00.000Z"));
         b2.setEndTime(Instant.parse("2019-09-02T14:35:00.000Z"));
         b2.setDate(LocalDate.parse("2019-09-02"));
-        //b2.generateValidationKey();
 
         b3.setScooterId("2");
         b3.setUserId("after-out");
         b3.setStartTime(Instant.parse("2019-09-02T14:30:00.000Z"));
         b3.setEndTime(Instant.parse("2019-09-02T15:30:00.000Z"));
         b3.setDate(LocalDate.parse("2019-09-02"));
-        //b3.generateValidationKey();
 
         b4.setScooterId("2");
         b4.setUserId("between");
         b4.setStartTime(Instant.parse("2019-09-02T14:10:00.000Z"));
         b4.setEndTime(Instant.parse("2019-09-02T14:40:00.000Z"));
         b4.setDate(LocalDate.parse("2019-09-02"));
-        //b4.generateValidationKey();
 
         b5.setScooterId("2");
         b5.setUserId("ok-cases");
         b5.setStartTime(Instant.parse("2019-09-02T13:20:00.000Z"));
         b5.setEndTime(Instant.parse("2019-09-02T13:45:00.000Z"));
         b5.setDate(LocalDate.parse("2019-09-02"));
-        //b5.generateValidationKey();
 
         b6.setScooterId("2");
         b6.setUserId("ok-cases");
         b6.setStartTime(Instant.parse("2019-09-02T15:10:00.000Z"));
         b6.setEndTime(Instant.parse("2019-09-02T15:35:00.000Z"));
         b6.setDate(LocalDate.parse("2019-09-02"));
-        //b6.generateValidationKey();
 
         try{
             b1.save(b1);
@@ -167,7 +159,6 @@ public class BookingTest2 {
         testCase.setStartTime(Instant.parse("2019-09-02T14:00:00.000Z"));
         testCase.setEndTime(Instant.parse("2019-09-02T15:00:00.000Z"));
         testCase.setDate(LocalDate.parse("2019-09-02"));
-        //testCase.generateValidationKey();
 
         try{
             List<Booking> bookings = testCase.validateBooking(testCase);
@@ -192,7 +183,6 @@ public class BookingTest2 {
         booking.setStartTime(Instant.parse("2019-09-02T14:00:00.000Z"));
         booking.setEndTime(Instant.parse("2019-09-02T15:00:00.000Z"));
         booking.setDate(LocalDate.parse("2019-09-02"));
-        //booking.generateValidationKey();
 
         try{
             //create booking
