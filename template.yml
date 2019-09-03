@@ -7,7 +7,7 @@ Description: >
 Parameters:
   TableName:
     Type: String
-    Default: adam-bookings-api-dev
+    Default: bookings-api-dev-adam
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
