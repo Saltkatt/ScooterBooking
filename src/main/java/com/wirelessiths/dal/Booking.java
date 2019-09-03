@@ -4,15 +4,20 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.awt.print.Book;
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 
 /**
@@ -33,6 +38,9 @@ public class Booking {
     private Instant startTime;
     private Instant endTime;
     private LocalDate date;
+
+    private TripStatus tripStatus;
+
 
     private static DynamoDBAdapter db_adapter;
     private final AmazonDynamoDB client;
@@ -112,6 +120,16 @@ public class Booking {
         this.userId = userId;
     }
 
+    @DynamoDBTypeConvertedEnum
+    @DynamoDBAttribute(attributeName="tripStatus")
+    public TripStatus getTripStratus() {
+        return tripStatus;
+    }
+
+    public void setTripStatus(TripStatus tripStatus) {
+        this.tripStatus = tripStatus;
+    }
+
     @Override
     public String toString() {
         return "Booking{" +
@@ -121,6 +139,7 @@ public class Booking {
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", date=" + date +
+                ", tripStatus=" + tripStatus +
                 '}';
     }
 
@@ -240,4 +259,5 @@ public class Booking {
         }
         return true;
     }
+
 }

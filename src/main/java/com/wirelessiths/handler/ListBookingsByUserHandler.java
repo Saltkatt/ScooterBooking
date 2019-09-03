@@ -25,6 +25,10 @@ public class ListBookingsByUserHandler implements RequestHandler<Map<String, Obj
 
             logger.info(input);
 
+            UpdateBookingHandler updateBookingHandler = new UpdateBookingHandler();
+
+
+
             Booking booking = new Booking();
             List<Booking> results = booking.getByUserId(AuthService.getUserInfo(input, "sub"));
 
