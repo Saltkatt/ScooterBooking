@@ -37,13 +37,11 @@ import java.util.Map;
                 logger.info(input);
 
                 Booking booking = new Booking();
-                UpdateBookingRequest updateBookingRequest = null;
-
+                UpdateBookingRequest updateBookingRequest = new UpdateBookingRequest();
+                Map<String,String> pathParameters =  (Map<String,String>)input.get("pathParameters");
                 JsonNode body = mapper.readTree((String) input.get("body"));
-                String bookingId = body.get("bookingId").asText();
-                booking.get(bookingId);
-                booking.setTripStatus(TripStatus.COMPLETED);
-
+                String bookingId =  pathParameters.get("bookingId");
+                booking = booking.get(bookingId);
 
                 try {
                     updateBookingRequest =  mapper.treeToValue(body, UpdateBookingRequest.class);
@@ -51,13 +49,10 @@ import java.util.Map;
                     e.printStackTrace();
                 }
 
+
                 booking = UpdateBookingHandler.setBookingProperties(updateBookingRequest, booking);
 
-                booking.setTripStatus(TripStatus.COMPLETED);
 
-
-
-                //Booking booking = new Booking();
                 List<Booking> results = booking.getByUserId(AuthService.getUserInfo(input, "sub"));
 
 

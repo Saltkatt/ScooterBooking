@@ -98,45 +98,52 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
      */
     public static Booking setBookingProperties(UpdateBookingRequest updateBookingRequest, Booking booking) {
 
-        updateBookingRequest.getUserId().ifPresent(booking::setUserId);
-        updateBookingRequest.getScooterId().ifPresent(booking::setScooterId);
-        updateBookingRequest.getBookingId().ifPresent(booking::setBookingId);
+        Optional.ofNullable(updateBookingRequest).ifPresent(optUpdateRequest -> {
+                optUpdateRequest.getUserId().ifPresent(booking::setUserId);
+                optUpdateRequest.getScooterId().ifPresent(booking::setScooterId);
+                optUpdateRequest.getBookingId().ifPresent(booking::setBookingId);
 
-        updateBookingRequest.getDate().ifPresent(n -> {
-            if(n.matches(""))
-                try {
-                    LocalDateConverter converter = new LocalDateConverter();
-                    booking.setDate(converter.unconvert(n));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-        });
+                optUpdateRequest.getDate().ifPresent(n -> {
+                    if (n.matches(""))
+                        try {
+                            LocalDateConverter converter = new LocalDateConverter();
+                            booking.setDate(converter.unconvert(n));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                });
 
-        updateBookingRequest.getStartTime().ifPresent(n -> {
-            try {
-                InstantConverter converter = new InstantConverter();
-                booking.setStartTime(converter.unconvert(n));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+                optUpdateRequest.getStartTime().ifPresent(n -> {
+                    try {
+                        InstantConverter converter = new InstantConverter();
+                        booking.setStartTime(converter.unconvert(n));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
 
-        updateBookingRequest.getEndTime().ifPresent(n -> {
-            try {
-                InstantConverter converter = new InstantConverter();
-                booking.setEndTime(converter.unconvert(n));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+                optUpdateRequest.getEndTime().ifPresent(n -> {
+                    try {
+                        InstantConverter converter = new InstantConverter();
+                        booking.setEndTime(converter.unconvert(n));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
 
-        updateBookingRequest.getTripStatus().ifPresent(n -> {
-            if(n.equals("WAITING_TO_START") || n.equals("IN_PROGRESS") || n.equals("COMPLETED") || n.equals("SCOOTER_NOT_RETURNED")) {
-                TripStatus tripStatus = TripStatus.valueOf(n);
-                booking.setTripStatus(tripStatus);
-            }
+                optUpdateRequest.getTripStatus().ifPresent(n -> {
+                    if (n.equals("WAITING_TO_START") || n.equals("IN_PROGRESS") || n.equals("COMPLETED") || n.equals("SCOOTER_NOT_RETURNED")) {
+                        TripStatus tripStatus = TripStatus.valueOf(n);
+                        booking.setTripStatus(tripStatus);
+                    }
 
-        });
+                });
+
+
+            } );
+
+
+
 
         return booking;
     }
