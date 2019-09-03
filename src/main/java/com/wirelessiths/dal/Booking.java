@@ -36,6 +36,7 @@ public class Booking {
     private Instant startTime;
     private Instant endTime;
     private LocalDate date;
+    private String test;
 
     private TripStatus tripStatus;
 
@@ -155,10 +156,12 @@ public class Booking {
                 ", tripStatus=" + tripStatus +
                 '}';
     }
+
+
     public List<Booking> validateBooking(Booking booking) throws IOException{
 
-
         int maxDurationSeconds = 60 * 60 * 7;//temporary hardcoding of 7 hour max booking length
+
         String start = booking.getStartTime().toString();
         String end = booking.getEndTime().toString();
         String endPlusMaxDur = booking.getEndTime().plusSeconds(maxDurationSeconds).toString();
