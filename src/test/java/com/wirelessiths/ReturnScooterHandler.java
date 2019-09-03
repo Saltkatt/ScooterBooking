@@ -77,7 +77,7 @@ public class ReturnScooterHandler {
 
         UpdateBookingHandler.setBookingProperties(updateBookingRequest, booking);
 
-       assertEquals(TripStatus.COMPLETED, booking.getTripStratus());
+       assertEquals(TripStatus.COMPLETED, booking.getTripStatus());
        assertEquals("83396a64-4a39-4c5f-b7e4-8e18b435b41e",booking.getUserId());
 
 

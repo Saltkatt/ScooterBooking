@@ -40,7 +40,7 @@ import java.util.Map;
                 UpdateBookingRequest updateBookingRequest = new UpdateBookingRequest();
                 Map<String,String> pathParameters =  (Map<String,String>)input.get("pathParameters");
                 JsonNode body = mapper.readTree((String) input.get("body"));
-                String bookingId =  pathParameters.get("bookingId");
+                String bookingId =  pathParameters.get("id");
                 booking = booking.get(bookingId);
 
                 try {
@@ -52,14 +52,13 @@ import java.util.Map;
 
                 booking = UpdateBookingHandler.setBookingProperties(updateBookingRequest, booking);
 
-
-                List<Booking> results = booking.getByUserId(AuthService.getUserInfo(input, "sub"));
+                booking.save(booking);
 
 
                 // send the response back
                 return ApiGatewayResponse.builder()
                         .setStatusCode(200)
-                        .setObjectBody(results)
+                        .setObjectBody(booking)
                         .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
                         .build();
 

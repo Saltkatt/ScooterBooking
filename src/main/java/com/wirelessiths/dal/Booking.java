@@ -122,7 +122,7 @@ public class Booking {
 
     @DynamoDBTypeConvertedEnum
     @DynamoDBAttribute(attributeName="tripStatus")
-    public TripStatus getTripStratus() {
+    public TripStatus getTripStatus() {
         return tripStatus;
     }
 
@@ -184,19 +184,22 @@ public class Booking {
     }
 
     public Booking get(String id) throws IOException {
-        Booking booking = null;
+        // Query with mapper
+        // Create Booking object with user id
+        Booking booking = new Booking();
+        booking.setBookingId(id);
 
-        HashMap<String, AttributeValue> av = new HashMap<String, AttributeValue>();
-        av.put(":v1", new AttributeValue().withS(id));
+        //Input this and the gsi index name in query expression
+        DynamoDBQueryExpression<Booking> queryExpression =
+                new DynamoDBQueryExpression<>();
+        queryExpression.setHashKeyValues(booking);
+        queryExpression.setIndexName("bookingIndex");
+        queryExpression.setConsistentRead(false);
+        final List<Booking> results =
+                mapper.query(Booking.class, queryExpression);
 
-        DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<Booking>()
-                .withKeyConditionExpression("bookingId = :v1")
-                .withExpressionAttributeValues(av);
-        queryExp.setIndexName("bookingId");
-
-        PaginatedQueryList<Booking> result = this.mapper.query(Booking.class, queryExp);
-        if (result.size() > 0) {
-            booking = result.get(0);
+        if (results.size() > 0) {
+            booking = results.get(0);
             logger.info("Booking - get(): booking - " + booking.toString());
         } else {
             logger.info("Booking - get(): booking - Not Found.");
@@ -224,6 +227,7 @@ public class Booking {
     }
 
     public void save(Booking booking) throws IOException {
+
 
         if(validateBooking(booking)){
             logger.info("Booking - save(): " + booking.toString());

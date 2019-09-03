@@ -7,7 +7,7 @@ Description: >
 Parameters:
   TableName:
     Type: String
-    Default: bookings-api-dev-adam
+    Default: adam-bookings-api-dev
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
@@ -111,11 +111,11 @@ Resources:
           Properties:
             Path: /bookings/{id}
             Method: put
-  ReturnBookingFunction:
+  ReturnScooterFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: target/bookings-api-dev.jar
-      Handler: com.wirelessiths.ReturnBookingHandler::handleRequest
+      Handler: com.wirelessiths.handler.ReturnScooterHandler::handleRequest
       Runtime: java8
       Policies:
         - DynamoDBCrudPolicy:
@@ -142,8 +142,6 @@ Resources:
       - AttributeName: date
         AttributeType: S
       - AttributeName: startTime
-        AttributeType: S
-      - AttributeName: tripStatus
         AttributeType: S
       KeySchema:
       - AttributeName: scooterId
@@ -213,5 +211,8 @@ Outputs:
     Description: "UpdateBooking Lambda Function ARN"
     Value: !GetAtt UpdateBookingFunction.Arn
 
+  ReturnScooterFunction:
+    Description: "ReturnScooter Lambda Function ARN"
+    Value: !GetAtt ReturnScooterFunction.Arn
 
 
