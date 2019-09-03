@@ -14,7 +14,7 @@ Parameters:
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 20
+    Timeout: 60
     MemorySize: 1024
     Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
       Variables:
@@ -100,7 +100,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: target/bookings-api-dev.jar
-      Handler: com.wirelessiths.UpdateBookingHandler::handleRequest
+      Handler: com.wirelessiths.handler.UpdateBookingHandler::handleRequest
       Runtime: java8
       Policies:
         - DynamoDBCrudPolicy:
