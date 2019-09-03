@@ -48,7 +48,6 @@ public class Booking {
 
     //private final Logger logger = LogManager.getLogger(this.getClass());
     private final LoggerAdapter logger;
-
     private static StringBuilder sb = new StringBuilder();
 
    /**
@@ -210,9 +209,9 @@ public class Booking {
         PaginatedQueryList<Booking> result = this.mapper.query(Booking.class, queryExp);
         if (result.size() > 0) {
             booking = result.get(0);
-            //logger.info("Booking - get(): booking - " + booking.toString());
+            logger.info("Booking - get(): booking - " + booking.toString());
         } else {
-            //logger.info("Booking - get(): booking - Not Found.");
+            logger.info("Booking - get(): booking - Not Found.");
         }
         return booking;
     }
@@ -261,10 +260,10 @@ public class Booking {
         // get product if exists
         booking = get(id);
         if (booking != null) {
-            //logger.info("Booking - delete(): " + booking.toString());
+            logger.info("Booking - delete(): " + booking.toString());
             this.mapper.delete(booking);
         } else {
-            //logger.info("Booking - delete(): booking - does not exist.");
+            logger.info("Booking - delete(): booking - does not exist.");
             return false;
         }
         return true;
