@@ -104,6 +104,7 @@ public class BookingTest2 {
 
         b1.setScooterId("2");
         b1.setUserId("over");
+        b1.setBookingId("100");
         b1.setStartTime(Instant.parse("2019-09-02T13:30:00.000Z"));
         b1.setEndTime(Instant.parse("2019-09-02T15:45:00.000Z"));
         b1.setDate(LocalDate.parse("2019-09-02"));
