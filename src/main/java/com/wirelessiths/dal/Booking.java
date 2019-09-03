@@ -36,7 +36,6 @@ public class Booking {
     private Instant startTime;
     private Instant endTime;
     private LocalDate date;
-    private String test;
 
     private TripStatus tripStatus;
 
@@ -74,15 +73,6 @@ public class Booking {
         this.mapper = new DynamoDBMapper(client, config);
         this.logger = new LoggerAdapter();
         //this.logger = LogManager.getLogger(this.getClass());
-    }
-
-    @DynamoDBAttribute(attributeName = "test")
-    public String getTest() {
-        return test;
-    }
-
-    public void setTest(String test) {
-        this.test = test;
     }
 
     @DynamoDBHashKey(attributeName = "scooterId")
@@ -143,7 +133,7 @@ public class Booking {
 
     @DynamoDBTypeConvertedEnum
     @DynamoDBAttribute(attributeName="tripStatus")
-    public TripStatus getTripStratus() {
+    public TripStatus getTripStatus() {
         return tripStatus;
     }
 

@@ -19,7 +19,7 @@ import java.util.List;
 
 import static org.junit.Assert.*;
 
-public class BookingTest2 {
+public class BookingTest {
 
     private static AmazonDynamoDB client;
     private static DynamoDBMapperConfig mapperConfig;
@@ -54,9 +54,7 @@ public class BookingTest2 {
         b2.setDate(LocalDate.parse("2019-09-02"));
 
         try{
-            System.out.println("saving1");
             b1.save(b1);
-            System.out.println("saving2");
             b2.save(b2);
         }catch(Exception e){
             System.out.println("error in populateForOkValidationTest()100");
@@ -342,5 +340,4 @@ public class BookingTest2 {
         client.createTable(createTableRequest);
         System.out.println("table created.");
     }
-
 }
