@@ -184,22 +184,19 @@ public class Booking {
     }
 
     public Booking get(String id) throws IOException {
-        // Query with mapper
-        // Create Booking object with user id
-        Booking booking = new Booking();
-        booking.setBookingId(id);
+        Booking booking = null;
 
-        //Input this and the gsi index name in query expression
-        DynamoDBQueryExpression<Booking> queryExpression =
-                new DynamoDBQueryExpression<>();
-        queryExpression.setHashKeyValues(booking);
-        queryExpression.setIndexName("bookingIndex");
-        queryExpression.setConsistentRead(false);
-        final List<Booking> results =
-                mapper.query(Booking.class, queryExpression);
+        HashMap<String, AttributeValue> av = new HashMap<String, AttributeValue>();
+        av.put(":v1", new AttributeValue().withS(id));
 
-        if (results.size() > 0) {
-            booking = results.get(0);
+        DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<Booking>()
+                .withKeyConditionExpression("bookingId = :v1")
+                .withExpressionAttributeValues(av);
+        queryExp.setIndexName("bookingId");
+
+        PaginatedQueryList<Booking> result = this.mapper.query(Booking.class, queryExp);
+        if (result.size() > 0) {
+            booking = result.get(0);
             logger.info("Booking - get(): booking - " + booking.toString());
         } else {
             logger.info("Booking - get(): booking - Not Found.");
