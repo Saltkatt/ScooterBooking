@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -23,17 +24,12 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
-        logger.info(input);
-
         try {
-
-            // get the 'body' from input
-            JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
 
             // get the 'pathParameters' from input
             Map<String,String> pathParameters =  (Map<String,String>)input.get("pathParameters");
             String productId = pathParameters.get("id");
-
+            JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
             // get the Product by id
             Booking booking = new Booking().get(productId);
 
@@ -41,19 +37,35 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
             if (booking != null) {
 
                 try {
-                    booking.setBookingId(String.valueOf(Optional.ofNullable(body.get("username").asText())));
-                    booking.setScooterId(String.valueOf(Optional.ofNullable(body.get("firstName").asText())));
-                    booking.setUserId(String.valueOf(Optional.ofNullable(body.get("lastName").asText())));
-                    booking.setStartTime(Instant.parse(String.valueOf(Optional.ofNullable(body.get("email").asText()))));
-                    booking.setEndTime(Instant.parse(String.valueOf(Optional.ofNullable(body.get("password").asText()))));
+
+                    if (body.has("bookingId") && !body.get("bookingId").asText().isEmpty()) {
+                        booking.setBookingId(body.get("bookingId").asText());
+                    }
+
+                    if (body.has("scooterId") && !body.get("scooterId").asText().isEmpty()) {
+                        booking.setScooterId(body.get("scooterId").asText());
+                    }
+
+                    if (body.has("userId") && !body.get("userId").asText().isEmpty()) {
+                        booking.setUserId(body.get("userId").asText());
+                    }
+
+                    if (body.has("startTime") && !body.get("startTime").asText().isEmpty()) {
+                             booking.setStartTime(Instant.parse(body.get("startTime").asText()));
+                    }
+
+                    if (body.has("endTime") && !body.get("endTime").asText().isEmpty()) {
+                             booking.setEndTime(Instant.parse(body.get("endTime").asText()));
+                    }
+
                     booking.update(booking);
 
                 } catch (Exception e) {
 
-                    logger.error("Error in retrieving booking: " + e);
+                    logger.error("Error in retrieving product: " + e);
 
                     // send the error response back
-                    Response responseBody = new Response("Error in updating booking: ", input);
+                    Response responseBody = new Response( "Error in updating product: " + e.getMessage(), input);
                     return ApiGatewayResponse.builder()
                             .setStatusCode(500)
                             .setObjectBody(responseBody)
@@ -81,7 +93,7 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
             logger.error("Error in retrieving product: " + ex);
 
             // send the error response back
-            Response responseBody = new Response("Error in retrieving product: ", input);
+            Response responseBody = new Response("Error in retrieving product: " + ex.getMessage(), input);
             return ApiGatewayResponse.builder()
                     .setStatusCode(500)
                     .setObjectBody(responseBody)
