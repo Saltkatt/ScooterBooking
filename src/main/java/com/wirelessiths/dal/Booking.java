@@ -46,7 +46,8 @@ public class Booking {
     private final DynamoDBMapper mapper;
     private final DynamoDB dynamoDB;
 
-    private final Logger logger;
+    //private final Logger logger = LogManager.getLogger(this.getClass());
+    private final LoggerAdapter logger;
     private static StringBuilder sb = new StringBuilder();
 
    /**
@@ -64,15 +65,15 @@ public class Booking {
         // create the mapper with config
         this.mapper = this.db_adapter.createDbMapper(mapperConfig);
 
-        this.logger = LogManager.getLogger(this.getClass());
+        this.logger = new LoggerAdapter(LogManager.getLogger(this.getClass()));
     }
 
     public Booking(AmazonDynamoDB client, DynamoDBMapperConfig config){
         this.client = client;
         this.dynamoDB = new DynamoDB(client);
         this.mapper = new DynamoDBMapper(client, config);
-        //this.logger = logger;
-        this.logger = LogManager.getLogger(this.getClass());
+        this.logger = new LoggerAdapter();
+        //this.logger = LogManager.getLogger(this.getClass());
     }
 
     @DynamoDBAttribute(attributeName = "test")
@@ -217,9 +218,9 @@ public class Booking {
         PaginatedQueryList<Booking> result = this.mapper.query(Booking.class, queryExp);
         if (result.size() > 0) {
             booking = result.get(0);
-            //logger.info("Booking - get(): booking - " + booking.toString());
+            logger.info("Booking - get(): booking - " + booking.toString());
         } else {
-            //logger.info("Booking - get(): booking - Not Found.");
+            logger.info("Booking - get(): booking - Not Found.");
         }
         return booking;
     }
@@ -275,10 +276,10 @@ public class Booking {
         // get product if exists
         booking = get(id);
         if (booking != null) {
-            //logger.info("Booking - delete(): " + booking.toString());
+            logger.info("Booking - delete(): " + booking.toString());
             this.mapper.delete(booking);
         } else {
-            //logger.info("Booking - delete(): booking - does not exist.");
+            logger.info("Booking - delete(): booking - does not exist.");
             return false;
         }
         return true;
