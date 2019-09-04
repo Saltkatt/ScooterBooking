@@ -2,23 +2,22 @@ package com.wirelessiths.handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
-import com.wirelessiths.dal.AuthService;
 import com.wirelessiths.dal.Booking;
-import com.wirelessiths.dal.TripStatus;
 import com.wirelessiths.dal.UpdateBookingRequest;
 import com.wirelessiths.exception.UnableToListBookingsException;
+import com.wirelessiths.exception.UnableToUpdateException;
+import com.wirelessiths.service.ExceptionHandlingService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Takes a booking object in body. Finds booking in dynamodb and updates tripStatus to scooter_returned
@@ -37,21 +36,21 @@ import java.util.Map;
                 logger.info(input);
 
                 Booking booking = new Booking();
-                UpdateBookingRequest updateBookingRequest = new UpdateBookingRequest();
+                UpdateBookingRequest updateBookingRequest;
                 Map<String,String> pathParameters =  (Map<String,String>)input.get("pathParameters");
                 JsonNode body = mapper.readTree((String) input.get("body"));
                 String bookingId =  pathParameters.get("id");
-                booking = booking.get(bookingId);
-
-                try {
-                    updateBookingRequest =  mapper.treeToValue(body, UpdateBookingRequest.class);
-                } catch (JsonProcessingException e) {
-                    e.printStackTrace();
-                }
 
 
-                booking = UpdateBookingHandler.setBookingProperties(updateBookingRequest, booking);
+                booking = Optional.ofNullable(bookingId).map(ExceptionHandlingService.handlingFunctionWrapper(booking::get, IOException.class)).orElseThrow(() -> new UnableToUpdateException("no booking id provided in pathparameters"));
+                updateBookingRequest = Optional.ofNullable(body).map(ExceptionHandlingService.handlingFunctionWrapper(b -> mapper.treeToValue((JsonNode)b, UpdateBookingRequest.class), IOException.class)).orElseThrow(() -> new UnableToUpdateException("no body provided"));
 
+
+
+
+
+               // updateBookingRequest =  mapper.treeToValue(body, UpdateBookingRequest.class);
+                UpdateBookingHandler.setBookingProperties(updateBookingRequest, booking);
                 booking.save(booking);
 
 
@@ -63,29 +62,27 @@ import java.util.Map;
                         .build();
 
             } catch(UnableToListBookingsException ex){
-                logger.error("Error in listing bookings: " + ex);
+                logger.error("Error in updateing bookings: " + ex);
                 logger.error(ex.getMessage());
                 ex.printStackTrace();
 
                 // send the error response back
-                Response responseBody = new Response("Error in listing bookings due to state: ", input);
+                Response responseBody = new Response("Error in updating booking bookings due to state: " + ex.getMessage(), input);
                 return ApiGatewayResponse.builder()
                         .setStatusCode(500)
                         .setObjectBody(responseBody)
-                        .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
                         .build();
 
             }catch (IOException ex){
-                logger.error("Error in listing bookings due to I/O: " + ex);
+                logger.error("Error in updating bookings due to I/O: " + ex);
                 logger.error(ex.getMessage());
                 ex.printStackTrace();
 
                 // send the error response back
-                Response responseBody = new Response("Error in I/O when listing bookings: ", input);
+                Response responseBody = new Response("Error in I/O when listing bookings: " + ex.getMessage(), input);
                 return ApiGatewayResponse.builder()
                         .setStatusCode(500)
                         .setObjectBody(responseBody)
-                        .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
                         .build();
 
             } catch(Exception ex) {
@@ -94,11 +91,10 @@ import java.util.Map;
                 ex.printStackTrace();
 
                 // send the error response back
-                Response responseBody = new Response("Error in listing bookings: " + ex.getMessage(), input);
+                Response responseBody = new Response("Error in updateing booking: " + ex.getMessage(), input);
                 return ApiGatewayResponse.builder()
                         .setStatusCode(500)
                         .setObjectBody(responseBody)
-                        .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
                         .build();
             }
         }

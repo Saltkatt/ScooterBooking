@@ -5,7 +5,7 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
 import com.wirelessiths.exception.UnableToListBookingsException;
-import com.wirelessiths.dal.AuthService;
+import com.wirelessiths.service.AuthService;
 import com.wirelessiths.dal.Booking;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
