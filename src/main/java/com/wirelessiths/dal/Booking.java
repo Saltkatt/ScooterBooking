@@ -47,7 +47,7 @@ public class Booking {
 
     //private final Logger logger = LogManager.getLogger(this.getClass());
     private final LoggerAdapter logger;
-    private static StringBuilder sb = new StringBuilder();
+    private final StringBuilder sb = new StringBuilder();
 
    /**
      *This method connects to DynamoDB, creates a table with a mapperConfig.
@@ -173,8 +173,8 @@ public class Booking {
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
         queryExp.withKeyConditionExpression("scooterId = :id and endTime between :start and :endPlusMaxDur")
                 .withExpressionAttributeValues(values)
+                .withConsistentRead(true)
                 .withFilterExpression("startTime < :end");
-        queryExp.setConsistentRead(true);
 
         return mapper.query(Booking.class, queryExp);
     }
