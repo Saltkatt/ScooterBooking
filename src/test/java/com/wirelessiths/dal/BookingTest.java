@@ -187,6 +187,12 @@ public class BookingTest {
             Booking savedBooking = booking.save(booking);
             //read by bookingId
             assertEquals(savedBooking, booking.get(savedBooking.getBookingId()));
+            //update
+            String newUserId = "test-2";
+            booking.setUserId(newUserId);
+            booking.update(booking);
+            assertEquals(booking.getUserId(), newUserId);
+
             //delete booking
             assert(booking.delete(savedBooking.getBookingId()));
             //delete deleted booking
