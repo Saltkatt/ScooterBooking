@@ -21,21 +21,19 @@ import java.util.Map;
 public class ActivateBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
-
+    //TODO: how auto cancel booking if not activate in given timespan
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
         String responseMessage = null;
-
         try{
             Response responseBody;
             int deadlineSeconds = 60 * 15;//hardcoded deadline for when booking is should be checked out
-            //TODO: how auto cancel booking if not activate in given timespan
             JsonNode body = null;
             Booking booking = new Booking();
             Instant now = LocalDateTime.now().toInstant(ZoneOffset.ofHours(-2));
 
-            //get relevant info from body
+            //get relevant info from request body
             body = new ObjectMapper().readTree((String) input.get("body"));
             String scooterId = body.get("scooterId").asText();
             String bookingId = body.get("bookingId").asText();
@@ -46,7 +44,7 @@ public class ActivateBookingHandler implements RequestHandler<Map<String, Object
             booking = booking.get(bookingId);
             if( booking.getUserId().equals(userId) && booking.getScooterId().equals(scooterId) ) {//is this check needed?
 
-                //check that booking is in a valid state for activationgit
+                //check that booking is in a valid state for activation
                 Instant startTime = booking.getStartTime();
                 if (now.isAfter(startTime) && now.isBefore(startTime.plusSeconds(deadlineSeconds)) &&
                         booking.getTripStatus().equals(TripStatus.WAITING_TO_START)) {
