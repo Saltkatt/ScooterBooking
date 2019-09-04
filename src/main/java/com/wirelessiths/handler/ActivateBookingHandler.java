@@ -29,23 +29,26 @@ public class ActivateBookingHandler implements RequestHandler<Map<String, Object
 
         try{
             Response responseBody;
-            int checkoutLimitSeconds = 60 * 15;
+            int deadlineSeconds = 60 * 15;//hardcoded deadline for when booking is should be checked out
+            //TODO: how auto cancel booking if not activate in given timespan
             JsonNode body = null;
             Booking booking = new Booking();
             Instant now = LocalDateTime.now().toInstant(ZoneOffset.ofHours(-2));
 
+            //get relevant info from body
             body = new ObjectMapper().readTree((String) input.get("body"));
             String scooterId = body.get("scooterId").asText();
             String bookingId = body.get("bookingId").asText();
             String userId = AuthService.getUserInfo(input, "sub");//comes with token sent by frontend
             //String userId = body.get("userId").asText();//temp from body for testing without setting gateway auth
 
+            //compare values from request with values from booking so that scooterId match etc
+            booking = booking.get(bookingId);
+            if( booking.getUserId().equals(userId) && booking.getScooterId().equals(scooterId) ) {//is this check needed?
 
-            booking = booking.get(bookingId);//is this check needed?
-            if( booking.getUserId().equals(userId) && booking.getScooterId().equals(scooterId) ) {
-
+                //check that booking is in a valid state for activation
                 Instant startTime = booking.getStartTime();
-                if (now.isAfter(startTime) && now.isBefore(startTime.plusSeconds(checkoutLimitSeconds)) &&
+                if (now.isAfter(startTime) && now.isBefore(startTime.plusSeconds(deadlineSeconds)) &&
                         booking.getTripStatus().equals(TripStatus.WAITING_TO_START)) {
 
                     //update booking
@@ -60,10 +63,9 @@ public class ActivateBookingHandler implements RequestHandler<Map<String, Object
                             .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
                             .build();
                 }
-                responseMessage = "booking start time has not passed or booking has already been activated, now: " + now + " booking start time: " + startTime + " starttime+: " + startTime.plusSeconds(checkoutLimitSeconds);
+                responseMessage = "booking start time has not passed or booking has already been activated, now: " + now + " booking start time: " + startTime + " deadline: " + startTime.plusSeconds(deadlineSeconds);
 
             }else{
-
                 responseMessage = "request userId or scooterId does not match corresponding booking values";
             }
             return ApiGatewayResponse.builder()

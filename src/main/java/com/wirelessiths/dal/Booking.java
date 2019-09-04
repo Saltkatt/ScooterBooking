@@ -5,9 +5,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
-import com.wirelessiths.exception.CouldNotCreateBookingException;
 import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -287,3 +285,4 @@ public class Booking {
         return Objects.hash(scooterId, bookingId, userId, startTime, endTime, date);
     }
 }
+//TODO: if booking is not checked out in allotted time, will we want to keep it in the db, delete it or move it to another db? it should cancel to leave timespan available for others to book
