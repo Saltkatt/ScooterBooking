@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
+import com.wirelessiths.dal.AuthService;
 import com.wirelessiths.dal.TripStatus;
 import com.wirelessiths.exception.CouldNotCreateBookingException;
 import com.wirelessiths.dal.Booking;
@@ -43,7 +44,8 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
           Booking savedBooking = null;
 
 		  booking.setScooterId(body.get("scooterId").asText());
-		  booking.setUserId(body.get("userId").asText());
+		  //booking.setUserId(body.get("userId").asText());
+		  booking.setUserId(AuthService.getUserInfo(input, "sub"));
 		  booking.setStartTime(Instant.parse(body.get("startTime").asText()));
 		  booking.setEndTime(Instant.parse(body.get("endTime").asText()));
 		  booking.setStartTime(Instant.parse(body.get("startTime").asText()));
