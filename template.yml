@@ -126,6 +126,22 @@ Resources:
           Properties:
             Path: /bookings/return/{id}
             Method: put
+  GetUserInfoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: target/bookings-api-dev.jar
+      Handler: com.wirelessiths.handler.GetUserInfoHandler::handleRequest
+      Runtime: java8
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName:
+              Ref: TableName
+      Events:
+        GetUserInfo:
+          Type: Api
+          Properties:
+            Path: /bookings/getuserinfo
+            Method: GET
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -215,4 +231,6 @@ Outputs:
     Description: "ReturnScooter Lambda Function ARN"
     Value: !GetAtt ReturnScooterFunction.Arn
 
-
+  GetUserInfoFunction:
+    Description: "GetUserInfo Lambda Function ARN"
+    Value: !GetAtt GetUserInfoFunction.Arn

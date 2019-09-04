@@ -38,9 +38,9 @@ public class ExceptionHandlingService {
     public static <T, R> Function<T, R> throwingFunctionWrapper(
             ThrowingFunction<T, R, Exception> throwingFunction) {
 
-        return i -> {
+        return t -> {
             try {
-               return throwingFunction.apply(i);
+               return throwingFunction.apply(t);
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
             }
@@ -50,9 +50,9 @@ public class ExceptionHandlingService {
     public static <T, R, E extends Exception> Function<T, R> handlingFunctionWrapper(
             ThrowingFunction<T, R, E> throwingFunction, Class<E> exceptionClass) {
 
-        return i -> {
+        return t -> {
             try {
-              return throwingFunction.apply(i);
+              return throwingFunction.apply(t);
             } catch (Exception ex) {
                 try {
                     E exCast = exceptionClass.cast(ex);
@@ -62,6 +62,7 @@ public class ExceptionHandlingService {
                     throw new RuntimeException(ex);
                 }
             }
+            return null;
         };
     }
 }

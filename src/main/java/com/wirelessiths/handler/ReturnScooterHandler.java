@@ -37,19 +37,23 @@ import java.util.Optional;
 
                 Booking booking = new Booking();
                 UpdateBookingRequest updateBookingRequest;
-                Map<String,String> pathParameters =  (Map<String,String>)input.get("pathParameters");
-                JsonNode body = mapper.readTree((String) input.get("body"));
-                String bookingId =  pathParameters.get("id");
+
+                JsonNode body = null;
+                JsonNode pathParameters = null;
+                JsonNode jsonNode = mapper.valueToTree(input);
+
+                if (jsonNode.hasNonNull("body")) {
+                    body = mapper.valueToTree(jsonNode.get("body"));
+                }
+                if (jsonNode.hasNonNull("pathParameters")) {
+                    pathParameters = mapper.valueToTree(jsonNode.get("pathParameters"));
+                }
+
+                booking =  Optional.ofNullable(pathParameters.get("id").asText()).map(ExceptionHandlingService.handlingFunctionWrapper(booking::get, IOException.class)).orElseThrow(() -> new UnableToUpdateException("Incorrect booking id provided in pathparameters"));
+                updateBookingRequest = Optional.ofNullable(body).map(ExceptionHandlingService.handlingFunctionWrapper(b -> mapper.treeToValue(b, UpdateBookingRequest.class), IOException.class)).orElseThrow(() -> new UnableToUpdateException("Incorrect body provided"));
 
 
-                booking = Optional.ofNullable(bookingId).map(ExceptionHandlingService.handlingFunctionWrapper(booking::get, IOException.class)).orElseThrow(() -> new UnableToUpdateException("no booking id provided in pathparameters"));
-                updateBookingRequest = Optional.ofNullable(body).map(ExceptionHandlingService.handlingFunctionWrapper(b -> mapper.treeToValue((JsonNode)b, UpdateBookingRequest.class), IOException.class)).orElseThrow(() -> new UnableToUpdateException("no body provided"));
 
-
-
-
-
-               // updateBookingRequest =  mapper.treeToValue(body, UpdateBookingRequest.class);
                 UpdateBookingHandler.setBookingProperties(updateBookingRequest, booking);
                 booking.save(booking);
 
@@ -61,8 +65,8 @@ import java.util.Optional;
                         .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
                         .build();
 
-            } catch(UnableToListBookingsException ex){
-                logger.error("Error in updateing bookings: " + ex);
+            } catch(UnableToUpdateException ex){
+                logger.error("Error in updateing bookings: " + ex.getMessage());
                 logger.error(ex.getMessage());
                 ex.printStackTrace();
 
@@ -86,7 +90,7 @@ import java.util.Optional;
                         .build();
 
             } catch(Exception ex) {
-                logger.error("Error in listing users: " + ex);
+                logger.error("Error in listing users: " + ex.getMessage());
                 logger.error(ex.getMessage());
                 ex.printStackTrace();
 

@@ -9,6 +9,8 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ReturnScooterHandler {
 
@@ -213,6 +215,15 @@ public class ReturnScooterHandler {
         assertEquals("2019-08-25",booking.getDate().toString());
 
 
+
+    }
+
+    @Test(expected = NullPointerException.class)
+    public void nullTest() throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        Map<String, Object> input = new HashMap<>();
+
+        JsonNode body = mapper.readTree((String) input.get("body"));
 
     }
 

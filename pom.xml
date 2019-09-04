@@ -19,11 +19,6 @@
   <dependencies>
 
     <!-- https://mvnrepository.com/artifact/com.amazonaws/aws-java-sdk-cognitoidentity -->
-    <dependency>
-      <groupId>com.amazonaws</groupId>
-      <artifactId>aws-java-sdk-cognitoidentity</artifactId>
-      <version>1.11.613</version>
-    </dependency>
 
     <dependency>
       <groupId>com.amazonaws</groupId>
@@ -83,6 +78,27 @@
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-java-sdk-dynamodb</artifactId>
       <version>1.11.477</version>
+    </dependency>
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-cognitoidp</artifactId>
+      <version>1.11.623</version>
+    </dependency>
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk</artifactId>
+      <version>1.11.623</version>
+    </dependency>
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-core</artifactId>
+      <version>1.11.623</version>
+    </dependency>
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.8</version>
+      <scope>provided</scope>
     </dependency>
 
   </dependencies>
