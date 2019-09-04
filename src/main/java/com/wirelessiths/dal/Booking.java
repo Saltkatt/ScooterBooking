@@ -180,6 +180,7 @@ public class Booking {
         return mapper.query(Booking.class, queryExp);
     }
 
+
         // methods
     public Boolean ifTableExists() {
         return this.client.describeTable(BOOKINGS_TABLE_NAME).getTable().getTableStatus().equals("ACTIVE");
