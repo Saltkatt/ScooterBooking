@@ -236,16 +236,9 @@ public class Booking {
 
     public Booking save(Booking booking) throws IOException {
 
-        //if(validateBooking(booking).size() == 0) {
-
-            //logger.info("Booking - save(): " + booking.toString());
+            logger.info("Booking - save(): " + booking.toString());
             this.mapper.save(booking);
             return booking;
-        //}
-        ////////}else{
-            //logger.info("Booking already exists at given interval: " + booking.toString());
-            //return null;
-        ////}
     }
 
     public void update(Booking booking) throws  IOException {   //TODO:  throw IOException/try&catch?
