@@ -41,7 +41,6 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
           // get the 'body' from input
           JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
           Booking booking = new Booking();
-          Booking savedBooking = null;
 
 		  //booking.setUserId(body.get("userId").asText());
 		  //booking.setUserId(body.get("userId").asText());//temp hardcode//
@@ -74,7 +73,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 					  .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
 					  .build();
 		  }
-      } catch (CouldNotCreateBookingException ex) {//TODO: ?
+      } catch (CouldNotCreateBookingException ex) {//TODO: necessary?
 			logger.error("Error in creating booking: " + ex);
             logger.error(ex.getMessage());
             ex.printStackTrace();
