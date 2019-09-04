@@ -2,7 +2,6 @@ package com.wirelessiths.handler;
 
 
 import com.amazonaws.regions.Regions;
-import com.amazonaws.services.cognitoidentity.AmazonCognitoIdentityClient;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
 import com.amazonaws.services.cognitoidp.model.AdminGetUserRequest;
@@ -148,9 +147,6 @@ public class GetUserInfoHandler implements RequestHandler<Map<String, Object>, A
 
     public AWSCognitoIdentityProvider getAwsCognitoIdentityProvider() {
         return AWSCognitoIdentityProviderClientBuilder.defaultClient();
-    }
-    public AmazonCognitoIdentityClient getAmazonCognitoIdentityClient() {
-        return new AmazonCognitoIdentityClient();
     }
 
 
