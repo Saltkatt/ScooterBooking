@@ -46,7 +46,7 @@ public class ActivateBookingHandler implements RequestHandler<Map<String, Object
             booking = booking.get(bookingId);
             if( booking.getUserId().equals(userId) && booking.getScooterId().equals(scooterId) ) {//is this check needed?
 
-                //check that booking is in a valid state for activation
+                //check that booking is in a valid state for activationgit
                 Instant startTime = booking.getStartTime();
                 if (now.isAfter(startTime) && now.isBefore(startTime.plusSeconds(deadlineSeconds)) &&
                         booking.getTripStatus().equals(TripStatus.WAITING_TO_START)) {
