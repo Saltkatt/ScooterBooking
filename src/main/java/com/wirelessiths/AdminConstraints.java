@@ -14,6 +14,8 @@ public class AdminConstraints {
 
     private static final String SETTINGS_TABLE_NAME = System.getenv("SETTINGS_TABLE_NAME");
 
+    private String field;
+    private int value;
     // seconds or minutes
     private int buffer;
     private int maxDuration;
