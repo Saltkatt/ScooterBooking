@@ -24,7 +24,7 @@ Resources:
   GetBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://carl-bucket-29/b3e5d05ccb178d0c49b7f652d027e847
+      CodeUri: s3://carl-bucket-29/6649b30ad7b45a02d0f532be84a294e0
       Handler: com.wirelessiths.handler.GetBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -40,7 +40,7 @@ Resources:
   ListBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://carl-bucket-29/b3e5d05ccb178d0c49b7f652d027e847
+      CodeUri: s3://carl-bucket-29/6649b30ad7b45a02d0f532be84a294e0
       Handler: com.wirelessiths.handler.ListBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -56,7 +56,7 @@ Resources:
   ListBookingsByUserFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://carl-bucket-29/b3e5d05ccb178d0c49b7f652d027e847
+      CodeUri: s3://carl-bucket-29/6649b30ad7b45a02d0f532be84a294e0
       Handler: com.wirelessiths.handler.ListBookingsByUserHandler::handleRequest
       Runtime: java8
       Policies:
@@ -72,7 +72,7 @@ Resources:
   DeleteBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://carl-bucket-29/b3e5d05ccb178d0c49b7f652d027e847
+      CodeUri: s3://carl-bucket-29/6649b30ad7b45a02d0f532be84a294e0
       Handler: com.wirelessiths.handler.DeleteBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -88,7 +88,7 @@ Resources:
   CreateBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://carl-bucket-29/b3e5d05ccb178d0c49b7f652d027e847
+      CodeUri: s3://carl-bucket-29/6649b30ad7b45a02d0f532be84a294e0
       Handler: com.wirelessiths.handler.CreateBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -104,7 +104,7 @@ Resources:
   UpdateBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://carl-bucket-29/b3e5d05ccb178d0c49b7f652d027e847
+      CodeUri: s3://carl-bucket-29/6649b30ad7b45a02d0f532be84a294e0
       Handler: com.wirelessiths.handler.UpdateBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -120,7 +120,7 @@ Resources:
   ActivateBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://carl-bucket-29/b3e5d05ccb178d0c49b7f652d027e847
+      CodeUri: s3://carl-bucket-29/6649b30ad7b45a02d0f532be84a294e0
       Handler: com.wirelessiths.handler.ActivateBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -136,7 +136,7 @@ Resources:
   ReturnBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://carl-bucket-29/b3e5d05ccb178d0c49b7f652d027e847
+      CodeUri: s3://carl-bucket-29/6649b30ad7b45a02d0f532be84a294e0
       Handler: com.wirelessiths.handler.ReturnBookingHandler::handleRequest
       Runtime: java8
       Policies:

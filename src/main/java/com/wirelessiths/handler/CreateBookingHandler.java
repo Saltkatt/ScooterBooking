@@ -43,13 +43,15 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
           Booking booking = new Booking();
 
 		  booking.setScooterId(body.get("scooterId").asText());
+
+		  //booking.setUserId(body.get("userId").asText());
 		  booking.setUserId(AuthService.getUserInfo(input, "sub"));
 		  booking.setStartTime(Instant.parse(body.get("startTime").asText()));
 		  booking.setEndTime(Instant.parse(body.get("endTime").asText()));
 		  booking.setStartTime(Instant.parse(body.get("startTime").asText()));
 		  booking.setEndTime(Instant.parse(body.get("endTime").asText()));
 		  booking.setDate(LocalDate.parse(body.get("date").asText()));
-		  booking.setTripStatus(TripStatus.valueOf(body.get("tripStatus").asText()));
+		  booking.setTripStatus(TripStatus.WAITING_TO_START);
 
 		  if(booking.validateBooking(booking).size() == 0){//if booking infringes on existing bookings, bookings.size will be > 0
               booking.save(booking);
