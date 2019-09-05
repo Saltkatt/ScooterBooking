@@ -155,6 +155,8 @@ public class Booking {
     }
 
 
+    private boolean validateBooking(Booking booking) throws IOException{
+
     public List<Booking> validateBooking(Booking booking) throws IOException{
 
         int maxDurationSeconds = 60 * 60 * 7;//temporary hardcoding of 7 hour max booking length
