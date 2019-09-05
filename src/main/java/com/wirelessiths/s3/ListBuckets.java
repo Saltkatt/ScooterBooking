@@ -23,50 +23,13 @@ import java.util.Map;
 
 public class ListBuckets {
 
-    private final Logger logger = LogManager.getLogger(this.getClass());
 
-    @Override
-    public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
-
-        try {
-            // get the 'body' from input
-            JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
-
-            final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
-            List<Bucket> buckets = s3.listBuckets();
-            for (Bucket b : buckets) {
-                //System.out.println("* " + b.getName());
-            }
-
-            // send the response back
-            return ApiGatewayResponse.builder()
-                    .setStatusCode(200)
-                    .setObjectBody()
-                    .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
-                    .build();
-
-        }catch (Exception ex) {
-            logger.error("Error unknown Exception" + ex);
-            logger.error(ex.getMessage());
-
-            // send the error response back
-            Response responseBody = new Response("Error in listing buckets due to unknown exception: " + ex.getMessage(), input);
-            return ApiGatewayResponse.builder()
-                    .setStatusCode(500)
-                    .setObjectBody(responseBody)
-                    .setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
-                    .build();
-        }
-
-
-    }
-
-   /* public static void listBuckets() {
+    public static void listBuckets() {
         final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
         List<Bucket> buckets = s3.listBuckets();
         for (Bucket b : buckets) {
             System.out.println("* " + b.getName());
         }
-    }*/
+    }
 
 }
