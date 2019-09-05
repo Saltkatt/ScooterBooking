@@ -1,4 +1,4 @@
-package com.wirelessiths.dal;
+package com.wirelessiths.service;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

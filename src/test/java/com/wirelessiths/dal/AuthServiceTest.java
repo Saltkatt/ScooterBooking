@@ -1,5 +1,6 @@
 package com.wirelessiths.dal;
 
+import com.wirelessiths.service.AuthService;
 import org.junit.Test;
 
 import java.util.HashMap;
