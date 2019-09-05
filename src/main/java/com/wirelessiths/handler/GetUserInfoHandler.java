@@ -9,8 +9,9 @@ import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
-import com.wirelessiths.dal.UserResponse;
+import com.wirelessiths.dal.User;
 import com.wirelessiths.exception.BookingDoesNotExistException;
+import com.wirelessiths.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,6 +20,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.wirelessiths.service.UserService.convertCognitoUser;
 
 /**
  * This class handles get requests and implements RequestHandler and ApiGatewayResponse.
@@ -41,7 +44,9 @@ public class GetUserInfoHandler implements RequestHandler<Map<String, Object>, A
 
 
             //String userPoolId = System.getenv("USER_POOL_ID");
-            UserResponse userResponse = getUserInfo("83396a64-4a39-4c5f-b7e4-8e18b435b41e");
+           // User user = getUserInfo("83396a64-4a39-4c5f-b7e4-8e18b435b41e");
+
+            List<User> users = listUsers("83396a64-4a39-4c5f-b7e4-8e18b435b41e");
             /*
 
             List<UserPoolDescriptionType> userPools =
@@ -71,16 +76,16 @@ public class GetUserInfoHandler implements RequestHandler<Map<String, Object>, A
              */
 
             // send the response back
-            if (userResponse != null) {
+            if (users != null) {
                 return ApiGatewayResponse.builder()
                         .setStatusCode(200)
-                        .setObjectBody(userResponse)
+                        .setObjectBody(users)
                         .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
                         .build();
             } else {
                 return ApiGatewayResponse.builder()
                         .setStatusCode(404)
-                        .setObjectBody("Booking with id: '" + userResponse + "' not found.")
+                        .setObjectBody("Booking with id: '" + users + "' not found.")
                         .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
                         .build();
             }
@@ -113,54 +118,71 @@ public class GetUserInfoHandler implements RequestHandler<Map<String, Object>, A
         }
 
     }
-    public UserResponse getUserInfo(String username) {
+    public User getUserInfo(String username) {
 
         String userPoolId = System.getenv("USER_POOL_ID");
 
-        AWSCognitoIdentityProvider cognitoClient = AWSCognitoIdentityProviderClientBuilder.standard().withRegion(Regions.US_EAST_1).defaultClient();
-        //AWSCognitoIdentityProvider cognitoClient = getAwsCognitoIdentityProvider();
+        AWSCognitoIdentityProvider cognitoClient = getAwsCognitoIdentityProvider();
+
         AdminGetUserRequest userRequest = new AdminGetUserRequest()
                 .withUsername(username)
                 .withUserPoolId(userPoolId);
-        
+
         AdminGetUserResult userResult = cognitoClient.adminGetUser(userRequest);
-        ListUsersRequest listUsersRequest = new ListUsersRequest().withFilter("sub = \"" + username + "\"").withUserPoolId(userPoolId);
+
+            User user = new User();
+            user.setUsername(userResult.getUsername());
+            user.setUserStatus(userResult.getUserStatus());
+            user.setUserCreateDate(userResult.getUserCreateDate());
+            user.setLastModifiedDate(userResult.getUserLastModifiedDate());
+
+            List<AttributeType> userAttributes = userResult.getUserAttributes();
+
+            for (AttributeType attribute : userAttributes) {
+                if (attribute.getName().equals("email")) {
+                    user.setEmail(attribute.getValue());
+                }
+            }
+            cognitoClient.shutdown();
+            return user;
+
+        }
+
+
+    public List<User> listUsers(String sub) {
+
+        AWSCognitoIdentityProvider cognitoClient = getAwsCognitoIdentityProvider();
+        String userPoolId = System.getenv("USER_POOL_ID");
+
+        ListUsersRequest listUsersRequest = new ListUsersRequest().withFilter("sub = \"" + sub + "\"").withUserPoolId(userPoolId);
         ListUsersResult usersResult2 = cognitoClient.listUsers(listUsersRequest);
 
         List<UserType> userTypeList = usersResult2.getUsers();
+        List<User> users = userTypeList.stream().map(UserService::convertCognitoUser).collect(Collectors.toList());
 
-        List<UserResponse> users = new ArrayList<>();
+        while (usersResult2.getPaginationToken() != null) {
+            try {
+                listUsersRequest.setPaginationToken(usersResult2.getPaginationToken());
+                usersResult2 = cognitoClient.listUsers(listUsersRequest);
 
-        //users.addAll(userTypeList.stream().map(u -> convertCognitoUser(u)).collect(Collectors.toList()));
-
-
-
-        UserResponse userResponse = new UserResponse();
-        userResponse.setUsername(userResult.getUsername());
-        userResponse.setUserStatus(userResult.getUserStatus());
-        userResponse.setUserCreateDate(userResult.getUserCreateDate());
-        userResponse.setLastModifiedDate(userResult.getUserLastModifiedDate());
-        
-
-        List<AttributeType> userAttributes = userResult.getUserAttributes();
-
-        
-        for(AttributeType attribute : userAttributes) {
-             if(attribute.getName().equals("email")) {
-                userResponse.setEmail(attribute.getValue());
+                users.addAll(userTypeList.stream().map(UserService::convertCognitoUser).collect(Collectors.toList()));
+            } catch (TooManyRequestsException e) {
+                // cognito hard rate limit for "list users": 5 per second. */
+                try {
+                    logger.warn("Too many requests", e);
+                    Thread.sleep(200);
+                } catch (InterruptedException e1) {
+                    logger.warn("Error while sleeping", e);
+                }
             }
         }
-        cognitoClient.shutdown();
-        return userResponse;
-
+        return users;
     }
+
 
     public AWSCognitoIdentityProvider getAwsCognitoIdentityProvider() {
-        return AWSCognitoIdentityProviderClientBuilder.defaultClient();
+        return AWSCognitoIdentityProviderClientBuilder.standard().withRegion(Regions.US_EAST_1).defaultClient();
     }
-
-
-
 
 
 }
