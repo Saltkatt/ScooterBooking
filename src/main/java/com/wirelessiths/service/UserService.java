@@ -24,20 +24,20 @@ public class UserService {
                 case "username":
                     builder.username(userAttribute.getValue());
                     break;
-                case  "email":
+                case "email":
                     builder.email(userAttribute.getValue());
                     break;
                 case "phone_number":
                     builder.phoneNumber(userAttribute.getValue());
                     break;
-                case  "preferred_username":
+                case "preferred_username":
                     builder.preferred_username(userAttribute.getValue());
                     break;
                 case "cognito:user_status":
                     builder.cognitoUserStatus(userAttribute.getValue());
+                    break;
                 case "status":
                     builder.userStatus(userAttribute.getValue());
-                default:
                     break;
             }
         }

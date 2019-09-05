@@ -155,15 +155,15 @@ public class GetUserInfoHandler implements RequestHandler<Map<String, Object>, A
         String userPoolId = System.getenv("USER_POOL_ID");
 
         ListUsersRequest listUsersRequest = new ListUsersRequest().withFilter("sub = \"" + sub + "\"").withUserPoolId(userPoolId);
-        ListUsersResult usersResult2 = cognitoClient.listUsers(listUsersRequest);
+        ListUsersResult userResults = cognitoClient.listUsers(listUsersRequest);
 
-        List<UserType> userTypeList = usersResult2.getUsers();
+        List<UserType> userTypeList = userResults.getUsers();
         List<User> users = userTypeList.stream().map(UserService::convertCognitoUser).collect(Collectors.toList());
 
-        while (usersResult2.getPaginationToken() != null) {
+        while (userResults.getPaginationToken() != null) {
             try {
-                listUsersRequest.setPaginationToken(usersResult2.getPaginationToken());
-                usersResult2 = cognitoClient.listUsers(listUsersRequest);
+                listUsersRequest.setPaginationToken(userResults.getPaginationToken());
+                userResults = cognitoClient.listUsers(listUsersRequest);
 
                 users.addAll(userTypeList.stream().map(UserService::convertCognitoUser).collect(Collectors.toList()));
             } catch (TooManyRequestsException e) {
