@@ -139,7 +139,7 @@ Resources:
         UpdateForReturnScooterBooking:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /bookings/return/{id}
+            Path: /bookings/return
             Method: put
   GetUserInfoFunction:
     Type: AWS::Serverless::Function

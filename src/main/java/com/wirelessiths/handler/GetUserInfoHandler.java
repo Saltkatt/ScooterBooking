@@ -15,13 +15,9 @@ import com.wirelessiths.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import static com.wirelessiths.service.UserService.convertCognitoUser;
 
 /**
  * This class handles get requests and implements RequestHandler and ApiGatewayResponse.
@@ -46,7 +42,7 @@ public class GetUserInfoHandler implements RequestHandler<Map<String, Object>, A
             //String userPoolId = System.getenv("USER_POOL_ID");
            // User user = getUserInfo("83396a64-4a39-4c5f-b7e4-8e18b435b41e");
 
-            List<User> users = listUsers("83396a64-4a39-4c5f-b7e4-8e18b435b41e");
+            List<User> users = UserService.listUsers("83396a64-4a39-4c5f-b7e4-8e18b435b41e", System.getenv("USER_POOL_ID"));
             /*
 
             List<UserPoolDescriptionType> userPools =
@@ -117,71 +113,6 @@ public class GetUserInfoHandler implements RequestHandler<Map<String, Object>, A
                     .build();
         }
 
-    }
-    public User getUserInfo(String username) {
-
-        String userPoolId = System.getenv("USER_POOL_ID");
-
-        AWSCognitoIdentityProvider cognitoClient = getAwsCognitoIdentityProvider();
-
-        AdminGetUserRequest userRequest = new AdminGetUserRequest()
-                .withUsername(username)
-                .withUserPoolId(userPoolId);
-
-        AdminGetUserResult userResult = cognitoClient.adminGetUser(userRequest);
-
-            User user = new User();
-            user.setUsername(userResult.getUsername());
-            user.setUserStatus(userResult.getUserStatus());
-            user.setUserCreateDate(userResult.getUserCreateDate());
-            user.setLastModifiedDate(userResult.getUserLastModifiedDate());
-
-            List<AttributeType> userAttributes = userResult.getUserAttributes();
-
-            for (AttributeType attribute : userAttributes) {
-                if (attribute.getName().equals("email")) {
-                    user.setEmail(attribute.getValue());
-                }
-            }
-            cognitoClient.shutdown();
-            return user;
-
-        }
-
-
-    public List<User> listUsers(String sub) {
-
-        AWSCognitoIdentityProvider cognitoClient = getAwsCognitoIdentityProvider();
-        String userPoolId = System.getenv("USER_POOL_ID");
-
-        ListUsersRequest listUsersRequest = new ListUsersRequest().withFilter("sub = \"" + sub + "\"").withUserPoolId(userPoolId);
-        ListUsersResult userResults = cognitoClient.listUsers(listUsersRequest);
-
-        List<UserType> userTypeList = userResults.getUsers();
-        List<User> users = userTypeList.stream().map(UserService::convertCognitoUser).collect(Collectors.toList());
-
-        while (userResults.getPaginationToken() != null) {
-            try {
-                listUsersRequest.setPaginationToken(userResults.getPaginationToken());
-                userResults = cognitoClient.listUsers(listUsersRequest);
-
-                users.addAll(userTypeList.stream().map(UserService::convertCognitoUser).collect(Collectors.toList()));
-            } catch (TooManyRequestsException e) {
-                // cognito hard rate limit for "list users": 5 per second. */
-                try {
-                    logger.warn("Too many requests", e);
-                    Thread.sleep(200);
-                } catch (InterruptedException e1) {
-                    logger.warn("Error while sleeping", e);
-                }
-            }
-        }
-        return users;
-    }
-
-
-    public AWSCognitoIdentityProvider getAwsCognitoIdentityProvider() {
-        return AWSCognitoIdentityProviderClientBuilder.standard().withRegion(Regions.US_EAST_1).defaultClient();
     }
 
 
