@@ -36,7 +36,6 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
-
       try {
           // get the 'body' from input
           JsonNode body = new ObjectMapper().readTree((String) input.get("body"));

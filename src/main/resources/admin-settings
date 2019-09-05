@@ -1,2 +1,4 @@
-buffer = 5 minutes
-maxDuration = 2 hours
+buffer = 60 * 5
+maxDuration = 60 * 60 * 2
+notCheckedOut = 60
+maxBookingsPerUser = 3
