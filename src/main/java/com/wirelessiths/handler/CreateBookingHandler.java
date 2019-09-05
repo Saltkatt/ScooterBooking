@@ -56,7 +56,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 		  if(booking.validateBooking(booking).size() == 0){//if booking infringes on existing bookings, bookings.size will be > 0
               booking.save(booking);
 			  return ApiGatewayResponse.builder()
-					  .setStatusCode(200)
+					  .setStatusCode(201)
 					  .setObjectBody(booking)
 					  .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
 					  .build();
