@@ -14,8 +14,10 @@ Parameters:
     Default: target/bookings-api-dev.jar
   UserPoolArn:
     Type: String
+    Default: xxx
   UserPoolId:
     Type: String
+    Default: xxx
 Globals:
   Function:
     Timeout: 20
@@ -30,7 +32,7 @@ Resources:
   GetBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/5f9b477a9bbed6f0501b5d62ee127939
+      CodeUri: s3://sam-bookings-adam/a50cb9aac8caca4705e8b0757953fdc1
       Handler: com.wirelessiths.handler.GetBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -46,7 +48,7 @@ Resources:
   ListBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/5f9b477a9bbed6f0501b5d62ee127939
+      CodeUri: s3://sam-bookings-adam/a50cb9aac8caca4705e8b0757953fdc1
       Handler: com.wirelessiths.handler.ListBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -62,7 +64,7 @@ Resources:
   ListBookingsByUserFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/5f9b477a9bbed6f0501b5d62ee127939
+      CodeUri: s3://sam-bookings-adam/a50cb9aac8caca4705e8b0757953fdc1
       Handler: com.wirelessiths.handler.ListBookingsByUserHandler::handleRequest
       Runtime: java8
       Policies:
@@ -78,7 +80,7 @@ Resources:
   DeleteBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/5f9b477a9bbed6f0501b5d62ee127939
+      CodeUri: s3://sam-bookings-adam/a50cb9aac8caca4705e8b0757953fdc1
       Handler: com.wirelessiths.handler.DeleteBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -94,7 +96,7 @@ Resources:
   CreateBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/5f9b477a9bbed6f0501b5d62ee127939
+      CodeUri: s3://sam-bookings-adam/a50cb9aac8caca4705e8b0757953fdc1
       Handler: com.wirelessiths.handler.CreateBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -110,7 +112,7 @@ Resources:
   UpdateBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/5f9b477a9bbed6f0501b5d62ee127939
+      CodeUri: s3://sam-bookings-adam/a50cb9aac8caca4705e8b0757953fdc1
       Handler: com.wirelessiths.UpdateBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -126,7 +128,7 @@ Resources:
   ReturnScooterFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/5f9b477a9bbed6f0501b5d62ee127939
+      CodeUri: s3://sam-bookings-adam/a50cb9aac8caca4705e8b0757953fdc1
       Handler: com.wirelessiths.handler.ReturnScooterHandler::handleRequest
       Runtime: java8
       Policies:
@@ -142,7 +144,7 @@ Resources:
   GetUserInfoFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/5f9b477a9bbed6f0501b5d62ee127939
+      CodeUri: s3://sam-bookings-adam/a50cb9aac8caca4705e8b0757953fdc1
       Handler: com.wirelessiths.handler.GetUserInfoHandler::handleRequest
       Runtime: java8
       Policies:
@@ -155,8 +157,7 @@ Resources:
           - cognito-idp:AdminGetUser
           - cognito-idp:ListUsers
           Resource:
-            Ref:
-              Ref: UserPoolArn
+            Ref: UserPoolArn
       Events:
         GetUserInfo:
           Type: Api
