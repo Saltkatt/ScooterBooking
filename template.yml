@@ -11,12 +11,6 @@ Parameters:
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
-  UserPoolArn:
-    Type: String
-    Default: xxx
-  UserPoolId:
-    Type: String
-    Default: xxx
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
@@ -25,7 +19,6 @@ Globals:
     Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
       Variables:
         BOOKINGS_TABLE_NAME: !Ref TableName
-        USER_POOL_ID: !Ref UserPoolId
 
 Resources:
   GetBookingFunction:
@@ -143,13 +136,6 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName:
               Ref: TableName
-        - Statement:
-                Effect: Allow
-                Action:
-                  - cognito-idp:AdminGetUser
-                  - cognito-idp:ListUsers
-                Resource:
-                  Ref: UserPoolArn
       Events:
         GetUserInfo:
           Type: Api
