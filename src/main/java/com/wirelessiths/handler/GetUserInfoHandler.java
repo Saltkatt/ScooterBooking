@@ -42,7 +42,7 @@ public class GetUserInfoHandler implements RequestHandler<Map<String, Object>, A
             //String userPoolId = System.getenv("USER_POOL_ID");
            // User user = getUserInfo("83396a64-4a39-4c5f-b7e4-8e18b435b41e");
 
-            List<User> users = UserService.listUsers("83396a64-4a39-4c5f-b7e4-8e18b435b41e", UserService.getAwsCognitoIdentityProvider());
+            List<User> users = UserService.listUsers("83396a64-4a39-4c5f-b7e4-8e18b435b41e", System.getenv("USER_POOL_ID"));
             /*
 
             List<UserPoolDescriptionType> userPools =

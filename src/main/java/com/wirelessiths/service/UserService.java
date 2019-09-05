@@ -55,10 +55,9 @@ public class UserService {
         return builder.build();
     }
 
-    public static List<User> listUsers(String sub, AWSCognitoIdentityProvider awsCognitoIdentityProvider) {
+    public static List<User> listUsers(String sub, String userPoolId) {
 
         AWSCognitoIdentityProvider cognitoClient = UserService.getAwsCognitoIdentityProvider();
-        String userPoolId = System.getenv("USER_POOL_ID");
 
         ListUsersRequest listUsersRequest = new ListUsersRequest().withFilter("sub = \"" + sub + "\"").withUserPoolId(userPoolId);
         ListUsersResult userResults = cognitoClient.listUsers(listUsersRequest);

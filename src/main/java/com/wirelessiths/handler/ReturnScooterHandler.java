@@ -1,5 +1,6 @@
 package com.wirelessiths.handler;
 
+
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -8,9 +9,7 @@ import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
 import com.wirelessiths.dal.Booking;
 import com.wirelessiths.dal.TripStatus;
-import com.wirelessiths.dal.UpdateBookingRequest;
 import com.wirelessiths.dal.User;
-import com.wirelessiths.exception.UnableToListBookingsException;
 import com.wirelessiths.exception.UnableToUpdateException;
 import com.wirelessiths.service.ExceptionHandlingService;
 import com.wirelessiths.service.SESService;
@@ -34,32 +33,12 @@ import java.util.Optional;
 
         @Override
         public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
+
+
             try {
 
                 ObjectMapper mapper = new ObjectMapper();
 
-                logger.info(input);
-
-                Booking booking = new Booking();
-                UpdateBookingRequest updateBookingRequest;
-
-                JsonNode body = null;
-                JsonNode pathParameters = null;
-                JsonNode jsonNode = mapper.valueToTree(input);
-
-                if (jsonNode.hasNonNull("body")) {
-                    body = mapper.valueToTree(jsonNode.get("body"));
-                }
-                if (jsonNode.hasNonNull("pathParameters")) {
-                    pathParameters = mapper.valueToTree(jsonNode.get("pathParameters"));
-                }
-
-                booking =  Optional.ofNullable(pathParameters.get("id").asText()).map(ExceptionHandlingService.handlingFunctionWrapper(booking::get, IOException.class)).orElseThrow(() -> new UnableToUpdateException("Incorrect booking id or booking does not exist"));
-                List<User> users = UserService.listUsers(booking.getUserId(), UserService.getAwsCognitoIdentityProvider());
-                String recipient;
-                if (!users.isEmpty()) {
-                    recipient = users.get(0).getEmail();
-                }
                 String mailSubject = "Scooter returned";
                 String htmlbody = "<h1>Thank you for returning the scooter!</h1>"
                         + "<p>This email was sent with <a href='https://aws.amazon.com/ses/'>"
@@ -67,10 +46,39 @@ import java.util.Optional;
                         + "AWS SDK for Java</a>";
                 String textBody = "Thank you for returning the scooter!";
 
+                Booking booking = new Booking();
+                JsonNode body = null;
+                String scooterId;
+                String bookingId;
+                String userId;
+
+                body = new ObjectMapper().readTree((String) input.get("body"));
+
+                if(body.hasNonNull("scooterId") && body.hasNonNull("bookingId") && body.hasNonNull("userId")) {
+                     scooterId = body.get("scooterId").asText();
+                     bookingId = body.get("bookingId").asText();
+                     userId = body.get("userId").asText();
+                } else {
+                    throw new UnableToUpdateException("scooterId, bookingId or userId not provided");
+                }
+
+
+                booking =  Optional.ofNullable(bookingId).map(ExceptionHandlingService.handlingFunctionWrapper(booking::get, IOException.class)).orElseThrow(() -> new UnableToUpdateException("Incorrect booking id or booking does not exist"));
+
+                if(!booking.getScooterId().equals(scooterId) || !booking.getUserId().equals(userId)){
+                    throw new UnableToUpdateException("sent scooterId or bookingId doesnt match with the id's in the booking");
+                }
+
+                List<User> users = UserService.listUsers(booking.getUserId(), System.getenv("USER_POOL_ID"));
+                String recipient = null;
+                if (!users.isEmpty()) {
+                    recipient = users.get(0).getEmail();
+                }
+
                 if(booking.getTripStatus() == TripStatus.IN_PROGRESS){
                     booking.setTripStatus(TripStatus.COMPLETED);
                     booking.save(booking);
-                    SESService.sendEmail(SESService.defaultFrom, SESService.defaultTo, mailSubject, htmlbody, textBody);
+                    Optional.ofNullable(recipient).ifPresent(ExceptionHandlingService.handlingConsumerWrapper((r)-> SESService.sendEmail(SESService.defaultFrom, r, mailSubject, htmlbody, textBody), IOException.class));
                 } else {
                     throw new UnableToUpdateException("can not return a scooter that is not activated");
                 }
@@ -119,6 +127,7 @@ import java.util.Optional;
                         .build();
             }
         }
+
 
 
 
