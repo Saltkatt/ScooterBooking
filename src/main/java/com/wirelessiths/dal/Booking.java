@@ -155,7 +155,6 @@ public class Booking {
     }
 
 
-    private boolean validateBooking(Booking booking) throws IOException{
 
     public List<Booking> validateBooking(Booking booking) throws IOException{
 

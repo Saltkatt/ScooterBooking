@@ -50,6 +50,8 @@ import java.util.Optional;
                 }
 
                 booking =  Optional.ofNullable(pathParameters.get("id").asText()).map(ExceptionHandlingService.handlingFunctionWrapper(booking::get, IOException.class)).orElseThrow(() -> new UnableToUpdateException("Incorrect booking id provided in pathparameters"));
+                logger.info(booking.toString());
+                logger.info(body.toString());
                 updateBookingRequest = Optional.ofNullable(body).map(ExceptionHandlingService.handlingFunctionWrapper(b -> mapper.treeToValue(b, UpdateBookingRequest.class), IOException.class)).orElseThrow(() -> new UnableToUpdateException("Incorrect body provided"));
 
 
