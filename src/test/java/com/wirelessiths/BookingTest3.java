@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import static org.junit.Assert.*;
 
 
-public class BookingTest {
+public class BookingTest3 {
 
     private String bookingId;
     private String scooterId;

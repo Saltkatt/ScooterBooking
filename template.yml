@@ -7,7 +7,7 @@ Description: >
 Parameters:
   TableName:
     Type: String
-    Default: bookings-api-dev-adam
+    Default: bookings-api-dev-carl
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
@@ -111,11 +111,26 @@ Resources:
           Properties:
             Path: /bookings/{id}
             Method: put
+  ActivateBookingFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: target/bookings-api-dev.jar
+      Handler: com.wirelessiths.handler.ActivateBookingHandler::handleRequest
+      Runtime: java8
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TableName
+      Events:
+        ActivateBooking:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /bookings/activate
+            Method: post
   ReturnBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: target/bookings-api-dev.jar
-      Handler: com.wirelessiths.ReturnBookingHandler::handleRequest
+      Handler: com.wirelessiths.handler.ReturnBookingHandler::handleRequest
       Runtime: java8
       Policies:
         - DynamoDBCrudPolicy:
@@ -142,8 +157,6 @@ Resources:
       - AttributeName: date
         AttributeType: S
       - AttributeName: startTime
-        AttributeType: S
-      - AttributeName: tripStatus
         AttributeType: S
       KeySchema:
       - AttributeName: scooterId
@@ -212,6 +225,10 @@ Outputs:
   UpdateBookingFunction:
     Description: "UpdateBooking Lambda Function ARN"
     Value: !GetAtt UpdateBookingFunction.Arn
+
+  ActivateBookingFunction:
+    Description: "Activate Booking Lambda Function ARN"
+    Value: !GetAtt ActivateBookingFunction.Arn
 
 
 

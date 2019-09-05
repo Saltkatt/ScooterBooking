@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
+import com.wirelessiths.dal.AuthService;
 import com.wirelessiths.dal.TripStatus;
 import com.wirelessiths.exception.CouldNotCreateBookingException;
 import com.wirelessiths.dal.Booking;
@@ -40,29 +41,37 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
           // get the 'body' from input
           JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
           Booking booking = new Booking();
-          booking.setScooterId(body.get("scooterId").asText());
-		  booking.setUserId(body.get("userId").asText());
+
+		  booking.setScooterId(body.get("scooterId").asText());
+
+		  //booking.setUserId(body.get("userId").asText());
+		  booking.setUserId(AuthService.getUserInfo(input, "sub"));
 		  booking.setStartTime(Instant.parse(body.get("startTime").asText()));
 		  booking.setEndTime(Instant.parse(body.get("endTime").asText()));
 		  booking.setStartTime(Instant.parse(body.get("startTime").asText()));
 		  booking.setEndTime(Instant.parse(body.get("endTime").asText()));
 		  booking.setDate(LocalDate.parse(body.get("date").asText()));
-		  booking.setTripStatus(TripStatus.valueOf(body.get("tripStatus").asText()));
-		  booking.save(booking);
+		  booking.setTripStatus(TripStatus.WAITING_TO_START);
 
-          // send the response back
-      		return ApiGatewayResponse.builder()
-      				.setStatusCode(200)
-      				.setObjectBody(booking)
-      				.setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
-      				.build();
+		  if(booking.validateBooking(booking).size() == 0){//if booking infringes on existing bookings, bookings.size will be > 0
+              booking.save(booking);
+			  return ApiGatewayResponse.builder()
+					  .setStatusCode(200)
+					  .setObjectBody(booking)
+					  .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
+					  .build();
+          }
+          Response responseBody = new Response("Scooter with id: " + booking.getScooterId() + "is not available for the selected timespan", input);
 
-      } catch (CouldNotCreateBookingException ex) {
-			logger.error("Error in creating booking: " + ex);
-            logger.error(ex.getMessage());
-            ex.printStackTrace();
+		  return ApiGatewayResponse.builder()
+			 .setStatusCode(409)
+			 .setObjectBody(responseBody)
+			 .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
+			 .build();
 
-			// send the error response back
+      } catch (CouldNotCreateBookingException ex) {//TODO: ?
+			logger.error("Error in creating booking: " + ex.getMessage());
+
 			Response responseBody = new Response("Error: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
 					.setStatusCode(500)
@@ -71,11 +80,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 					.build();
 
 		} catch (JsonProcessingException ex) {
-			logger.error("Error in JSON processing" + ex);
-            logger.error(ex.getMessage());
-            ex.printStackTrace();
-
-			// send the error response back
+			logger.error("Error in JSON processing" + ex.getMessage());
 
 			Response responseBody = new Response("Error in JSON processing: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
@@ -85,11 +90,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 					.build();
 
 		} catch (IOException ex) {
-			logger.error("Error: IOException" + ex);
-            logger.error(ex.getMessage());
-            ex.printStackTrace();
-
-			// send the error response back
+			logger.error("Error: IOException" + ex.getMessage());
 
 			Response responseBody = new Response("Error in creating booking due to I/O: " + ex.getMessage(), input);
 			return ApiGatewayResponse.builder()
@@ -99,12 +100,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 					.build();
 
 		}catch (Exception ex){
-            logger.error("Error unknown Exception" + ex);
-            logger.error(ex.getMessage());
-            ex.printStackTrace();
-
-            // send the error response back
-
+            logger.error("Error unknown Exception" + ex.getMessage());
 
             Response responseBody = new Response("Error in creating booking due to unknown exception: " + ex.getMessage(), input);
             return ApiGatewayResponse.builder()

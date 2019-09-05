@@ -4,20 +4,17 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-import java.awt.print.Book;
+import org.apache.logging.log4j.LogManager;
+
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
+
+import java.util.Objects;
 
 
 /**
@@ -47,8 +44,9 @@ public class Booking {
     private final DynamoDBMapper mapper;
     private final DynamoDB dynamoDB;
 
-    private final Logger logger = LogManager.getLogger(this.getClass());
-    private static StringBuilder sb = new StringBuilder();
+    //private final Logger logger = LogManager.getLogger(this.getClass());
+    private final LoggerAdapter logger;
+    private final StringBuilder sb = new StringBuilder();
 
    /**
      *This method connects to DynamoDB, creates a table with a mapperConfig.
@@ -64,7 +62,18 @@ public class Booking {
         this.dynamoDB = this.db_adapter.getDynamoDB();
         // create the mapper with config
         this.mapper = this.db_adapter.createDbMapper(mapperConfig);
+
+        this.logger = new LoggerAdapter(LogManager.getLogger(this.getClass()));
     }
+
+    public Booking(AmazonDynamoDB client, DynamoDBMapperConfig config){
+        this.client = client;
+        this.dynamoDB = new DynamoDB(client);
+        this.mapper = new DynamoDBMapper(client, config);
+        this.logger = new LoggerAdapter();
+        //this.logger = LogManager.getLogger(this.getClass());
+    }
+
 
     @DynamoDBHashKey(attributeName = "scooterId")
     public String getScooterId() {
@@ -74,7 +83,9 @@ public class Booking {
         this.scooterId = scooterId;
     }
 
+
     @DynamoDBRangeKey(attributeName = "endTime")
+    @DynamoDBAttribute(attributeName = "endTime")
     @DynamoDBTypeConverted( converter = InstantConverter.class )
     public Instant getEndTime() {
         return endTime;
@@ -122,7 +133,7 @@ public class Booking {
 
     @DynamoDBTypeConvertedEnum
     @DynamoDBAttribute(attributeName="tripStatus")
-    public TripStatus getTripStratus() {
+    public TripStatus getTripStatus() {
         return tripStatus;
     }
 
@@ -143,30 +154,28 @@ public class Booking {
                 '}';
     }
 
-    private boolean validateBooking(Booking booking) throws IOException{
 
-        int maxDurationSeconds = 60 * 60 * 2;//temporary hardcoding of 2 hour max booking length
-        String startRange = booking.getStartTime().toString();
-        String endRange = booking.getEndTime().plusSeconds(maxDurationSeconds).toString();
+    public List<Booking> validateBooking(Booking booking) throws IOException{
+
+        int maxDurationSeconds = 60 * 60 * 7;//temporary hardcoding of 7 hour max booking length
+
+        String start = booking.getStartTime().toString();
+        String end = booking.getEndTime().toString();
+        String endPlusMaxDur = booking.getEndTime().plusSeconds(maxDurationSeconds).toString();
 
         Map<String, AttributeValue> values = new HashMap<>();
-        values.put(":val1", new AttributeValue().withS(booking.getScooterId()));
-        values.put(":val2", new AttributeValue().withS(startRange));
-        values.put(":val3", new AttributeValue().withS(endRange));
+        values.put(":id", new AttributeValue().withS(booking.getScooterId()));
+        values.put(":start", new AttributeValue().withS(start));
+        values.put(":endPlusMaxDur", new AttributeValue().withS(endPlusMaxDur));
+        values.put(":end", new AttributeValue().withS(end));
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
-        queryExp.withKeyConditionExpression("scooterId = :val1 and endTime between :val2 and :val3")
-                .withExpressionAttributeValues(values);
-        queryExp.setConsistentRead(true);
+        queryExp.withKeyConditionExpression("scooterId = :id and endTime between :start and :endPlusMaxDur")
+                .withExpressionAttributeValues(values)
+                .withConsistentRead(true)
+                .withFilterExpression("startTime < :end");
 
-        List<Booking> bookings = mapper.query(Booking.class, queryExp);
-
-        return bookings.size() == 0;
-
-//        System.out.println("Infringing bookings:");
-//        for (Booking returnedBooking : bookings) {
-//            System.out.println(returnedBooking.toString());
-//        }
+        return mapper.query(Booking.class, queryExp);
     }
 
         // methods
@@ -191,8 +200,9 @@ public class Booking {
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<Booking>()
                 .withKeyConditionExpression("bookingId = :v1")
-                .withExpressionAttributeValues(av);
-        queryExp.setIndexName("bookingId");
+                .withExpressionAttributeValues(av)
+                .withConsistentRead(false);
+        queryExp.setIndexName("bookingIndex");
 
         PaginatedQueryList<Booking> result = this.mapper.query(Booking.class, queryExp);
         if (result.size() > 0) {
@@ -223,14 +233,11 @@ public class Booking {
         return results;
     }
 
-    public void save(Booking booking) throws IOException {
+    public Booking save(Booking booking) throws IOException {
 
-        if(validateBooking(booking)){
             logger.info("Booking - save(): " + booking.toString());
             this.mapper.save(booking);
-        }else{
-            logger.info("Booking already exists at given interval: " + booking.toString());
-        }
+            return booking;
     }
 
     public void update(Booking booking) throws  IOException {   //TODO:  throw IOException/try&catch?
@@ -260,4 +267,22 @@ public class Booking {
         return true;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Booking booking = (Booking) o;
+        return scooterId.equals(booking.scooterId) &&
+                bookingId.equals(booking.bookingId) &&
+                userId.equals(booking.userId) &&
+                startTime.equals(booking.startTime) &&
+                endTime.equals(booking.endTime) &&
+                date.equals(booking.date);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(scooterId, bookingId, userId, startTime, endTime, date);
+    }
 }
+//TODO: if booking is not checked out in allotted time, will we want to keep it in the db, delete it or move it to another db? it should cancel to leave timespan available for others to book
