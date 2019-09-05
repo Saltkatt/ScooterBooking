@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
-import com.wirelessiths.dal.Booking;
+import com.wirelessiths.dal.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,8 +19,11 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
 
     private final Logger logger = LogManager.getLogger(this.getClass());
 
+
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
+
+        logger.info(input);
 
         try {
 
@@ -47,10 +50,10 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
 
                 } catch (Exception e) {
 
-                    logger.error("Error in retrieving product: " + e);
+                    logger.error("Error in retrieving booking: " + e);
 
                     // send the error response back
-                    Response responseBody = new Response("Error in updating product: ", input);
+                    Response responseBody = new Response("Error in updating booking: ", input);
                     return ApiGatewayResponse.builder()
                             .setStatusCode(500)
                             .setObjectBody(responseBody)
@@ -86,4 +89,63 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                     .build();
         }
     }
+
+    /**
+     * Makes a booking object from updateBookingRequest. Should be used for updating object so that if no new info is inputted, the old information will persist.
+     * @param updateBookingRequest - the booking request in where the new information is stored.
+     * @param booking - the booking that you want to update.
+     * @return updated booking
+     */
+    public static Booking setBookingProperties(UpdateBookingRequest updateBookingRequest, Booking booking) {
+
+        Optional.ofNullable(updateBookingRequest).ifPresent(optUpdateRequest -> {
+                optUpdateRequest.getUserId().ifPresent(booking::setUserId);
+                optUpdateRequest.getScooterId().ifPresent(booking::setScooterId);
+                optUpdateRequest.getBookingId().ifPresent(booking::setBookingId);
+
+                optUpdateRequest.getDate().ifPresent(n -> {
+                    if (n.matches(""))
+                        try {
+                            LocalDateConverter converter = new LocalDateConverter();
+                            booking.setDate(converter.unconvert(n));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                });
+
+                optUpdateRequest.getStartTime().ifPresent(n -> {
+                    try {
+                        InstantConverter converter = new InstantConverter();
+                        booking.setStartTime(converter.unconvert(n));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+
+                optUpdateRequest.getEndTime().ifPresent(n -> {
+                    try {
+                        InstantConverter converter = new InstantConverter();
+                        booking.setEndTime(converter.unconvert(n));
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+
+                optUpdateRequest.getTripStatus().ifPresent(n -> {
+                    if (n.equals("WAITING_TO_START") || n.equals("IN_PROGRESS") || n.equals("COMPLETED") || n.equals("SCOOTER_NOT_RETURNED")) {
+                        TripStatus tripStatus = TripStatus.valueOf(n);
+                        booking.setTripStatus(tripStatus);
+                    }
+
+                });
+
+
+            } );
+
+
+
+
+        return booking;
+    }
+
 }

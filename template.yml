@@ -7,7 +7,7 @@ Description: >
 Parameters:
   TableName:
     Type: String
-    Default: master-bookings-api-dev
+    Default: bookings-api-dev-carl
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
@@ -100,7 +100,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: target/bookings-api-dev.jar
-      Handler: com.wirelessiths.UpdateBookingHandler::handleRequest
+      Handler: com.wirelessiths.handler.UpdateBookingHandler::handleRequest
       Runtime: java8
       Policies:
         - DynamoDBCrudPolicy:
@@ -111,7 +111,36 @@ Resources:
           Properties:
             Path: /bookings/{id}
             Method: put
-
+  ActivateBookingFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: target/bookings-api-dev.jar
+      Handler: com.wirelessiths.handler.ActivateBookingHandler::handleRequest
+      Runtime: java8
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TableName
+      Events:
+        ActivateBooking:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /bookings/activate
+            Method: post
+  ReturnBookingFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: target/bookings-api-dev.jar
+      Handler: com.wirelessiths.handler.ReturnBookingHandler::handleRequest
+      Runtime: java8
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TableName
+      Events:
+        UpdateForReturnScooterBooking:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /bookings/return/{id}
+            Method: put
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -196,6 +225,10 @@ Outputs:
   UpdateBookingFunction:
     Description: "UpdateBooking Lambda Function ARN"
     Value: !GetAtt UpdateBookingFunction.Arn
+
+  ActivateBookingFunction:
+    Description: "Activate Booking Lambda Function ARN"
+    Value: !GetAtt ActivateBookingFunction.Arn
 
 
 
