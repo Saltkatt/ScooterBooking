@@ -4,9 +4,7 @@ package com.wirelessiths.handler;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
-import com.amazonaws.services.cognitoidp.model.AdminGetUserRequest;
-import com.amazonaws.services.cognitoidp.model.AdminGetUserResult;
-import com.amazonaws.services.cognitoidp.model.AttributeType;
+import com.amazonaws.services.cognitoidp.model.*;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.wirelessiths.ApiGatewayResponse;
@@ -16,9 +14,11 @@ import com.wirelessiths.exception.BookingDoesNotExistException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This class handles get requests and implements RequestHandler and ApiGatewayResponse.
@@ -41,7 +41,7 @@ public class GetUserInfoHandler implements RequestHandler<Map<String, Object>, A
 
 
             //String userPoolId = System.getenv("USER_POOL_ID");
-            UserResponse userResponse = getUserInfo("adam2");
+            UserResponse userResponse = getUserInfo("83396a64-4a39-4c5f-b7e4-8e18b435b41e");
             /*
 
             List<UserPoolDescriptionType> userPools =
@@ -124,6 +124,16 @@ public class GetUserInfoHandler implements RequestHandler<Map<String, Object>, A
                 .withUserPoolId(userPoolId);
         
         AdminGetUserResult userResult = cognitoClient.adminGetUser(userRequest);
+        ListUsersRequest listUsersRequest = new ListUsersRequest().withFilter("sub = \"" + username + "\"").withUserPoolId(userPoolId);
+        ListUsersResult usersResult2 = cognitoClient.listUsers(listUsersRequest);
+
+        List<UserType> userTypeList = usersResult2.getUsers();
+
+        List<UserResponse> users = new ArrayList<>();
+
+        //users.addAll(userTypeList.stream().map(u -> convertCognitoUser(u)).collect(Collectors.toList()));
+
+
 
         UserResponse userResponse = new UserResponse();
         userResponse.setUsername(userResult.getUsername());
