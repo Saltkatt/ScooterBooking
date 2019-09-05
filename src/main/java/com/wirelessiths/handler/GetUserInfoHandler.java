@@ -40,7 +40,7 @@ public class GetUserInfoHandler implements RequestHandler<Map<String, Object>, A
         try {
 
 
-            String userPoolId = System.getenv("USER_POOL_ID");
+            //String userPoolId = System.getenv("USER_POOL_ID");
             UserResponse userResponse = getUserInfo("adam2");
             /*
 
