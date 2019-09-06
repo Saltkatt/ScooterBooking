@@ -91,9 +91,7 @@ public class UserService {
         return AWSCognitoIdentityProviderClientBuilder.standard().withRegion(Regions.US_EAST_1).defaultClient();
     }
 
-    public static User getUserInfo(String username) {
-
-        String userPoolId = System.getenv("USER_POOL_ID");
+    public static User getUserInfo(String username, String userPoolId) {
 
         AWSCognitoIdentityProvider cognitoClient = getAwsCognitoIdentityProvider();
 
@@ -119,5 +117,13 @@ public class UserService {
             cognitoClient.shutdown();
             return user;
 
+        }
+
+        public static void deleteUser(String username, String userPoolId) {
+
+            AWSCognitoIdentityProvider cognitoClient = getAwsCognitoIdentityProvider();
+            AdminDeleteUserRequest adminDeleteUserRequest = new AdminDeleteUserRequest();
+            adminDeleteUserRequest.withUsername(username).withUserPoolId(userPoolId);
+            cognitoClient.adminDeleteUser(adminDeleteUserRequest);
         }
 }
