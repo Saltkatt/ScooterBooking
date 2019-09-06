@@ -154,13 +154,13 @@ public class Booking {
                 '}';
     }
 
-    public List<Booking> validateBooking(Booking booking) throws IOException{
+    public List<Booking> validateBooking(Booking booking, int maxDuration, int buffer) throws IOException{
 
-        int maxDurationSeconds = 60 * 60 * 7;//temporary hardcoding of 7 hour max booking length
+        //int maxDurationSeconds = 60 * 60 * 7;//temporary hardcoding of 7 hour max booking length
 
-        String start = booking.getStartTime().toString();
-        String end = booking.getEndTime().toString();
-        String endPlusMaxDur = booking.getEndTime().plusSeconds(maxDurationSeconds).toString();
+        String start = booking.getStartTime().minusSeconds(buffer).toString();
+        String end = booking.getEndTime().plusSeconds(buffer).toString();
+        String endPlusMaxDur = booking.getEndTime().plusSeconds(maxDuration).toString();
 
         Map<String, AttributeValue> values = new HashMap<>();
         values.put(":id", new AttributeValue().withS(booking.getScooterId()));

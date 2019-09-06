@@ -8,6 +8,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.*;
+import com.wirelessiths.s3.ReadFile;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -16,14 +17,19 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
-public class BookingTest {
+    public class BookingTest {
 
     private static AmazonDynamoDB client;
     private static DynamoDBMapperConfig mapperConfig;
     private static String tableName = "test-table";
+
+    private static int maxDuration = 7200;
+    private static int buffer = 300;
+    private static int maxBookings = 3;
 
 
     @BeforeClass
@@ -33,7 +39,6 @@ public class BookingTest {
         populateForOkValidationTest();
         populateForFailValidationTest();
     }
-
 
     //@Before
     public static void populateForOkValidationTest(){
@@ -73,8 +78,9 @@ public class BookingTest {
         testCase.setDate(LocalDate.parse("2019-09-02"));
         //testCase.generateValidationKey();
 
+
         try{
-            List<Booking> bookings = testCase.validateBooking(testCase);
+            List<Booking> bookings = testCase.validateBooking(testCase, maxDuration, buffer );
             System.out.println("pass test bookings:");
             bookings.forEach(System.out::println);
             System.out.println("pass test bookings.size(): " + bookings.size());
@@ -159,7 +165,7 @@ public class BookingTest {
         testCase.setDate(LocalDate.parse("2019-09-02"));
 
         try{
-            List<Booking> bookings = testCase.validateBooking(testCase);
+            List<Booking> bookings = testCase.validateBooking(testCase, maxDuration, buffer);
             System.out.println("fail test bookings.size(): " + bookings.size());
 
             bookings.forEach(System.out::println);

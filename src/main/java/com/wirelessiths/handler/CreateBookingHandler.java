@@ -10,6 +10,7 @@ import com.wirelessiths.Response;
 import com.wirelessiths.dal.TripStatus;
 import com.wirelessiths.exception.CouldNotCreateBookingException;
 import com.wirelessiths.dal.Booking;
+import com.wirelessiths.s3.ReadFile;
 import com.wirelessiths.service.AuthService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -56,19 +57,29 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 		  booking.setDate(LocalDate.parse(body.get("date").asText()));
 		  booking.setTripStatus(TripStatus.WAITING_TO_START);
 
+		  Map<String, Integer> appConfig = ReadFile.readFileInBucket();
+		  int maxDuration =  appConfig.get("maxDuration");
+		  int buffer = appConfig.get("buffer");
+		  int maxBookings = appConfig.get("maxBookingPerUser");
+		  String message;
 
-		  int maxDuration =  readFileInBucket().get("maxDuration");
-		  int buffer = readFileInBucket().get("buffer");
+		  if(booking.getByUserId(booking.getUserId()).size() <= maxBookings){
+			  if(booking.validateBooking(booking, maxDuration, buffer).size() == 0){//if booking infringes on existing bookings, bookings.size will be > 0
+				  booking.save(booking);
+				  return ApiGatewayResponse.builder()
+						  .setStatusCode(201)
+						  .setObjectBody(booking)
+						  .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
+						  .build();
+			  }
+			  message = "Scooter with id: " + booking.getScooterId() + "is not available for the selected timespan";
 
-		  if(booking.validateBooking(booking).size() == 0){//if booking infringes on existing bookings, bookings.size will be > 0
-              booking.save(booking);
-			  return ApiGatewayResponse.builder()
-					  .setStatusCode(200)
-					  .setObjectBody(booking)
-					  .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
-					  .build();
-          }
-          Response responseBody = new Response("Scooter with id: " + booking.getScooterId() + "is not available for the selected timespan", input);
+		  }else{
+			  message = "User has reached max number of allowed bookings";
+		  }
+
+
+          Response responseBody = new Response(message, input);
 
 		  return ApiGatewayResponse.builder()
 			 .setStatusCode(409)
