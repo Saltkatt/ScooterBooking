@@ -90,7 +90,7 @@ TODO: Check how status is being saved in db. Might need to alter how enum is set
                 ", startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +
                 ", date='" + date + '\'' +
-                ", tripStatus='" + tripStatus + '\'' +
+                ", tripStatus='" + tripStatus.toString() + '\'' +
                 '}';
     }
 

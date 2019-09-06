@@ -7,10 +7,10 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
-import com.wirelessiths.dal.AuthService;
 import com.wirelessiths.dal.TripStatus;
 import com.wirelessiths.exception.CouldNotCreateBookingException;
 import com.wirelessiths.dal.Booking;
+import com.wirelessiths.service.AuthService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -60,9 +60,6 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 		  int maxDuration =  readFileInBucket().get("maxDuration");
 		  int buffer = readFileInBucket().get("buffer");
 
-
-
-
 		  if(booking.validateBooking(booking).size() == 0){//if booking infringes on existing bookings, bookings.size will be > 0
               booking.save(booking);
 			  return ApiGatewayResponse.builder()
@@ -110,6 +107,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 					.build();
 
 		}catch (Exception ex){
+
             logger.error("Error unknown Exception" + ex.getMessage());
 
             Response responseBody = new Response("Error in creating booking due to unknown exception: " + ex.getMessage(), input);
@@ -119,5 +117,5 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
                     .setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
                     .build();
         }
-	}
+    }
 }

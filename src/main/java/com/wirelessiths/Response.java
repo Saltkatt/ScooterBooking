@@ -12,6 +12,11 @@ public class Response {
 		this.input = input;
 	}
 
+	public Response(String message) {
+		this.message = message;
+		this.input = null;
+	}
+
 	public String getMessage() {
 		return this.message;
 	}

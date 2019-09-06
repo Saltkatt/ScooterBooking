@@ -3,9 +3,8 @@ package com.wirelessiths;
 import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.wirelessiths.dal.AuthService;
-import com.wirelessiths.dal.Booking;
 import com.wirelessiths.dal.DynamoDBAdapter;
+import com.wirelessiths.service.AuthService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
