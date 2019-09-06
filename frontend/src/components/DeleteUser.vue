@@ -1,15 +1,35 @@
 <template>
     <div class="delete-user-container">
+        <header>
+            <!-- Navigation Bar -->
+            <nav class="nav-bar">
+                <ul>
+                    <li><router-link to="/logout"><button class="btn">Logout</button></router-link></li>
+                    <li><router-link to="/delete"><button class="btn">Delete</button></router-link></li>
+                    <router-link to="/login">Home</router-link>
+                    <li>Stats</li>
+                    <li>Trips</li>
+
+                </ul>
+            </nav>
+        </header>
         <div>
-            <h1>Delete Account</h1>
+            <h1>Delete Account?</h1>
+            <h3>If you want to delete your account with Wireless Scooter, contact admin with your userId, username and email.</h3>
+            <ul>
+                <li>Username: {{userInfo.username}}</li>
+                <li>UserID: {{userInfo.userId}}</li>
+                <li>Email: {{userInfo.email}}</li>
+            </ul>
+
+            <h3>Admin details: </h3>
+            <ul>
+                <li>email:</li>
+            </ul>
+
+
         </div>
 
-        <div class="alert alert-info">
-            {{userInfo}}
-        </div>
-
-        <router-link to="/deleteUser"><button class="btn"> Delete </button></router-link>
-        <router-link to="/login"><button class="btn"> Login </button></router-link>
 
     </div>
 </template>
@@ -38,7 +58,6 @@
 <style scoped>
     .delete-user-container{
         background-color: limegreen;
-        font-family: 'Courier New', Courier, monospace;
         text-align: center;
     }
 

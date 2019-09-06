@@ -7,18 +7,22 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
-import com.wirelessiths.dal.AuthService;
 import com.wirelessiths.dal.TripStatus;
 import com.wirelessiths.exception.CouldNotCreateBookingException;
 import com.wirelessiths.dal.Booking;
+import com.wirelessiths.service.AuthService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
+
+import static com.wirelessiths.s3.ReadFile.readFileInBucket;
 
 /**
  * This class handles save requests and implements RequestHandler and ApiGatewayResponse.
@@ -36,7 +40,6 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
-
       try {
           // get the 'body' from input
           JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
@@ -52,6 +55,10 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 		  booking.setEndTime(Instant.parse(body.get("endTime").asText()));
 		  booking.setDate(LocalDate.parse(body.get("date").asText()));
 		  booking.setTripStatus(TripStatus.WAITING_TO_START);
+
+
+		  int maxDuration =  readFileInBucket().get("maxDuration");
+		  int buffer = readFileInBucket().get("buffer");
 
 		  if(booking.validateBooking(booking).size() == 0){//if booking infringes on existing bookings, bookings.size will be > 0
               booking.save(booking);
@@ -100,6 +107,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 					.build();
 
 		}catch (Exception ex){
+
             logger.error("Error unknown Exception" + ex.getMessage());
 
             Response responseBody = new Response("Error in creating booking due to unknown exception: " + ex.getMessage(), input);
@@ -109,5 +117,5 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
                     .setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
                     .build();
         }
-	}
+    }
 }

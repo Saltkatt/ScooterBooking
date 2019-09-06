@@ -8,7 +8,7 @@ Description: 'sam-app
 Parameters:
   TableName:
     Type: String
-    Default: bookings-api-dev-carl
+    Default: carl-bookings-api-dev
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
@@ -24,7 +24,7 @@ Resources:
   GetBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://carl-bucket-29/6649b30ad7b45a02d0f532be84a294e0
+      CodeUri: s3://carl-bucket-29/9a45d34889982feb2bd9b9adc311c741
       Handler: com.wirelessiths.handler.GetBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -40,7 +40,7 @@ Resources:
   ListBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://carl-bucket-29/6649b30ad7b45a02d0f532be84a294e0
+      CodeUri: s3://carl-bucket-29/9a45d34889982feb2bd9b9adc311c741
       Handler: com.wirelessiths.handler.ListBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -56,7 +56,7 @@ Resources:
   ListBookingsByUserFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://carl-bucket-29/6649b30ad7b45a02d0f532be84a294e0
+      CodeUri: s3://carl-bucket-29/9a45d34889982feb2bd9b9adc311c741
       Handler: com.wirelessiths.handler.ListBookingsByUserHandler::handleRequest
       Runtime: java8
       Policies:
@@ -72,7 +72,7 @@ Resources:
   DeleteBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://carl-bucket-29/6649b30ad7b45a02d0f532be84a294e0
+      CodeUri: s3://carl-bucket-29/9a45d34889982feb2bd9b9adc311c741
       Handler: com.wirelessiths.handler.DeleteBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -88,7 +88,7 @@ Resources:
   CreateBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://carl-bucket-29/6649b30ad7b45a02d0f532be84a294e0
+      CodeUri: s3://carl-bucket-29/9a45d34889982feb2bd9b9adc311c741
       Handler: com.wirelessiths.handler.CreateBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -104,7 +104,7 @@ Resources:
   UpdateBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://carl-bucket-29/6649b30ad7b45a02d0f532be84a294e0
+      CodeUri: s3://carl-bucket-29/9a45d34889982feb2bd9b9adc311c741
       Handler: com.wirelessiths.handler.UpdateBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -120,7 +120,7 @@ Resources:
   ActivateBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://carl-bucket-29/6649b30ad7b45a02d0f532be84a294e0
+      CodeUri: s3://carl-bucket-29/9a45d34889982feb2bd9b9adc311c741
       Handler: com.wirelessiths.handler.ActivateBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -133,11 +133,11 @@ Resources:
           Properties:
             Path: /bookings/activate
             Method: post
-  ReturnBookingFunction:
+  ReturnScooterFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://carl-bucket-29/6649b30ad7b45a02d0f532be84a294e0
-      Handler: com.wirelessiths.handler.ReturnBookingHandler::handleRequest
+      CodeUri: s3://carl-bucket-29/9a45d34889982feb2bd9b9adc311c741
+      Handler: com.wirelessiths.handler.ReturnScooterHandler::handleRequest
       Runtime: java8
       Policies:
       - DynamoDBCrudPolicy:
@@ -147,8 +147,24 @@ Resources:
         UpdateForReturnScooterBooking:
           Type: Api
           Properties:
-            Path: /bookings/return/{id}
+            Path: /bookings/return
             Method: put
+  GetUserInfoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://carl-bucket-29/9a45d34889982feb2bd9b9adc311c741
+      Handler: com.wirelessiths.handler.GetUserInfoHandler::handleRequest
+      Runtime: java8
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: TableName
+      Events:
+        GetUserInfo:
+          Type: Api
+          Properties:
+            Path: /bookings/getuserinfo
+            Method: GET
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -251,4 +267,16 @@ Outputs:
     Value:
       Fn::GetAtt:
       - ActivateBookingFunction
+      - Arn
+  ReturnScooterFunction:
+    Description: ReturnScooter Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - ReturnScooterFunction
+      - Arn
+  GetUserInfoFunction:
+    Description: GetUserInfo Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - GetUserInfoFunction
       - Arn

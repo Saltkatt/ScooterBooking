@@ -116,7 +116,6 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                 optUpdateRequest.getBookingId().ifPresent(booking::setBookingId);
 
                 optUpdateRequest.getDate().ifPresent(n -> {
-                    if (n.matches(""))
                         try {
                             LocalDateConverter converter = new LocalDateConverter();
                             booking.setDate(converter.unconvert(n));
@@ -144,7 +143,7 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                 });
 
                 optUpdateRequest.getTripStatus().ifPresent(n -> {
-                    if (n.equals("WAITING_TO_START") || n.equals("IN_PROGRESS") || n.equals("COMPLETED") || n.equals("SCOOTER_NOT_RETURNED")) {
+                    if (n.equals(TripStatus.WAITING_TO_START.toString()) || n.equals(TripStatus.IN_PROGRESS.toString()) || n.equals(TripStatus.COMPLETED.toString()) || n.equals(TripStatus.SCOOTER_NOT_RETURNED.toString())) {
                         TripStatus tripStatus = TripStatus.valueOf(n);
                         booking.setTripStatus(tripStatus);
                     }

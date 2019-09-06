@@ -8,7 +8,7 @@ Description: 'sam-app
 Parameters:
   TableName:
     Type: String
-    Default: bookings-api-dev-adam
+    Default: master-bookings-api-dev
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
@@ -24,7 +24,7 @@ Resources:
   GetBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/b3059f8ab6c2aa6da5551710fcc428e3
+      CodeUri: s3://sam-bookings-adam/c42f0b528735e77f3b3c84528810c052
       Handler: com.wirelessiths.handler.GetBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -40,7 +40,7 @@ Resources:
   ListBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/b3059f8ab6c2aa6da5551710fcc428e3
+      CodeUri: s3://sam-bookings-adam/c42f0b528735e77f3b3c84528810c052
       Handler: com.wirelessiths.handler.ListBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -56,7 +56,7 @@ Resources:
   ListBookingsByUserFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/b3059f8ab6c2aa6da5551710fcc428e3
+      CodeUri: s3://sam-bookings-adam/c42f0b528735e77f3b3c84528810c052
       Handler: com.wirelessiths.handler.ListBookingsByUserHandler::handleRequest
       Runtime: java8
       Policies:
@@ -72,7 +72,7 @@ Resources:
   DeleteBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/b3059f8ab6c2aa6da5551710fcc428e3
+      CodeUri: s3://sam-bookings-adam/c42f0b528735e77f3b3c84528810c052
       Handler: com.wirelessiths.handler.DeleteBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -88,7 +88,7 @@ Resources:
   CreateBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/b3059f8ab6c2aa6da5551710fcc428e3
+      CodeUri: s3://sam-bookings-adam/c42f0b528735e77f3b3c84528810c052
       Handler: com.wirelessiths.handler.CreateBookingHandler::handleRequest
       Runtime: java8
       Policies:
@@ -104,8 +104,8 @@ Resources:
   UpdateBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/b3059f8ab6c2aa6da5551710fcc428e3
-      Handler: com.wirelessiths.UpdateBookingHandler::handleRequest
+      CodeUri: s3://sam-bookings-adam/c42f0b528735e77f3b3c84528810c052
+      Handler: com.wirelessiths.handler.UpdateBookingHandler::handleRequest
       Runtime: java8
       Policies:
       - DynamoDBCrudPolicy:
@@ -117,11 +117,27 @@ Resources:
           Properties:
             Path: /bookings/{id}
             Method: put
-  ReturnBookingFunction:
+  ActivateBookingFunction:
     Type: AWS::Serverless::Function
     Properties:
-      CodeUri: s3://sam-bookings-adam/b3059f8ab6c2aa6da5551710fcc428e3
-      Handler: com.wirelessiths.ReturnBookingHandler::handleRequest
+      CodeUri: s3://sam-bookings-adam/c42f0b528735e77f3b3c84528810c052
+      Handler: com.wirelessiths.handler.ActivateBookingHandler::handleRequest
+      Runtime: java8
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: TableName
+      Events:
+        ActivateBooking:
+          Type: Api
+          Properties:
+            Path: /bookings/activate
+            Method: post
+  ReturnScooterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://sam-bookings-adam/c42f0b528735e77f3b3c84528810c052
+      Handler: com.wirelessiths.handler.ReturnScooterHandler::handleRequest
       Runtime: java8
       Policies:
       - DynamoDBCrudPolicy:
@@ -133,6 +149,22 @@ Resources:
           Properties:
             Path: /bookings/return/{id}
             Method: put
+  GetUserInfoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: s3://sam-bookings-adam/c42f0b528735e77f3b3c84528810c052
+      Handler: com.wirelessiths.handler.GetUserInfoHandler::handleRequest
+      Runtime: java8
+      Policies:
+      - DynamoDBCrudPolicy:
+          TableName:
+            Ref: TableName
+      Events:
+        GetUserInfo:
+          Type: Api
+          Properties:
+            Path: /bookings/getuserinfo
+            Method: GET
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
@@ -150,8 +182,6 @@ Resources:
       - AttributeName: date
         AttributeType: S
       - AttributeName: startTime
-        AttributeType: S
-      - AttributeName: tripStatus
         AttributeType: S
       KeySchema:
       - AttributeName: scooterId
@@ -231,4 +261,22 @@ Outputs:
     Value:
       Fn::GetAtt:
       - UpdateBookingFunction
+      - Arn
+  ActivateBookingFunction:
+    Description: Activate Booking Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - ActivateBookingFunction
+      - Arn
+  ReturnScooterFunction:
+    Description: ReturnScooter Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - ReturnScooterFunction
+      - Arn
+  GetUserInfoFunction:
+    Description: GetUserInfo Lambda Function ARN
+    Value:
+      Fn::GetAtt:
+      - GetUserInfoFunction
       - Arn
