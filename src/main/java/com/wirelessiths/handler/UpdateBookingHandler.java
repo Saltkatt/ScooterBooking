@@ -46,7 +46,6 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
             boolean isNew = false;
             Booking newBooking = null;
 
-            //TODO: Gör fler if (!null) koller på tex om json bodyn finns eller är tom
 
             // send the response back
             if (booking != null) {
@@ -84,8 +83,6 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                     }
 
 
-                    //TODO: Vad händer om skapande av ny bokning misslyckas?
-                    //TODO: ...om inget i föregående if-sats händer (if(isNew))
 
                 } catch (Exception e) {
 
@@ -137,16 +134,7 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
      */
     public static Booking setBookingProperties(UpdateBookingRequest updateBookingRequest, Booking booking) {
 
-        //TODO: Vad göra om ändringen av något fält inte sker? p.g.a t.ex. regex, isPresent eller isEmpty
-        //TODO: ...någon utskrift?
-        //TODO: Hantera felaktiga datum?   t.ex. felaktiga datum (årtal)?
-        //TODO: Ska fältet inte ändras om formatet är fel? hur ska detta meddelas så man kan lösa de?
 
-
-        //TODO: Blir det rätt format i våran kod?
-        //TODO: Vad göra om det inte stämmer?   felhantering
-        //TODO: Constraints på tidigast och senast årtal?
-        //TODO: Använda i createBookingHandler?
         Pattern DATE_PATTERN = Pattern.compile(
                 "^((2000|2400|2800|(19|2[0-9](0[48]|[2468][048]|[13579][26])))-02-29)$"
                         + "|^(((19|2[0-9])[0-9]{2})-02-(0[1-9]|1[0-9]|2[0-8]))$"
@@ -155,14 +143,10 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
 
         Pattern TIME_PATTERN = Pattern.compile("([01]?[0-9]|2[0-3]):[0-5][0-9]");
 
-        //TODO: Funkar inte att slå ihop patterns såhär
         Pattern ISO_INSTANT = Pattern.compile(DATE_PATTERN + "T" + TIME_PATTERN + ".\\d?\\d?\\d?\\d?\\d?\\d?\\d?\\d?\\d?Z");
 
 
 
-        //TODO: Skriva om optional.if present funktionerna så man kan lägga in .isEmpty efter ifPresent checken
-        //TODO: Lägg varje ifPresent i if satsar istället för som de är nu?
-        //TODO: Separata Optional.ofNullable för varje fält som ska kollas?
         Optional.ofNullable(updateBookingRequest).ifPresent(optUpdateRequest -> {
                 optUpdateRequest.getUserId().filter(s -> !s.isEmpty()).ifPresent(booking::setUserId);
                 optUpdateRequest.getScooterId().filter(s -> !s.isEmpty()).ifPresent(booking::setScooterId);
@@ -228,11 +212,11 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
             Booking newBooking = new Booking().get(booking.getBookingId());
             isDeleted = booking.delete(booking.getBookingId());
 
-            if(isDeleted) {   //TODO: Nödvändig koll?    Vad händer om deleten misslyckas men ändå returner true? eller Tvärtom?
+            if(isDeleted) {
                 return newBooking;
             }
 
-        }catch (Exception e) {     //TODO: Utförligare try&catch
+        }catch (Exception e) {
             e.printStackTrace();
         }
 
