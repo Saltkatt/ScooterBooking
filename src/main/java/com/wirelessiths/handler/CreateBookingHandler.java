@@ -14,11 +14,15 @@ import com.wirelessiths.dal.Booking;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
+
+import static com.wirelessiths.s3.ReadFile.readFileInBucket;
 
 /**
  * This class handles save requests and implements RequestHandler and ApiGatewayResponse.
@@ -51,6 +55,13 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 		  booking.setEndTime(Instant.parse(body.get("endTime").asText()));
 		  booking.setDate(LocalDate.parse(body.get("date").asText()));
 		  booking.setTripStatus(TripStatus.WAITING_TO_START);
+
+
+		  int maxDuration =  readFileInBucket().get("maxDuration");
+		  int buffer = readFileInBucket().get("buffer");
+
+
+
 
 		  if(booking.validateBooking(booking).size() == 0){//if booking infringes on existing bookings, bookings.size will be > 0
               booking.save(booking);
