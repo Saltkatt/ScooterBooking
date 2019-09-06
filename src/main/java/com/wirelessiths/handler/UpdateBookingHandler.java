@@ -26,7 +26,6 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
-        //TODO: Minska på tryen/ dela upp den
         try {
 
             ObjectMapper mapper = new ObjectMapper();
@@ -180,11 +179,6 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                     }
                 });
 
-                //TODO: Instant.parse i try & catch?  catch: DateTimeParseException?? som enda format check på startTime och endTime
-                //TODO: Constraints på tidigast och senast årtal?  Instant.isBefore() Instant.isAfter()
-                //TODO: Andra checkar som att startTime är mindre/tidigare än endTime eller om nån av tiderna redan har vart
-                //TODO: ska dom checkarna göras här?
-                // "2019-08-30T16:00:36.739Z"
                 optUpdateRequest.getStartTime().ifPresent(n -> {
                     if (!n.matches("")) {
                         try {
@@ -196,7 +190,6 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                     }
                 });
 
-            //TODO: Constraints på tidigast och senast årtal?
                 optUpdateRequest.getEndTime().ifPresent(n -> {
                     if(!n.matches("")) {
                         try {
@@ -209,7 +202,7 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                 });
 
                 optUpdateRequest.getTripStatus().ifPresent(n -> {
-                    if (n.equals("WAITING_TO_START") || n.equals("IN_PROGRESS") || n.equals("COMPLETED") || n.equals("SCOOTER_NOT_RETURNED")) {
+                    if (n.equals(TripStatus.WAITING_TO_START.toString()) || n.equals(TripStatus.IN_PROGRESS.toString()) || n.equals(TripStatus.COMPLETED.toString()) || n.equals(TripStatus.SCOOTER_NOT_RETURNED.toString())) {
                         TripStatus tripStatus = TripStatus.valueOf(n);
                         booking.setTripStatus(tripStatus);
                     }

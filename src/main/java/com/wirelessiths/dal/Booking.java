@@ -154,7 +154,6 @@ public class Booking {
                 '}';
     }
 
-
     public List<Booking> validateBooking(Booking booking) throws IOException{
 
         int maxDurationSeconds = 60 * 60 * 7;//temporary hardcoding of 7 hour max booking length
@@ -177,6 +176,7 @@ public class Booking {
 
         return mapper.query(Booking.class, queryExp);
     }
+
 
         // methods
     public Boolean ifTableExists() {
