@@ -5,6 +5,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
+import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
+import com.amazonaws.services.dynamodbv2.model.Condition;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
@@ -101,9 +103,9 @@ public class Booking {
         return startTime;
     }
     public void setStartTime(Instant startTime) {
+        this.date = LocalDate.parse(startTime.toString().split("T")[0]);
         this.startTime = startTime;
     }
-
 
     @DynamoDBIndexHashKey(attributeName = "date", globalSecondaryIndexName = "dateIndex")
     @DynamoDBTypeConverted( converter = LocalDateConverter.class )
@@ -169,6 +171,7 @@ public class Booking {
         values.put(":end", new AttributeValue().withS(end));
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
+
         queryExp.withKeyConditionExpression("scooterId = :id and endTime between :start and :endPlusMaxDur")
                 .withExpressionAttributeValues(values)
                 .withConsistentRead(true)

@@ -36,13 +36,12 @@ public class ActivateBookingHandler implements RequestHandler<Map<String, Object
 
             String scooterId = body.get("scooterId").asText();
             String bookingId = body.get("bookingId").asText();
-            String userId = AuthService.getUserInfo(input, "sub");//comes with token sent by frontend
+            String userId = AuthService.getUserInfo(input, "sub");
 
             booking = booking.get(bookingId);
             Instant startTime = booking.getStartTime();
 
             if( !booking.getUserId().equals(userId) || !booking.getScooterId().equals(scooterId) ) {
-
                 responseBody = new Response("request userId or scooterId does not match corresponding booking values");
                 return ApiGatewayResponse.builder()
                         .setStatusCode(409)
@@ -75,10 +74,10 @@ public class ActivateBookingHandler implements RequestHandler<Map<String, Object
                     .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
                     .build();
 
-        }catch(IOException e){
+        }catch(IOException e ){
 
             logger.info(e.getMessage());
-            responseBody = new Response("Error: " + e.getMessage());
+            responseBody = new Response("I/O Error: " + e.getMessage());
 
             return ApiGatewayResponse.builder()
                     .setStatusCode(502)
