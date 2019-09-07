@@ -9,6 +9,7 @@ import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
 import com.wirelessiths.dal.TripStatus;
 import com.wirelessiths.dal.Booking;
+import com.wirelessiths.s3.Settings;
 import com.wirelessiths.service.AuthService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -47,10 +48,10 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
             booking.setDate(LocalDate.parse(body.get("date").asText()));
             booking.setTripStatus(TripStatus.WAITING_TO_START);
 
-            //Map<String, Integer> appConfig = ReadFile.readFileInBucket();
-            int maxDuration =  60 * 60 * 2;//appConfig.get("maxDuration");
-            int buffer = 60 * 15;//appConfig.get("buffer");
-            int maxAllowedBookings = 3;//appConfig.get("maxBookingPerUser");
+            Settings settings = Settings.getSettings();
+            int maxDuration = settings.getMaxDuration();
+            int buffer = settings.getBuffer();
+            int maxAllowedBookings = settings.getMaxBookings();
             String message;
             double duration = Duration.between(booking.getStartTime(), booking.getEndTime()).getSeconds();
 
@@ -75,7 +76,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
                         .build();
             }
 
-            if(booking.validateBooking(booking, maxDuration, buffer).size() > 0){//if booking infringes on existing bookings, bookings.size will be > 0
+            if(booking.validateBooking(booking, maxDuration, buffer).size() > 0){//returns list on infringing bookings
 
                 message =  "Scooter with id: " + booking.getScooterId() + " is not available for the selected timespan";
                 return ApiGatewayResponse.builder()
