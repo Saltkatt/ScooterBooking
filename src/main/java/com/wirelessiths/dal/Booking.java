@@ -7,6 +7,7 @@ import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
 import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
 import com.amazonaws.services.dynamodbv2.model.Condition;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ public class Booking {
     private String userId;
 
     private Instant startTime;
+
     private Instant endTime;
     private LocalDate date;
 
@@ -86,7 +88,7 @@ public class Booking {
         this.scooterId = scooterId;
     }
 
-
+    //@JsonFormat(pattern = "yyyy-MM-dd T HH:mm:ss", timezone = "UTC")
     @DynamoDBRangeKey(attributeName = "endTime")
     @DynamoDBAttribute(attributeName = "endTime")
     @DynamoDBTypeConverted( converter = InstantConverter.class )

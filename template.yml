@@ -13,7 +13,7 @@ Parameters:
     Default: xxx
   TableName:
     Type: String
-    Default: adam-bookings-api-dev-09-09-rc3
+    Default: xxx
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar

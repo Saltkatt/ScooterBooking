@@ -2,6 +2,8 @@ package com.wirelessiths;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -49,7 +51,9 @@ public class ApiGatewayResponse {
 
 		private static final Logger LOG = LogManager.getLogger(ApiGatewayResponse.Builder.class);
 
-		private static final ObjectMapper objectMapper = new ObjectMapper();
+		private static final ObjectMapper objectMapper = new ObjectMapper()
+				.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
+				.registerModule(new JavaTimeModule());
 
 		private int statusCode = 200;
 		private Map<String, String> headers = Collections.emptyMap();
@@ -57,6 +61,12 @@ public class ApiGatewayResponse {
 		private Object objectBody;
 		private byte[] binaryBody;
 		private boolean base64Encoded;
+
+//		public Builder() {
+//			JavaTimeModule module = new JavaTimeModule();
+//			objectMapper.registerModule(module);
+//			objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+//		}
 
 		public Builder setStatusCode(int statusCode) {
 			this.statusCode = statusCode;
