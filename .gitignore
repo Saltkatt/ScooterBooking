@@ -26,3 +26,12 @@ node_modules/*
 .env
 *.env
 .env*
+
+#packagedfiles:
+dependency-reduced-pom.xml
+packaged-template.yml
+packaged.yaml
+packaged.yml
+
+#parameters file
+parameters.json

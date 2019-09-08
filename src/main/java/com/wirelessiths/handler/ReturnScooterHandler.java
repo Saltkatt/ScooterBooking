@@ -48,9 +48,9 @@ import java.util.Optional;
 
                 Booking booking = new Booking();
                 JsonNode body = null;
-                String scooterId;
-                String bookingId;
-                String userId;
+                String scooterId = "";
+                String bookingId = "";
+                String userId = "";
 
                 body = new ObjectMapper().readTree((String) input.get("body"));
 
@@ -59,7 +59,7 @@ import java.util.Optional;
                      bookingId = body.get("bookingId").asText();
                      userId = body.get("userId").asText();
                 } else {
-                    throw new UnableToUpdateException("scooterId, bookingId or userId not provided");
+                    //return  ApiGatewayResponse.builder().setStatusCode(500).setObjectBody();
                 }
 
 
