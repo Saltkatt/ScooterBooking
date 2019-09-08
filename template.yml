@@ -5,18 +5,18 @@ Description: >
 
   Sample SAM Template for sam-app
 Parameters:
-  TableName:
-    Type: String
-    Default: adam-bookings-api-dev-09-08-rc4
-  CodeUri:
-    Type: String
-    Default: target/bookings-api-dev.jar
-  UserPoolArn:
-    Type: String
-    Default: xxx
   UserPoolId:
     Type: String
     Default: xxx
+  UserPoolArn:
+    Type: String
+    Default: xxx
+  TableName:
+    Type: String
+    Default: adam-bookings-api-dev-09-08-rc7
+  CodeUri:
+    Type: String
+    Default: target/bookings-api-dev.jar
   CognitoUserPoolName:
     Type: String
     Default: MyUserPool
@@ -34,23 +34,6 @@ Globals:
         USER_POOL_ID: !Ref UserPoolId
 
 Resources:
-  MyApi:
-    Type: AWS::Serverless::Api
-    Properties:
-      StageName: dev
-      Cors: "'*'"
-      Auth:
-        ApiKeyRequired: false # OPTIONAL
-        DefaultAuthorizer: MyCognitoAuth # OPTIONAL, if you use IAM permissions, specify AWS_IAM.
-          # For AWS_IAM:
-          # DefaultAuthorizer: AWS_IAM
-          # InvokeRole: NONE # CALLER_CREDENTIALS by default unless overridden
-        Authorizers:
-          MyCognitoAuth:
-            UserPoolArn: !GetAtt MyCognitoUserPool.Arn
-            # Can also accept an array
-            Identity: # OPTIONAL
-              Header: Authorization # OPTIONAL; Default: 'Authorization'
 
   GetBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -195,27 +178,6 @@ Resources:
           Properties:
             Path: /bookings/getuserinfo
             Method: GET
-
-  MyCognitoUserPool:
-    Type: AWS::Cognito::UserPool
-    Properties:
-      UserPoolName: !Ref CognitoUserPoolName
-      Policies:
-        PasswordPolicy:
-          MinimumLength: 8
-      UsernameAttributes:
-        - email
-      Schema:
-        - AttributeDataType: String
-          Name: email
-          Required: false
-
-  MyCognitoUserPoolClient:
-    Type: AWS::Cognito::UserPoolClient
-    Properties:
-      UserPoolId: !Ref MyCognitoUserPool
-      ClientName: !Ref CognitoUserPoolClientName
-      GenerateSecret: false
 
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
