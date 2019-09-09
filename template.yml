@@ -13,7 +13,7 @@ Parameters:
     Default: xxx
   TableName:
     Type: String
-    Default: adam-bookings-api-dev-09-09-rc1
+    Default: adam-bookings-api-dev-09-09-rc3
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
@@ -34,6 +34,23 @@ Globals:
         USER_POOL_ID: !Ref UserPoolId
 
 Resources:
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      Cors: "'*'"
+      Auth:
+        ApiKeyRequired: false # OPTIONAL
+        DefaultAuthorizer: MyCognitoAuth # OPTIONAL, if you use IAM permissions, specify AWS_IAM.
+          # For AWS_IAM:
+        # DefaultAuthorizer: AWS_IAM
+        # InvokeRole: NONE # CALLER_CREDENTIALS by default unless overridden
+        Authorizers:
+          MyCognitoAuth:
+            UserPoolArn: !Ref UserPoolArn
+            # Can also accept an array
+            Identity: # OPTIONAL
+              Header: Authorization # OPTIONAL; Default: 'Authorization'
 
   GetBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -50,6 +67,7 @@ Resources:
           Properties:
             Path: /bookings/{id}
             Method: get
+            RestApiId: !Ref MyApi  # Add this line
   ListBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -65,6 +83,7 @@ Resources:
           Properties:
             Path: /bookings
             Method: get
+            RestApiId: !Ref MyApi  # Add this line
   ListBookingsByUserFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -80,6 +99,7 @@ Resources:
           Properties:
             Path: /users/{id}/bookings
             Method: get
+            RestApiId: !Ref MyApi  # Add this line
   DeleteBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -95,6 +115,7 @@ Resources:
           Properties:
             Path: /bookings/{id}
             Method: delete
+            RestApiId: !Ref MyApi  # Add this line
   CreateBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -110,6 +131,7 @@ Resources:
           Properties:
             Path: /bookings
             Method: post
+            RestApiId: !Ref MyApi  # Add this line
   UpdateBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -125,6 +147,7 @@ Resources:
           Properties:
             Path: /bookings/{id}
             Method: put
+            RestApiId: !Ref MyApi  # Add this line
   ActivateBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -140,6 +163,7 @@ Resources:
           Properties:
             Path: /bookings/activate
             Method: post
+            RestApiId: !Ref MyApi  # Add this line
   ReturnScooterFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -162,6 +186,7 @@ Resources:
           Properties:
             Path: /bookings/return
             Method: put
+            RestApiId: !Ref MyApi  # Add this line
 
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
