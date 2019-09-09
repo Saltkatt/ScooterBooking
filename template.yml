@@ -5,12 +5,24 @@ Description: >
 
   Sample SAM Template for sam-app
 Parameters:
+  UserPoolId:
+    Type: String
+    Default: xxx
+  UserPoolArn:
+    Type: String
+    Default: xxx
   TableName:
     Type: String
-    Default: master-bookings-api-dev
+    Default: adam-bookings-api-dev-09-08-rc7
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
+  CognitoUserPoolName:
+    Type: String
+    Default: MyUserPool
+  CognitoUserPoolClientName:
+    Type: String
+    Default: MyUserPoolClient
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
@@ -19,8 +31,10 @@ Globals:
     Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
       Variables:
         BOOKINGS_TABLE_NAME: !Ref TableName
+        USER_POOL_ID: !Ref UserPoolId
 
 Resources:
+
   GetBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -135,6 +149,13 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TableName
+        - Statement:
+            Effect: Allow
+            Action:
+              - cognito-idp:AdminGetUser
+              - cognito-idp:ListUsers
+            Resource:
+              Ref: UserPoolArn
       Events:
         UpdateForReturnScooterBooking:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -157,6 +178,7 @@ Resources:
           Properties:
             Path: /bookings/getuserinfo
             Method: GET
+
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:

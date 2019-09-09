@@ -5,6 +5,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
+import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
+import com.amazonaws.services.dynamodbv2.model.Condition;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
@@ -37,6 +39,7 @@ public class Booking {
     private LocalDate date;
 
     private TripStatus tripStatus;
+    private BookingStatus bookingStatus;
 
 
     private static DynamoDBAdapter db_adapter;
@@ -101,9 +104,9 @@ public class Booking {
         return startTime;
     }
     public void setStartTime(Instant startTime) {
+        this.date = LocalDate.parse(startTime.toString().split("T")[0]);
         this.startTime = startTime;
     }
-
 
     @DynamoDBIndexHashKey(attributeName = "date", globalSecondaryIndexName = "dateIndex")
     @DynamoDBTypeConverted( converter = LocalDateConverter.class )
@@ -141,6 +144,16 @@ public class Booking {
         this.tripStatus = tripStatus;
     }
 
+    @DynamoDBTypeConvertedEnum
+    @DynamoDBAttribute(attributeName="tripStatus")
+    public BookingStatus getBookingStatus() {
+        return bookingStatus;
+    }
+
+    public void setBookingStatus(BookingStatus bookingStatus) {
+        this.bookingStatus = bookingStatus;
+    }
+
     @Override
     public String toString() {
         return "Booking{" +
@@ -154,13 +167,13 @@ public class Booking {
                 '}';
     }
 
-    public List<Booking> validateBooking(Booking booking) throws IOException{
+    public List<Booking> validateBooking(Booking booking, int maxDuration, int buffer) throws IOException{
 
-        int maxDurationSeconds = 60 * 60 * 7;//temporary hardcoding of 7 hour max booking length
+        //int maxDurationSeconds = 60 * 60 * 7;//temporary hardcoding of 7 hour max booking length
 
-        String start = booking.getStartTime().toString();
-        String end = booking.getEndTime().toString();
-        String endPlusMaxDur = booking.getEndTime().plusSeconds(maxDurationSeconds).toString();
+        String start = booking.getStartTime().minusSeconds(buffer).toString();
+        String end = booking.getEndTime().plusSeconds(buffer).toString();
+        String endPlusMaxDur = booking.getEndTime().plusSeconds(maxDuration).toString();
 
         Map<String, AttributeValue> values = new HashMap<>();
         values.put(":id", new AttributeValue().withS(booking.getScooterId()));
@@ -169,6 +182,7 @@ public class Booking {
         values.put(":end", new AttributeValue().withS(end));
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
+
         queryExp.withKeyConditionExpression("scooterId = :id and endTime between :start and :endPlusMaxDur")
                 .withExpressionAttributeValues(values)
                 .withConsistentRead(true)

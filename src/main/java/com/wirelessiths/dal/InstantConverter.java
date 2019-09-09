@@ -11,7 +11,6 @@ public class InstantConverter implements DynamoDBTypeConverter<String, Instant> 
     public String convert( final Instant time ) {
 
         return time.toString();
-        //return time.
     }
 
     @Override

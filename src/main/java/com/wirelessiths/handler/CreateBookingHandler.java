@@ -10,7 +10,7 @@ import com.wirelessiths.Response;
 import com.wirelessiths.dal.TripStatus;
 import com.wirelessiths.exception.CouldNotCreateBookingException;
 import com.wirelessiths.dal.Booking;
-import com.wirelessiths.s3.Settings;
+import com.wirelessiths.s3.ReadFile;
 import com.wirelessiths.service.AuthService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -31,86 +31,78 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
     private final Logger logger = LogManager.getLogger(this.getClass());
 
-    /**
-	 * This method connects to the ApiGatewayResponse and request handler to allow the creation of individual bookings.
-	 * @param input contains the body of information required for the booking.
-	 * @param context
-	 * @return
-	 */
-	@Override
-	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
+    @Override
+    public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
-      try {
-          // get the 'body' from input
-          JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
-          Booking booking = new Booking();
+        try {
+            // get the 'body' from input
+            JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
+            Booking booking = new Booking();
 
-		  booking.setScooterId(body.get("scooterId").asText());
+            booking.setScooterId(body.get("scooterId").asText());
 
-		  //booking.setUserId(body.get("userId").asText());
-		  booking.setUserId(AuthService.getUserInfo(input, "sub"));
-		  booking.setStartTime(Instant.parse(body.get("startTime").asText()));
-		  booking.setEndTime(Instant.parse(body.get("endTime").asText()));
-		  booking.setStartTime(Instant.parse(body.get("startTime").asText()));
-		  booking.setEndTime(Instant.parse(body.get("endTime").asText()));
-		  booking.setDate(LocalDate.parse(body.get("date").asText()));
-		  booking.setTripStatus(TripStatus.WAITING_TO_START);
+            booking.setUserId(AuthService.getUserInfo(input, "sub"));
+            booking.setStartTime(Instant.parse(body.get("startTime").asText()));
+            booking.setEndTime(Instant.parse(body.get("endTime").asText()));
+            booking.setStartTime(Instant.parse(body.get("startTime").asText()));
+            booking.setEndTime(Instant.parse(body.get("endTime").asText()));
+            booking.setDate(LocalDate.parse(body.get("date").asText()));
+            booking.setTripStatus(TripStatus.WAITING_TO_START);
 
-		  Settings settings = Settings.getSettings();
+            Map<String, Integer> appConfig = ReadFile.readFileInBucket();
+            int maxDuration =  appConfig.get("maxDuration");
+            int buffer = appConfig.get("buffer");
+            int maxAllowedBookings = appConfig.get("maxBookingPerUser");
+            String message;
 
-		  //int maxDuration =  readFileInBucket().get("maxDuration");
+            if(booking.getByUserId(booking.getUserId()).size() <= maxAllowedBookings) {
 
-		  int buffer = settings.getBuffer();
-		  int maxDuration = settings.getMaxDuration();
+                message = "User has reached max number of allowed bookings";
+                return ApiGatewayResponse.builder()
+                        .setStatusCode(409)
+                        .setObjectBody(message)
+                        .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
+                        .build();
+            }
 
+            if(booking.validateBooking(booking, maxDuration, buffer).size() > 0){//if booking infringes on existing bookings, bookings.size will be > 0
 
-		  if(booking.validateBooking(booking).size() == 0){//if booking infringes on existing bookings, bookings.size will be > 0
-              booking.save(booking);
-			  return ApiGatewayResponse.builder()
-					  .setStatusCode(200)
-					  .setObjectBody(booking)
-					  .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
-					  .build();
-          }
-          Response responseBody = new Response("Scooter with id: " + booking.getScooterId() + "is not available for the selected timespan", input);
+                message =  "Scooter with id: " + booking.getScooterId() + "is not available for the selected timespan";
+                return ApiGatewayResponse.builder()
+                        .setStatusCode(409)
+                        .setObjectBody(message)
+                        .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
+                        .build();
 
-		  return ApiGatewayResponse.builder()
-			 .setStatusCode(409)
-			 .setObjectBody(responseBody)
-			 .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
-			 .build();
+            }
+            booking.save(booking);
+            return ApiGatewayResponse.builder()
+                    .setStatusCode(201)
+                    .setObjectBody(booking)
+                    .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
+                    .build();
 
-      } catch (CouldNotCreateBookingException ex) {//TODO: ?
-			logger.error("Error in creating booking: " + ex.getMessage());
+        } catch (JsonProcessingException ex) {
+            logger.error("Error in JSON processing" + ex.getMessage());
 
-			Response responseBody = new Response("Error: " + ex.getMessage(), input);
-			return ApiGatewayResponse.builder()
-					.setStatusCode(500)
-					.setObjectBody(responseBody)
-					.setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
-					.build();
+            Response responseBody = new Response("Error in JSON processing: " + ex.getMessage(), input);
+            return ApiGatewayResponse.builder()
+                    .setStatusCode(500)
+                    .setObjectBody(responseBody)
+                    .setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
+                    .build();
 
-		} catch (JsonProcessingException ex) {
-			logger.error("Error in JSON processing" + ex.getMessage());
+        } catch (IOException ex) {
+            logger.error("Error: IOException" + ex.getMessage());
 
-			Response responseBody = new Response("Error in JSON processing: " + ex.getMessage(), input);
-			return ApiGatewayResponse.builder()
-					.setStatusCode(500)
-					.setObjectBody(responseBody)
-					.setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
-					.build();
+            Response responseBody = new Response("Error in creating booking due to I/O: " + ex.getMessage(), input);
+            return ApiGatewayResponse.builder()
+                    .setStatusCode(500)
+                    .setObjectBody(responseBody)
+                    .setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
+                    .build();
 
-		} catch (IOException ex) {
-			logger.error("Error: IOException" + ex.getMessage());
-
-			Response responseBody = new Response("Error in creating booking due to I/O: " + ex.getMessage(), input);
-			return ApiGatewayResponse.builder()
-					.setStatusCode(500)
-					.setObjectBody(responseBody)
-					.setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
-					.build();
-
-		}catch (Exception ex){
+        }catch (Exception ex){
 
             logger.error("Error unknown Exception" + ex.getMessage());
 

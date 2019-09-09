@@ -11,6 +11,7 @@ import com.wirelessiths.dal.Booking;
 import com.wirelessiths.dal.TripStatus;
 import com.wirelessiths.dal.User;
 import com.wirelessiths.exception.UnableToUpdateException;
+import com.wirelessiths.service.AuthService;
 import com.wirelessiths.service.ExceptionHandlingService;
 import com.wirelessiths.service.SESService;
 import com.wirelessiths.service.UserService;
@@ -48,25 +49,32 @@ import java.util.Optional;
 
                 Booking booking = new Booking();
                 JsonNode body = null;
-                String scooterId;
-                String bookingId;
-                String userId;
+                String scooterId = "";
+                String bookingId = "";
+                String userId = AuthService.getUserInfo(input, "sub");
+                boolean isAdmin = AuthService.isAdmin(input);
 
                 body = new ObjectMapper().readTree((String) input.get("body"));
 
-                if(body.hasNonNull("scooterId") && body.hasNonNull("bookingId") && body.hasNonNull("userId")) {
-                     scooterId = body.get("scooterId").asText();
+                if(body.hasNonNull("bookingId")) {
                      bookingId = body.get("bookingId").asText();
-                     userId = body.get("userId").asText();
                 } else {
-                    throw new UnableToUpdateException("scooterId, bookingId or userId not provided");
+                    Response responseBody = new Response("bookingId not provided in body", input);
+                    return ApiGatewayResponse.builder()
+                            .setStatusCode(500)
+                            .setObjectBody(responseBody)
+                            .build();
                 }
 
 
                 booking =  Optional.ofNullable(bookingId).map(ExceptionHandlingService.handlingFunctionWrapper(booking::get, IOException.class)).orElseThrow(() -> new UnableToUpdateException("Incorrect booking id or booking does not exist"));
 
-                if(!booking.getScooterId().equals(scooterId) || !booking.getUserId().equals(userId)){
-                    throw new UnableToUpdateException("sent scooterId or bookingId doesnt match with the id's in the booking");
+                if(!booking.getUserId().equals(userId) || !isAdmin){
+                    Response responseBody = new Response("The user trying to return this booking is not the same user that booked the object or is not Admin", input);
+                    return ApiGatewayResponse.builder()
+                            .setStatusCode(500)
+                            .setObjectBody(responseBody)
+                            .build();
                 }
 
                 List<User> users = UserService.listUsers(booking.getUserId(), System.getenv("USER_POOL_ID"));
@@ -80,14 +88,18 @@ import java.util.Optional;
                     booking.save(booking);
                     Optional.ofNullable(recipient).ifPresent(ExceptionHandlingService.handlingConsumerWrapper((r)-> SESService.sendEmail(SESService.defaultFrom, r, mailSubject, htmlbody, textBody), IOException.class));
                 } else {
-                    throw new UnableToUpdateException("can not return a scooter that is not activated");
+                    Response responseBody = new Response("Cannot return scooter that is not tripStatus in progress", input);
+                    return ApiGatewayResponse.builder()
+                            .setStatusCode(500)
+                            .setObjectBody(responseBody)
+                            .build();
                 }
 
                 // send the response back
                 return ApiGatewayResponse.builder()
                         .setStatusCode(200)
                         .setObjectBody(booking)
-                        .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
+                        .setHeaders(Collections.singletonMap("Powered-By", "Wireless scooter"))
                         .build();
 
             } catch(UnableToUpdateException ex){
