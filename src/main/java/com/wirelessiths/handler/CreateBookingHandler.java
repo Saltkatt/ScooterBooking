@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
 import com.wirelessiths.dal.TripStatus;
-import com.wirelessiths.exception.CouldNotCreateBookingException;
 import com.wirelessiths.dal.Booking;
 import com.wirelessiths.s3.ReadFile;
 import com.wirelessiths.service.AuthService;
@@ -31,6 +30,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
     private final Logger logger = LogManager.getLogger(this.getClass());
 
+
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
@@ -41,7 +41,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
             booking.setScooterId(body.get("scooterId").asText());
 
-            booking.setUserId(AuthService.getUserInfo(input, "sub"));
+            booking.setUserId(AuthService.getUserId(input));
             booking.setStartTime(Instant.parse(body.get("startTime").asText()));
             booking.setEndTime(Instant.parse(body.get("endTime").asText()));
             booking.setStartTime(Instant.parse(body.get("startTime").asText()));

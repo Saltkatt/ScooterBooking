@@ -13,7 +13,7 @@ Parameters:
     Default: xxx
   TableName:
     Type: String
-    Default: adam-bookings-api-dev-09-08-rc7
+    Default: adam-bookings-api-dev-09-09-rc3
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
@@ -34,6 +34,23 @@ Globals:
         USER_POOL_ID: !Ref UserPoolId
 
 Resources:
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: dev
+      Cors: "'*'"
+      Auth:
+        ApiKeyRequired: false # OPTIONAL
+        DefaultAuthorizer: MyCognitoAuth # OPTIONAL, if you use IAM permissions, specify AWS_IAM.
+          # For AWS_IAM:
+        # DefaultAuthorizer: AWS_IAM
+        # InvokeRole: NONE # CALLER_CREDENTIALS by default unless overridden
+        Authorizers:
+          MyCognitoAuth:
+            UserPoolArn: !Ref UserPoolArn
+            # Can also accept an array
+            Identity: # OPTIONAL
+              Header: Authorization # OPTIONAL; Default: 'Authorization'
 
   GetBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -50,6 +67,7 @@ Resources:
           Properties:
             Path: /bookings/{id}
             Method: get
+            RestApiId: !Ref MyApi  # Add this line
   ListBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -65,6 +83,7 @@ Resources:
           Properties:
             Path: /bookings
             Method: get
+            RestApiId: !Ref MyApi  # Add this line
   ListBookingsByUserFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -78,8 +97,9 @@ Resources:
         GetBooking:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /bookings-by-user
+            Path: /users/{id}/bookings
             Method: get
+            RestApiId: !Ref MyApi  # Add this line
   DeleteBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -95,6 +115,7 @@ Resources:
           Properties:
             Path: /bookings/{id}
             Method: delete
+            RestApiId: !Ref MyApi  # Add this line
   CreateBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -110,6 +131,7 @@ Resources:
           Properties:
             Path: /bookings
             Method: post
+            RestApiId: !Ref MyApi  # Add this line
   UpdateBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -125,6 +147,7 @@ Resources:
           Properties:
             Path: /bookings/{id}
             Method: put
+            RestApiId: !Ref MyApi  # Add this line
   ActivateBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -140,6 +163,7 @@ Resources:
           Properties:
             Path: /bookings/activate
             Method: post
+            RestApiId: !Ref MyApi  # Add this line
   ReturnScooterFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -162,82 +186,67 @@ Resources:
           Properties:
             Path: /bookings/return
             Method: put
-  GetUserInfoFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: target/bookings-api-dev.jar
-      Handler: com.wirelessiths.handler.GetUserInfoHandler::handleRequest
-      Runtime: java8
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: TableName
-      Events:
-        GetUserInfo:
-          Type: Api
-          Properties:
-            Path: /bookings/getuserinfo
-            Method: GET
+            RestApiId: !Ref MyApi  # Add this line
 
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Ref TableName
       AttributeDefinitions:
-      - AttributeName: scooterId
-        AttributeType: S
-      - AttributeName: endTime
-        AttributeType: S
-      - AttributeName: bookingId
-        AttributeType: S
-      - AttributeName: userId
-        AttributeType: S
-      - AttributeName: date
-        AttributeType: S
-      - AttributeName: startTime
-        AttributeType: S
+        - AttributeName: scooterId
+          AttributeType: S
+        - AttributeName: endTime
+          AttributeType: S
+        - AttributeName: bookingId
+          AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: date
+          AttributeType: S
+        - AttributeName: startTime
+          AttributeType: S
       KeySchema:
-      - AttributeName: scooterId
-        KeyType: HASH
-      - AttributeName: endTime
-        KeyType: RANGE
+        - AttributeName: scooterId
+          KeyType: HASH
+        - AttributeName: endTime
+          KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: userIndex
-        KeySchema:
-        - AttributeName: userId
-          KeyType: HASH
-        - AttributeName: startTime
-          KeyType: RANGE
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: bookingIndex
-        KeySchema:
-        - AttributeName: bookingId
-          KeyType: HASH
-        - AttributeName: startTime
-          KeyType: RANGE
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: dateIndex
-        KeySchema:
-        - AttributeName: date
-          KeyType: HASH
-        - AttributeName: scooterId
-          KeyType: RANGE
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        - IndexName: userIndex
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+            - AttributeName: startTime
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: bookingIndex
+          KeySchema:
+            - AttributeName: bookingId
+              KeyType: HASH
+            - AttributeName: startTime
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: dateIndex
+          KeySchema:
+            - AttributeName: date
+              KeyType: HASH
+            - AttributeName: scooterId
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
 
 Outputs:
   GetBookingFunction:
@@ -271,7 +280,3 @@ Outputs:
   ReturnScooterFunction:
     Description: "ReturnScooter Lambda Function ARN"
     Value: !GetAtt ReturnScooterFunction.Arn
-
-  GetUserInfoFunction:
-    Description: "GetUserInfo Lambda Function ARN"
-    Value: !GetAtt GetUserInfoFunction.Arn

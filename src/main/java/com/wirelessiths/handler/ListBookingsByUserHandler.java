@@ -23,14 +23,20 @@ public class ListBookingsByUserHandler implements RequestHandler<Map<String, Obj
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
         try {
 
-            logger.info(input);
-
-            UpdateBookingHandler updateBookingHandler = new UpdateBookingHandler();
-
-
+            Map<String,String> pathParameters =  (Map<String,String>)input.get("pathParameters");
+            String userId = pathParameters.get("id");
+            String tokenUserId = AuthService.getUserId(input);
+            if(!userId.equals(tokenUserId) && !AuthService.isAdmin(input)) {
+                Response responseBody = new Response("Not authorized to view this page. Provided user id does not match the your user or you are not an Admin", input);
+                return ApiGatewayResponse.builder()
+                        .setStatusCode(403)
+                        .setObjectBody(responseBody)
+                        .setHeaders(Collections.singletonMap("Powered By", "Wireless scooter"))
+                        .build();
+            }
 
             Booking booking = new Booking();
-            List<Booking> results = booking.getByUserId(AuthService.getUserInfo(input, "sub"));
+            List<Booking> results = booking.getByUserId(userId);
 
 
             // send the response back
