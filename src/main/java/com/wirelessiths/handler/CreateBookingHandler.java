@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
-import com.wirelessiths.dal.TripStatus;
+import com.wirelessiths.dal.BookingStatus;
 import com.wirelessiths.dal.Booking;
 import com.wirelessiths.s3.Settings;
 import com.wirelessiths.service.AuthService;
@@ -46,7 +46,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
             booking.setStartTime(Instant.parse(body.get("startTime").asText()));
             booking.setEndTime(Instant.parse(body.get("endTime").asText()));
             booking.setDate(LocalDate.parse(body.get("date").asText()));
-            booking.setTripStatus(TripStatus.WAITING_TO_START);
+            booking.setBookingStatus(BookingStatus.VALID);
 
             Settings settings = Settings.getSettings();
             int maxDuration = settings.getMaxDuration();

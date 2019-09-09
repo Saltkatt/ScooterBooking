@@ -5,9 +5,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
-import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
-import com.amazonaws.services.dynamodbv2.model.Condition;
-import com.fasterxml.jackson.annotation.JsonFormat;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
@@ -100,6 +97,8 @@ public class Booking {
     }
 
 
+
+
     @DynamoDBIndexRangeKey(attributeName = "startTime", globalSecondaryIndexName = "dateIndex")
     @DynamoDBTypeConverted( converter = InstantConverter.class )
     public Instant getStartTime() {
@@ -147,7 +146,7 @@ public class Booking {
     }
 
     @DynamoDBTypeConvertedEnum
-    @DynamoDBAttribute(attributeName="tripStatus")
+    @DynamoDBAttribute(attributeName="bookingStatus")
     public BookingStatus getBookingStatus() {
         return bookingStatus;
     }
@@ -166,6 +165,7 @@ public class Booking {
                 ", endTime=" + endTime +
                 ", date=" + date +
                 ", tripStatus=" + tripStatus +
+                ", bookingStatus=" + bookingStatus +
                 '}';
     }
 
