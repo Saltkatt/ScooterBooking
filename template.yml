@@ -14,6 +14,7 @@ Parameters:
   TableName:
     Type: String
     Default: xxx
+
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
@@ -98,6 +99,22 @@ Resources:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /users/{id}/bookings
+            Method: get
+            RestApiId: !Ref MyApi  # Add this line
+  BookingStatusFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: target/bookings-api-dev.jar
+      Handler: com.wirelessiths.handler.BookingStatusHandler::handleRequest
+      Runtime: java8
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref TableName
+      Events:
+        GetBooking:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /bookings/{id}/status
             Method: get
             RestApiId: !Ref MyApi  # Add this line
   DeleteBookingFunction:
