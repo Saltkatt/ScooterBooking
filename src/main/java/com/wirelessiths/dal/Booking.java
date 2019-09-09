@@ -39,6 +39,7 @@ public class Booking {
     private LocalDate date;
 
     private TripStatus tripStatus;
+    private BookingStatus bookingStatus;
 
 
     private static DynamoDBAdapter db_adapter;
@@ -141,6 +142,16 @@ public class Booking {
 
     public void setTripStatus(TripStatus tripStatus) {
         this.tripStatus = tripStatus;
+    }
+
+    @DynamoDBTypeConvertedEnum
+    @DynamoDBAttribute(attributeName="tripStatus")
+    public BookingStatus getBookingStatus() {
+        return bookingStatus;
+    }
+
+    public void setBookingStatus(BookingStatus bookingStatus) {
+        this.bookingStatus = bookingStatus;
     }
 
     @Override
