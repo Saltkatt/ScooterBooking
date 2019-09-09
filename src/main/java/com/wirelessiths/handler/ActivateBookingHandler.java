@@ -36,7 +36,7 @@ public class ActivateBookingHandler implements RequestHandler<Map<String, Object
 
             String scooterId = body.get("scooterId").asText();
             String bookingId = body.get("bookingId").asText();
-            String userId = AuthService.getUserInfo(input, "sub");
+            String userId = AuthService.getUserId(input);
 
             booking = booking.get(bookingId);
             Instant startTime = booking.getStartTime();

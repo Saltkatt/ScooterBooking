@@ -8,22 +8,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
 import com.wirelessiths.dal.TripStatus;
-import com.wirelessiths.exception.CouldNotCreateBookingException;
 import com.wirelessiths.dal.Booking;
 import com.wirelessiths.s3.ReadFile;
 import com.wirelessiths.service.AuthService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
-
-import static com.wirelessiths.s3.ReadFile.readFileInBucket;
 
 /**
  * This class handles save requests and implements RequestHandler and ApiGatewayResponse.
@@ -43,7 +38,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
             booking.setScooterId(body.get("scooterId").asText());
 
-            booking.setUserId(AuthService.getUserInfo(input, "sub"));
+            booking.setUserId(AuthService.getUserId(input));
             booking.setStartTime(Instant.parse(body.get("startTime").asText()));
             booking.setEndTime(Instant.parse(body.get("endTime").asText()));
             booking.setStartTime(Instant.parse(body.get("startTime").asText()));

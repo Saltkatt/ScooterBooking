@@ -13,7 +13,7 @@ Parameters:
     Default: xxx
   TableName:
     Type: String
-    Default: adam-bookings-api-dev-09-08-rc7
+    Default: adam-bookings-api-dev-09-09-rc1
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
@@ -78,7 +78,7 @@ Resources:
         GetBooking:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /bookings-by-user
+            Path: /users/{id}/bookings
             Method: get
   DeleteBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -162,82 +162,66 @@ Resources:
           Properties:
             Path: /bookings/return
             Method: put
-  GetUserInfoFunction:
-    Type: AWS::Serverless::Function
-    Properties:
-      CodeUri: target/bookings-api-dev.jar
-      Handler: com.wirelessiths.handler.GetUserInfoHandler::handleRequest
-      Runtime: java8
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName:
-              Ref: TableName
-      Events:
-        GetUserInfo:
-          Type: Api
-          Properties:
-            Path: /bookings/getuserinfo
-            Method: GET
 
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
     Properties:
       TableName: !Ref TableName
       AttributeDefinitions:
-      - AttributeName: scooterId
-        AttributeType: S
-      - AttributeName: endTime
-        AttributeType: S
-      - AttributeName: bookingId
-        AttributeType: S
-      - AttributeName: userId
-        AttributeType: S
-      - AttributeName: date
-        AttributeType: S
-      - AttributeName: startTime
-        AttributeType: S
+        - AttributeName: scooterId
+          AttributeType: S
+        - AttributeName: endTime
+          AttributeType: S
+        - AttributeName: bookingId
+          AttributeType: S
+        - AttributeName: userId
+          AttributeType: S
+        - AttributeName: date
+          AttributeType: S
+        - AttributeName: startTime
+          AttributeType: S
       KeySchema:
-      - AttributeName: scooterId
-        KeyType: HASH
-      - AttributeName: endTime
-        KeyType: RANGE
+        - AttributeName: scooterId
+          KeyType: HASH
+        - AttributeName: endTime
+          KeyType: RANGE
       ProvisionedThroughput:
         ReadCapacityUnits: 1
         WriteCapacityUnits: 1
       GlobalSecondaryIndexes:
-      - IndexName: userIndex
-        KeySchema:
-        - AttributeName: userId
-          KeyType: HASH
-        - AttributeName: startTime
-          KeyType: RANGE
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: bookingIndex
-        KeySchema:
-        - AttributeName: bookingId
-          KeyType: HASH
-        - AttributeName: startTime
-          KeyType: RANGE
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
-      - IndexName: dateIndex
-        KeySchema:
-        - AttributeName: date
-          KeyType: HASH
-        - AttributeName: scooterId
-          KeyType: RANGE
-        Projection:
-          ProjectionType: ALL
-        ProvisionedThroughput:
-          ReadCapacityUnits: 1
-          WriteCapacityUnits: 1
+        - IndexName: userIndex
+          KeySchema:
+            - AttributeName: userId
+              KeyType: HASH
+            - AttributeName: startTime
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: bookingIndex
+          KeySchema:
+            - AttributeName: bookingId
+              KeyType: HASH
+            - AttributeName: startTime
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
+        - IndexName: dateIndex
+          KeySchema:
+            - AttributeName: date
+              KeyType: HASH
+            - AttributeName: scooterId
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 1
+            WriteCapacityUnits: 1
 
 Outputs:
   GetBookingFunction:
@@ -271,7 +255,3 @@ Outputs:
   ReturnScooterFunction:
     Description: "ReturnScooter Lambda Function ARN"
     Value: !GetAtt ReturnScooterFunction.Arn
-
-  GetUserInfoFunction:
-    Description: "GetUserInfo Lambda Function ARN"
-    Value: !GetAtt GetUserInfoFunction.Arn

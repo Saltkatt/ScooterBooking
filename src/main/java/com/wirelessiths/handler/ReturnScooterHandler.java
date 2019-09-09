@@ -51,7 +51,7 @@ import java.util.Optional;
                 JsonNode body = null;
                 String scooterId = "";
                 String bookingId = "";
-                String userId = AuthService.getUserInfo(input, "sub");
+                String userId = AuthService.getUserId(input);
                 boolean isAdmin = AuthService.isAdmin(input);
 
                 body = new ObjectMapper().readTree((String) input.get("body"));

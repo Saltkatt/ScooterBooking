@@ -12,11 +12,10 @@ public class AuthService {
     /**
      * Looks in nested request Map for user claims. "sub" as input for userId, "username" as input for username.
      * @param input The request from lambda
-     * @param field The key in the claims map
      * @return corresponding value from claims map, if none found return ""
      */
-    public static String getUserInfo(Map<String, Object> input, String field) {
-        return Optional.ofNullable(input).map(m -> (Map<String, Map>)m.get(("requestContext"))).map(m -> (Map<String, Map>)m.get("authorizer")).map(m -> (Map<String, String>)m.get("claims")).map(m -> m.get(field)).orElse("");
+    public static String getUserId(Map<String, Object> input) {
+        return Optional.ofNullable(input).map(m -> (Map<String, Map>)m.get(("requestContext"))).map(m -> (Map<String, Map>)m.get("authorizer")).map(m -> (Map<String, String>)m.get("claims")).map(m -> m.get("sub")).orElse("");
 
     }
 
@@ -26,7 +25,18 @@ public class AuthService {
      * @return True if admin, false if not admin
      */
     public static boolean isAdmin(Map<String, Object> input) {
-        return getUserInfo(input, "cognito:groups").equals("admin");
+        Object cognitoGroups = Optional.ofNullable(input).map(m -> (Map<String, Map>)m.get(("requestContext"))).map(m -> (Map<String, Map>)m.get("authorizer")).map(m -> (Map<String, Object>)m.get("claims")).map(m -> m.get("cognito:groups")).orElse("");
+         if(cognitoGroups instanceof String) {
+            return cognitoGroups.equals("admin");
+        } else if(cognitoGroups instanceof List){
+            for (String s : (List<String>)cognitoGroups) {
+                if (s.equals("admin")){
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
     }
 
 
