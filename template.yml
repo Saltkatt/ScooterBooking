@@ -13,7 +13,10 @@ Parameters:
     Default: xxx
   TableName:
     Type: String
-    Default: adam-bookings-api-dev-09-09-rc3
+    Default: xxx
+  BucketName:
+    Type: String
+    Default: xxx
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
@@ -26,7 +29,7 @@ Parameters:
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
-    Timeout: 20
+    Timeout: 60
     MemorySize: 1024
     Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
       Variables:
@@ -38,7 +41,6 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: dev
-      Cors: "'*'"
       Auth:
         ApiKeyRequired: false # OPTIONAL
         DefaultAuthorizer: MyCognitoAuth # OPTIONAL, if you use IAM permissions, specify AWS_IAM.
@@ -100,6 +102,22 @@ Resources:
             Path: /users/{id}/bookings
             Method: get
             RestApiId: !Ref MyApi  # Add this line
+  BookingStatusFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: target/bookings-api-dev.jar
+      Handler: com.wirelessiths.handler.SetBookingStatusHandler::handleRequest
+      Runtime: java8
+      Policies:
+        - DynamoDBReadPolicy:
+            TableName: !Ref TableName
+      Events:
+        GetBooking:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /bookings/{id}/status
+            Method: get
+            RestApiId: !Ref MyApi  # Add this line
   DeleteBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -125,6 +143,8 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TableName
+        - S3ReadPolicy:
+            BucketName: !Ref BucketName
       Events:
         CreateBooking:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -146,45 +166,6 @@ Resources:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /bookings/{id}
-            Method: put
-            RestApiId: !Ref MyApi  # Add this line
-  ActivateBookingFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-    Properties:
-      CodeUri: target/bookings-api-dev.jar
-      Handler: com.wirelessiths.handler.ActivateBookingHandler::handleRequest
-      Runtime: java8
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref TableName
-      Events:
-        ActivateBooking:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /bookings/activate
-            Method: post
-            RestApiId: !Ref MyApi  # Add this line
-  ReturnScooterFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-    Properties:
-      CodeUri: target/bookings-api-dev.jar
-      Handler: com.wirelessiths.handler.ReturnScooterHandler::handleRequest
-      Runtime: java8
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref TableName
-        - Statement:
-            Effect: Allow
-            Action:
-              - cognito-idp:AdminGetUser
-              - cognito-idp:ListUsers
-            Resource:
-              Ref: UserPoolArn
-      Events:
-        UpdateForReturnScooterBooking:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /bookings/return
             Method: put
             RestApiId: !Ref MyApi  # Add this line
 
@@ -273,10 +254,3 @@ Outputs:
     Description: "UpdateBooking Lambda Function ARN"
     Value: !GetAtt UpdateBookingFunction.Arn
 
-  ActivateBookingFunction:
-    Description: "Activate Booking Lambda Function ARN"
-    Value: !GetAtt ActivateBookingFunction.Arn
-
-  ReturnScooterFunction:
-    Description: "ReturnScooter Lambda Function ARN"
-    Value: !GetAtt ReturnScooterFunction.Arn

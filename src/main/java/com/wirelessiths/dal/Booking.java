@@ -5,8 +5,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
-import com.amazonaws.services.dynamodbv2.model.ComparisonOperator;
-import com.amazonaws.services.dynamodbv2.model.Condition;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
@@ -35,6 +33,7 @@ public class Booking {
     private String userId;
 
     private Instant startTime;
+
     private Instant endTime;
     private LocalDate date;
 
@@ -86,7 +85,7 @@ public class Booking {
         this.scooterId = scooterId;
     }
 
-
+    //@JsonFormat(pattern = "yyyy-MM-dd T HH:mm:ss", timezone = "UTC")
     @DynamoDBRangeKey(attributeName = "endTime")
     @DynamoDBAttribute(attributeName = "endTime")
     @DynamoDBTypeConverted( converter = InstantConverter.class )
@@ -96,6 +95,8 @@ public class Booking {
     public void setEndTime(Instant endTime) {
         this.endTime = endTime;
     }
+
+
 
 
     @DynamoDBIndexRangeKey(attributeName = "startTime", globalSecondaryIndexName = "dateIndex")
@@ -145,7 +146,7 @@ public class Booking {
     }
 
     @DynamoDBTypeConvertedEnum
-    @DynamoDBAttribute(attributeName="tripStatus")
+    @DynamoDBAttribute(attributeName="bookingStatus")
     public BookingStatus getBookingStatus() {
         return bookingStatus;
     }
@@ -164,6 +165,7 @@ public class Booking {
                 ", endTime=" + endTime +
                 ", date=" + date +
                 ", tripStatus=" + tripStatus +
+                ", bookingStatus=" + bookingStatus +
                 '}';
     }
 
@@ -254,7 +256,7 @@ public class Booking {
             return booking;
     }
 
-    public void update(Booking booking) throws  IOException {   //TODO:  throw IOException/try&catch?
+    public void update(Booking booking) throws  IOException {
 
         logger.info("User - update(): " + booking.toString());
         //TODO: Optimistic Locking och Condition Expressions???

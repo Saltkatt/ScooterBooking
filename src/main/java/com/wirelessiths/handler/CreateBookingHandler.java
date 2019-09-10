@@ -7,21 +7,20 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
-import com.wirelessiths.dal.TripStatus;
+import com.wirelessiths.dal.BookingStatus;
 import com.wirelessiths.dal.Booking;
-import com.wirelessiths.s3.ReadFile;
+import com.wirelessiths.s3.Settings;
 import com.wirelessiths.service.AuthService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+
+import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
-
-import static com.wirelessiths.s3.ReadFile.readFileInBucket;
-import static com.wirelessiths.s3.Settings.getSettings;
 
 /**
  * This class handles save requests and implements RequestHandler and ApiGatewayResponse.
@@ -47,15 +46,27 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
             booking.setStartTime(Instant.parse(body.get("startTime").asText()));
             booking.setEndTime(Instant.parse(body.get("endTime").asText()));
             booking.setDate(LocalDate.parse(body.get("date").asText()));
-            booking.setTripStatus(TripStatus.WAITING_TO_START);
+            booking.setBookingStatus(BookingStatus.VALID);
 
-            Map<String, Integer> appConfig = ReadFile.readFileInBucket();
-            int maxDuration =  appConfig.get("maxDuration");
-            int buffer = appConfig.get("buffer");
-            int maxAllowedBookings = appConfig.get("maxBookingPerUser");
+            Settings settings = Settings.getSettings();
+            int maxDuration = settings.getMaxDuration();
+            int buffer = settings.getBuffer();
+            int maxAllowedBookings = settings.getMaxBookings();
             String message;
+            double duration = Duration.between(booking.getStartTime(), booking.getEndTime()).getSeconds();
 
-            if(booking.getByUserId(booking.getUserId()).size() <= maxAllowedBookings) {
+            if(duration > maxDuration) {
+
+                message = "Requested timespan is more than max allowed length,  allowed length: " + maxDuration/60f +
+                        " min, requested length: " +  duration/60f + " min";
+                return ApiGatewayResponse.builder()
+                        .setStatusCode(409)
+                        .setObjectBody(message)
+                        .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
+                        .build();
+            }
+
+            if(booking.getByUserId(booking.getUserId()).size() >= maxAllowedBookings) {
 
                 message = "User has reached max number of allowed bookings";
                 return ApiGatewayResponse.builder()
@@ -65,9 +76,9 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
                         .build();
             }
 
-            if(booking.validateBooking(booking, maxDuration, buffer).size() > 0){//if booking infringes on existing bookings, bookings.size will be > 0
+            if(booking.validateBooking(booking, maxDuration, buffer).size() > 0){//returns list on infringing bookings
 
-                message =  "Scooter with id: " + booking.getScooterId() + "is not available for the selected timespan";
+                message =  "Scooter with id: " + booking.getScooterId() + " is not available for the selected timespan";
                 return ApiGatewayResponse.builder()
                         .setStatusCode(409)
                         .setObjectBody(message)
