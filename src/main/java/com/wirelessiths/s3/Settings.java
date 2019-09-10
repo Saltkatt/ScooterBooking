@@ -1,10 +1,16 @@
 package com.wirelessiths.s3;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.io.IOException;
 import java.util.Map;
 
 import static com.wirelessiths.s3.ReadFile.readFileInBucket;
 
 public class Settings {
+
+    static final Logger logger = LogManager.getLogger(Settings.class);
 
     private int buffer;
     private int maxDuration;
@@ -58,17 +64,26 @@ public class Settings {
      * Creates new hashmap for values retrieved from readFileInBucket() and sets the values to Settings variables.
      * @return settings
      */
-    public static Settings getSettings() {
+    public static Settings getSettings() throws IOException, Exception {
+
+
+        logger.info("a");
 
         //Create new hashmap "config" to receive hashmap in readFileInBucket().
         Map<String, Integer > config = readFileInBucket();
+        logger.info("b");
         Settings settings = new Settings();
+        logger.info("c");
 
         //setBuffer with config buffer value.
         settings.setBuffer(config.get("buffer"));
+        logger.info("d");
         settings.setMaxDuration(config.get("maxDuration"));
-        settings.setMaxBookings(config.get("maxBookings"));
+        logger.info("e");
+        settings.setMaxBookings(config.get("maxBookingsPerUser"));
+        logger.info("f");
         settings.setNotCheckedOut(config.get("notCheckedOut"));
+        logger.info("g");
 
         return settings;
     }

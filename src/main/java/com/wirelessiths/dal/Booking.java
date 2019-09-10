@@ -37,7 +37,6 @@ public class Booking {
     private Instant endTime;
     private LocalDate date;
 
-    private TripStatus tripStatus;
     private BookingStatus bookingStatus;
 
 
@@ -136,16 +135,6 @@ public class Booking {
     }
 
     @DynamoDBTypeConvertedEnum
-    @DynamoDBAttribute(attributeName="tripStatus")
-    public TripStatus getTripStatus() {
-        return tripStatus;
-    }
-
-    public void setTripStatus(TripStatus tripStatus) {
-        this.tripStatus = tripStatus;
-    }
-
-    @DynamoDBTypeConvertedEnum
     @DynamoDBAttribute(attributeName="bookingStatus")
     public BookingStatus getBookingStatus() {
         return bookingStatus;
@@ -164,7 +153,6 @@ public class Booking {
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", date=" + date +
-                ", tripStatus=" + tripStatus +
                 ", bookingStatus=" + bookingStatus +
                 '}';
     }

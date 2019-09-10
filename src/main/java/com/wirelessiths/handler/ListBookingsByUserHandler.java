@@ -25,6 +25,7 @@ public class ListBookingsByUserHandler implements RequestHandler<Map<String, Obj
 
             Map<String,String> pathParameters =  (Map<String,String>)input.get("pathParameters");
             String userId = pathParameters.get("id");
+            boolean isAdmin = AuthService.isAdmin(input);
             String tokenUserId = AuthService.getUserId(input);
             if(!userId.equals(tokenUserId) && !AuthService.isAdmin(input)) {
                 Response responseBody = new Response("Not authorized to view this page. Provided user id does not match the your user or you are not an Admin", input);

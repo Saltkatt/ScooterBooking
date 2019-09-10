@@ -1,5 +1,6 @@
 package com.wirelessiths.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,8 +28,10 @@ public class AuthService {
     public static boolean isAdmin(Map<String, Object> input) {
         Object cognitoGroups = Optional.ofNullable(input).map(m -> (Map<String, Map>)m.get(("requestContext"))).map(m -> (Map<String, Map>)m.get("authorizer")).map(m -> (Map<String, Object>)m.get("claims")).map(m -> m.get("cognito:groups")).orElse("");
          if(cognitoGroups instanceof String) {
+             logger.info("is instance of string");
             return cognitoGroups.equals("admin");
         } else if(cognitoGroups instanceof List){
+             logger.info("is instance of list");
             for (String s : (List<String>)cognitoGroups) {
                 if (s.equals("admin")){
                     return true;
@@ -36,6 +39,7 @@ public class AuthService {
             }
             return false;
         }
+        logger.info("is not an instance of string or list");
         return false;
     }
 

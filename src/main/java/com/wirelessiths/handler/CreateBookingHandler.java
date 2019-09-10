@@ -37,20 +37,30 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
             // get the 'body' from input
             JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
             Booking booking = new Booking();
-
+            logger.info("1");
             booking.setScooterId(body.get("scooterId").asText());
+            logger.info("2");
 
             booking.setUserId(AuthService.getUserId(input));
+            logger.info("3");
             booking.setStartTime(Instant.parse(body.get("startTime").asText()));
+            logger.info("4");
             booking.setEndTime(Instant.parse(body.get("endTime").asText()));
+            logger.info("5");
             booking.setBookingStatus(BookingStatus.VALID);
+            logger.info("6");
 
             Settings settings = Settings.getSettings();
+            logger.info("7");
             int maxDuration = settings.getMaxDuration();
+            logger.info("8");
             int buffer = settings.getBuffer();
+            logger.info("9");
             int maxAllowedBookings = settings.getMaxBookings();
+            logger.info("10");
             String message;
             double duration = Duration.between(booking.getStartTime(), booking.getEndTime()).getSeconds();
+            logger.info("11");
 
             if(duration > maxDuration) {
 
