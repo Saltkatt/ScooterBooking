@@ -176,7 +176,7 @@ Resources:
       TableName: !Ref TableName
       AttributeDefinitions:
         - AttributeName: scooterId
-          AttributeType: S
+          AttributeType: N
         - AttributeName: endTime
           AttributeType: S
         - AttributeName: bookingId

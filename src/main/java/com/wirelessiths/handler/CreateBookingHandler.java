@@ -37,7 +37,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
             JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
             Booking booking = new Booking();
 
-            booking.setScooterId(body.get("scooterId").asText());
+            booking.setScooterId(body.get("scooterId").asInt());
 
             booking.setUserId(AuthService.getUserId(input));
             booking.setStartTime(Instant.parse(body.get("startTime").asText()));
@@ -64,7 +64,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
             if(booking.getByUserId(booking.getUserId()).size() >= maxAllowedBookings) {
 
-                message = "User has reached max number of allowed bookings";
+                message = "User has reached max number of allowed concurrent bookings";
                 return ApiGatewayResponse.builder()
                         .setStatusCode(409)
                         .setObjectBody(message)

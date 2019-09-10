@@ -28,7 +28,7 @@ public class Booking {
     // get the table name from env. var. set in serverless.yml
     private static final String BOOKINGS_TABLE_NAME = System.getenv("BOOKINGS_TABLE_NAME");
 
-    private String scooterId;
+    private int scooterId;
     private String bookingId;
     private String userId;
 
@@ -75,10 +75,10 @@ public class Booking {
 
 
     @DynamoDBHashKey(attributeName = "scooterId")
-    public String getScooterId() {
+    public int getScooterId() {
         return this.scooterId;
     }
-    public void setScooterId(String scooterId) {
+    public void setScooterId(int scooterId) {
         this.scooterId = scooterId;
     }
 
@@ -151,7 +151,6 @@ public class Booking {
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", date=" + date +
-                ", tripStatus=" + tripStatus +
                 ", bookingStatus=" + bookingStatus +
                 '}';
     }
@@ -165,7 +164,7 @@ public class Booking {
         String endPlusMaxDur = booking.getEndTime().plusSeconds(maxDuration).toString();
 
         Map<String, AttributeValue> values = new HashMap<>();
-        values.put(":id", new AttributeValue().withS(booking.getScooterId()));
+        values.put(":id", new AttributeValue().withN(Integer.toString(booking.getScooterId())));
         values.put(":start", new AttributeValue().withS(start));
         values.put(":endPlusMaxDur", new AttributeValue().withS(endPlusMaxDur));
         values.put(":end", new AttributeValue().withS(end));
@@ -275,7 +274,7 @@ public class Booking {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Booking booking = (Booking) o;
-        return scooterId.equals(booking.scooterId) &&
+        return scooterId == booking.scooterId &&
                 bookingId.equals(booking.bookingId) &&
                 userId.equals(booking.userId) &&
                 startTime.equals(booking.startTime) &&
