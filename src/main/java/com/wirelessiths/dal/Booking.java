@@ -256,7 +256,7 @@ public class Booking {
             return booking;
     }
 
-    public void update(Booking booking) throws  IOException {   //TODO:  throw IOException/try&catch?
+    public void update(Booking booking) throws  IOException {
 
         logger.info("User - update(): " + booking.toString());
         //TODO: Optimistic Locking och Condition Expressions???
