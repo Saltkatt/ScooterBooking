@@ -25,7 +25,7 @@ import java.util.Map;
 public class ListFiles {
 
 
-    static String bucketName = "settings";
+    static String bucketName = "booking-admin-settings1567688833719";
 
     public static void listFilesInBucket() {
         final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();

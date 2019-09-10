@@ -20,7 +20,7 @@ public class UploadFile {
         try{
             if(s3.doesBucketExistV2(bucketName))
             s3.putObject(bucketName, keyName, new File(filePath));
-            System.out.println("Succes uploading");
+            System.out.println("Success uploading");
 
         }catch (AmazonServiceException ex){
             ex.getMessage();
