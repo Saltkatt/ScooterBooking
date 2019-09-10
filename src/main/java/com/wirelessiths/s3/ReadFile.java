@@ -18,7 +18,7 @@ public class ReadFile {
 
    public static Map<String, Integer> readFileInBucket() {
        String keyName = "admin.txt";
-       String bucketName = "booking-admin-settings1567688833719";
+       String bucketName = System.getenv("BUCKET_NAME");
 
        final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
        S3Object object = s3.getObject(new GetObjectRequest(bucketName, keyName));

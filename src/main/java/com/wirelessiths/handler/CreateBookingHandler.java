@@ -43,9 +43,6 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
             booking.setUserId(AuthService.getUserId(input));
             booking.setStartTime(Instant.parse(body.get("startTime").asText()));
             booking.setEndTime(Instant.parse(body.get("endTime").asText()));
-            booking.setStartTime(Instant.parse(body.get("startTime").asText()));
-            booking.setEndTime(Instant.parse(body.get("endTime").asText()));
-            booking.setDate(LocalDate.parse(body.get("date").asText()));
             booking.setBookingStatus(BookingStatus.VALID);
 
             Settings settings = Settings.getSettings();

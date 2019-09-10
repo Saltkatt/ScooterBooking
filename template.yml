@@ -35,6 +35,7 @@ Globals:
       Variables:
         BOOKINGS_TABLE_NAME: !Ref TableName
         USER_POOL_ID: !Ref UserPoolId
+        BUCKET_NAME: !Ref BucketName
 
 Resources:
   MyApi:
