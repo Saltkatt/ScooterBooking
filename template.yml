@@ -14,7 +14,6 @@ Parameters:
   TableName:
     Type: String
     Default: xxx
-
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
@@ -165,45 +164,6 @@ Resources:
             Path: /bookings/{id}
             Method: put
             RestApiId: !Ref MyApi  # Add this line
-  ActivateBookingFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-    Properties:
-      CodeUri: target/bookings-api-dev.jar
-      Handler: com.wirelessiths.handler.ActivateBookingHandler::handleRequest
-      Runtime: java8
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref TableName
-      Events:
-        ActivateBooking:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /bookings/activate
-            Method: post
-            RestApiId: !Ref MyApi  # Add this line
-  ReturnScooterFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-    Properties:
-      CodeUri: target/bookings-api-dev.jar
-      Handler: com.wirelessiths.handler.ReturnScooterHandler::handleRequest
-      Runtime: java8
-      Policies:
-        - DynamoDBCrudPolicy:
-            TableName: !Ref TableName
-        - Statement:
-            Effect: Allow
-            Action:
-              - cognito-idp:AdminGetUser
-              - cognito-idp:ListUsers
-            Resource:
-              Ref: UserPoolArn
-      Events:
-        UpdateForReturnScooterBooking:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-          Properties:
-            Path: /bookings/return
-            Method: put
-            RestApiId: !Ref MyApi  # Add this line
 
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
@@ -290,10 +250,3 @@ Outputs:
     Description: "UpdateBooking Lambda Function ARN"
     Value: !GetAtt UpdateBookingFunction.Arn
 
-  ActivateBookingFunction:
-    Description: "Activate Booking Lambda Function ARN"
-    Value: !GetAtt ActivateBookingFunction.Arn
-
-  ReturnScooterFunction:
-    Description: "ReturnScooter Lambda Function ARN"
-    Value: !GetAtt ReturnScooterFunction.Arn
