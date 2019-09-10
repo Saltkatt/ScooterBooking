@@ -33,11 +33,8 @@ public class Booking {
     private String userId;
 
     private Instant startTime;
-
     private Instant endTime;
     private LocalDate date;
-
-    private TripStatus tripStatus;
     private BookingStatus bookingStatus;
 
 
@@ -133,16 +130,6 @@ public class Booking {
     }
     public void setUserId(String userId) {
         this.userId = userId;
-    }
-
-    @DynamoDBTypeConvertedEnum
-    @DynamoDBAttribute(attributeName="tripStatus")
-    public TripStatus getTripStatus() {
-        return tripStatus;
-    }
-
-    public void setTripStatus(TripStatus tripStatus) {
-        this.tripStatus = tripStatus;
     }
 
     @DynamoDBTypeConvertedEnum
