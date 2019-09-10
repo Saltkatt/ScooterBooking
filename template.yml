@@ -14,6 +14,9 @@ Parameters:
   TableName:
     Type: String
     Default: xxx
+  BucketName:
+    Type: String
+    Default: xxx
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
@@ -38,7 +41,6 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: dev
-      Cors: "'*'"
       Auth:
         ApiKeyRequired: false # OPTIONAL
         DefaultAuthorizer: MyCognitoAuth # OPTIONAL, if you use IAM permissions, specify AWS_IAM.
@@ -141,6 +143,8 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TableName
+        - S3ReadPolicy:
+            BucketName: !Ref BucketName
       Events:
         CreateBooking:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
