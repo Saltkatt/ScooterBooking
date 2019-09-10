@@ -59,10 +59,8 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                     }
 
 
-                    //TODO: Skriv tester
                     if ( body.has("endTime") || body.has("scooterId")) {
 
-                        //TODO: Kolla om EndTime och ScooterId har rätt format (regex) Egen metod?
                         isNew = true;
 
                         newBooking = rewriteBooking(booking);
