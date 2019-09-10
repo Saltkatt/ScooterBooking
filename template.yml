@@ -13,7 +13,7 @@ Parameters:
     Default: xxx
   TableName:
     Type: String
-    Default: adam-bookings-api-dev-09-10-rc1
+    Default: adam-bookings-api-dev-09-09-rc3
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
@@ -68,10 +68,6 @@ Resources:
             Path: /bookings/{id}
             Method: get
             RestApiId: !Ref MyApi  # Add this line
-            RequestValidatorId: !Ref RequestValidator
-            AuthorizationScopes:
-              - openid
-              - email
   ListBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -88,10 +84,6 @@ Resources:
             Path: /bookings
             Method: get
             RestApiId: !Ref MyApi  # Add this line
-            RequestValidatorId: !Ref RequestValidator
-            AuthorizationScopes:
-              - openid
-              - email
   ListBookingsByUserFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -108,10 +100,6 @@ Resources:
             Path: /users/{id}/bookings
             Method: get
             RestApiId: !Ref MyApi  # Add this line
-            RequestValidatorId: !Ref RequestValidator
-            AuthorizationScopes:
-              - openid
-              - email
   DeleteBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -128,10 +116,6 @@ Resources:
             Path: /bookings/{id}
             Method: delete
             RestApiId: !Ref MyApi  # Add this line
-            RequestValidatorId: !Ref RequestValidator
-            AuthorizationScopes:
-              - openid
-              - email
   CreateBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -148,10 +132,6 @@ Resources:
             Path: /bookings
             Method: post
             RestApiId: !Ref MyApi  # Add this line
-            RequestValidatorId: !Ref RequestValidator
-            AuthorizationScopes:
-              - openid
-              - email
   UpdateBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -168,10 +148,6 @@ Resources:
             Path: /bookings/{id}
             Method: put
             RestApiId: !Ref MyApi  # Add this line
-            RequestValidatorId: !Ref RequestValidator
-            AuthorizationScopes:
-              - openid
-              - email
   ActivateBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -188,10 +164,6 @@ Resources:
             Path: /bookings/activate
             Method: post
             RestApiId: !Ref MyApi  # Add this line
-            RequestValidatorId: !Ref RequestValidator
-            AuthorizationScopes:
-              - openid
-              - email
   ReturnScooterFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -215,18 +187,6 @@ Resources:
             Path: /bookings/return
             Method: put
             RestApiId: !Ref MyApi  # Add this line
-            RequestValidatorId: !Ref RequestValidator
-            AuthorizationScopes:
-              - openid
-              - email
-
-  RequestValidator:
-    Type: AWS::ApiGateway::RequestValidator
-    Properties:
-    Name: RequestValidator
-    RestApiId: !Ref MyApi
-    ValidateRequestBody: True
-    ValidateRequestParameters: True
 
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
