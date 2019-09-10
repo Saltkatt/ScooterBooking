@@ -20,7 +20,7 @@ import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Map;
 
-public class BookingStatusHandler  implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
+public class SetBookingStatusHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 // json request
 //    {
 //        "command": "start",

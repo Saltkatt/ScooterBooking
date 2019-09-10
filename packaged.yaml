@@ -107,7 +107,7 @@ Resources:
     Type: AWS::Serverless::Function
     Properties:
       CodeUri: s3://carl-bucket-29/cd792ba8797ed535d01f5d40335a493b
-      Handler: com.wirelessiths.handler.BookingStatusHandler::handleRequest
+      Handler: com.wirelessiths.handler.SetBookingStatusHandler::handleRequest
       Runtime: java8
       Policies:
       - DynamoDBReadPolicy:
