@@ -42,6 +42,7 @@ Resources:
     Type: AWS::Serverless::Api
     Properties:
       StageName: dev
+
       Auth:
         ApiKeyRequired: false # OPTIONAL
         DefaultAuthorizer: MyCognitoAuth # OPTIONAL, if you use IAM permissions, specify AWS_IAM.
@@ -71,6 +72,7 @@ Resources:
             Path: /bookings/{id}
             Method: get
             RestApiId: !Ref MyApi  # Add this line
+
   ListBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:

@@ -78,6 +78,7 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
 
                         booking = setBookingProperties(updateBookingRequest, booking);
                         booking.update(booking);
+
                     }
 
 
@@ -146,7 +147,7 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
 
 
         Optional.ofNullable(updateBookingRequest).ifPresent(optUpdateRequest -> {
-                optUpdateRequest.getUserId().filter(s -> !s.isEmpty()).ifPresent(booking::setUserId);
+                optUpdateRequest.getUserId().ifPresent(booking::setUserId);
                 optUpdateRequest.getScooterId().filter(s -> !s.isEmpty()).ifPresent(booking::setScooterId);
                 optUpdateRequest.getBookingId().filter(s -> !s.isEmpty()).ifPresent(booking::setBookingId);
 
