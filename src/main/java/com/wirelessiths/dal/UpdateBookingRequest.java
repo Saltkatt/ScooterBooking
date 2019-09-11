@@ -73,14 +73,6 @@ TODO: Check how status is being saved in db. Might need to alter how enum is set
         this.date = date;
     }
 
-    public Optional<String> getTripStatus() {
-        return Optional.ofNullable(tripStatus);
-    }
-
-    public void setTripStatus(String status) {
-        this.tripStatus = status;
-    }
-
     @Override
     public String toString() {
         return "UpdateBookingRequest{" +
@@ -90,7 +82,6 @@ TODO: Check how status is being saved in db. Might need to alter how enum is set
                 ", startTime='" + startTime + '\'' +
                 ", endTime='" + endTime + '\'' +
                 ", date='" + date + '\'' +
-                ", tripStatus='" + tripStatus.toString() + '\'' +
                 '}';
     }
 
@@ -104,12 +95,11 @@ TODO: Check how status is being saved in db. Might need to alter how enum is set
                 Objects.equals(getUserId(), that.getUserId()) &&
                 Objects.equals(getStartTime(), that.getStartTime()) &&
                 Objects.equals(getEndTime(), that.getEndTime()) &&
-                Objects.equals(getDate(), that.getDate()) &&
-                Objects.equals(that.getTripStatus(), that.getTripStatus());
+                Objects.equals(getDate(), that.getDate());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getScooterId(), getBookingId(), getUserId(), getStartTime(), getEndTime(), getDate(), getTripStatus());
+        return Objects.hash(getScooterId(), getBookingId(), getUserId(), getStartTime(), getEndTime(), getDate());
     }
 }

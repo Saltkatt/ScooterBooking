@@ -183,13 +183,6 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                     }
                 });
 
-                optUpdateRequest.getTripStatus().ifPresent(n -> {
-                    if (n.equals(TripStatus.WAITING_TO_START.toString()) || n.equals(TripStatus.IN_PROGRESS.toString()) || n.equals(TripStatus.COMPLETED.toString()) || n.equals(TripStatus.SCOOTER_NOT_RETURNED.toString())) {
-                        TripStatus tripStatus = TripStatus.valueOf(n);
-                        booking.setTripStatus(tripStatus);
-                    }
-
-                });
 
 
             } );
