@@ -44,7 +44,7 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
 
 
             boolean isNew = false;
-            Booking newBooking = null;
+            Booking updatedBooking = null;
 
 
             // send the response back
@@ -63,21 +63,22 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
 
                         isNew = true;
 
-                        newBooking = rewriteBooking(booking);
+                        updatedBooking = rewriteBooking(booking);
                     }
 
-                    if(isNew) {
+                    if(isNew)  {
 
-                        if(newBooking != null) {
+                        if(updatedBooking != null) {
 
-                            newBooking = setBookingProperties(updateBookingRequest, newBooking);
-                            newBooking.save(newBooking);
+                            updatedBooking = setBookingProperties(updateBookingRequest, updatedBooking);
+                            updatedBooking.save(updatedBooking);
                         }
                     }
                     else {
 
-                        booking = setBookingProperties(updateBookingRequest, booking);
-                        booking.update(booking);
+                        updatedBooking = booking;
+                        updatedBooking = setBookingProperties(updateBookingRequest, updatedBooking);
+                        updatedBooking.update(updatedBooking);
                     }
 
 
@@ -97,7 +98,7 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
 
                 return ApiGatewayResponse.builder()
                         .setStatusCode(200)
-                        .setObjectBody(booking)
+                        .setObjectBody(updatedBooking)
                         .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
                         .build();
             }
@@ -183,13 +184,6 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                     }
                 });
 
-                optUpdateRequest.getTripStatus().ifPresent(n -> {
-                    if (n.equals(TripStatus.WAITING_TO_START.toString()) || n.equals(TripStatus.IN_PROGRESS.toString()) || n.equals(TripStatus.COMPLETED.toString()) || n.equals(TripStatus.SCOOTER_NOT_RETURNED.toString())) {
-                        TripStatus tripStatus = TripStatus.valueOf(n);
-                        booking.setTripStatus(tripStatus);
-                    }
-
-                });
 
 
             } );
