@@ -1,16 +1,19 @@
 package com.wirelessiths.dal;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.service.AuthService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.junit.Ignore;
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
 public class AuthServiceTest {
+
 
 
    private Map<String, Object> mostOut = new HashMap<>();
@@ -18,7 +21,6 @@ public class AuthServiceTest {
    private Map<String, Object> middle = new HashMap<>();
    private Map<String, String> innerMost = new HashMap<>();
     private Map<String, List<String>> innerMostList = new HashMap<>();
-
 
     @Test
     public void yieldsInmostString() {
@@ -117,11 +119,9 @@ public class AuthServiceTest {
 
     @Test
     public void isAdminReturnsTrueWhenMultipleGroupsAndOneOfThemIsAdmin() {
-        List<String> groups = new ArrayList<>();
-        groups.add("admin");
-        groups.add("user");
-        innerMostList.put("cognito:groups", groups);
-        middle.put("claims", innerMostList);
+
+        innerMost.put("cognito:groups", "[\"admin\", \"users\"]");
+        middle.put("claims", innerMost);
         middleOut.put("authorizer", middle);
         mostOut.put("requestContext", middleOut);
 
@@ -132,11 +132,9 @@ public class AuthServiceTest {
 
     @Test
     public void isAdminFalseWhenNoAdminAdded() {
-        List<String> groups = new ArrayList<>();
-        groups.add("user2");
-        groups.add("user");
-        innerMostList.put("cognito:groups", groups);
-        middle.put("claims", innerMostList);
+
+        innerMost.put("cognito:groups", "[\"benny\", \"users\"]");
+        middle.put("claims", innerMost);
         middleOut.put("authorizer", middle);
         mostOut.put("requestContext", middleOut);
 
@@ -157,6 +155,28 @@ public class AuthServiceTest {
         assertTrue(result);
 
     }
+
+    @Test
+    public void isAdminTest() {
+        String cognitoGroups = "[\"admin\", \"users\"]";
+        if (cognitoGroups.startsWith("[") && cognitoGroups.endsWith("]")) {
+            ObjectMapper mapper = new ObjectMapper();
+            List<String> groupsList = new ArrayList<>();
+            try {
+                groupsList = Arrays.asList(mapper.readValue(cognitoGroups, String[].class));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            for (String s: groupsList) {
+                if(s.equals("admin")) {
+                   assertTrue(true);
+                }
+            }
+           assertFalse(false);
+        }
+        assertFalse(false);
+    }
+
 
 
 }
