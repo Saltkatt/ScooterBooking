@@ -18,7 +18,6 @@ import java.io.IOException;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.Collections;
 import java.util.Map;
 
@@ -43,9 +42,6 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
             booking.setUserId(AuthService.getUserId(input));
             booking.setStartTime(Instant.parse(body.get("startTime").asText()));
             booking.setEndTime(Instant.parse(body.get("endTime").asText()));
-            booking.setStartTime(Instant.parse(body.get("startTime").asText()));
-            booking.setEndTime(Instant.parse(body.get("endTime").asText()));
-            booking.setDate(LocalDate.parse(body.get("date").asText()));
             booking.setBookingStatus(BookingStatus.VALID);
 
             Settings settings = Settings.getSettings();
@@ -68,7 +64,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
             if(booking.getByUserId(booking.getUserId()).size() >= maxAllowedBookings) {
 
-                message = "User has reached max number of allowed bookings";
+                message = "User has reached max number of allowed concurrent bookings";
                 return ApiGatewayResponse.builder()
                         .setStatusCode(409)
                         .setObjectBody(message)
@@ -76,7 +72,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
                         .build();
             }
 
-            if(booking.validateBooking(booking, maxDuration, buffer).size() > 0){//returns list on infringing bookings
+            if(booking.validateBooking(booking, maxDuration, buffer).size() > 0){//returns list of infringing bookings
 
                 message =  "Scooter with id: " + booking.getScooterId() + " is not available for the selected timespan";
                 return ApiGatewayResponse.builder()
@@ -115,7 +111,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
         }catch (Exception ex){
 
-            logger.error("Error unknown Exception" + ex.getMessage());
+            logger.error("Error unknown Exception" + ex);
 
             Response responseBody = new Response("Error in creating booking due to unknown exception: " + ex.getMessage(), input);
             return ApiGatewayResponse.builder()

@@ -20,7 +20,7 @@ import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Map;
 
-public class SetBookingStatusHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
+public class SetBookingStateHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 // json request
 //    {
 //        "command": "start",
@@ -37,6 +37,7 @@ private final Logger logger = LogManager.getLogger(this.getClass());
         String incomingScooterId;
         String command;
         Response responseBody;
+        String newState = null;
 
         Booking booking = new Booking();
 
@@ -69,7 +70,7 @@ private final Logger logger = LogManager.getLogger(this.getClass());
                    if (!now.isAfter(startTime) || !now.isBefore(startTime.plusSeconds(deadlineSeconds)) ||
                                                 !booking.getBookingStatus().equals(BookingStatus.VALID)) {
 
-                       responseBody = new Response("booking is not in a valid state to be activated");
+                       responseBody = new Response("booking is not in a valid state to be activated", input);
                        return ApiGatewayResponse.builder()
                                .setStatusCode(400)
                                .setObjectBody(responseBody)
@@ -77,12 +78,13 @@ private final Logger logger = LogManager.getLogger(this.getClass());
                                .build();
                    }
                    booking.setBookingStatus(BookingStatus.ACTIVE);
+                   newState = BookingStatus.ACTIVE.toString();
                    //do other stuff?
                    break;
 
                case "complete":
                    //validate if end is possible
-                   if(!booking.getBookingStatus().equals(BookingStatus.VALID)){
+                   if(booking.getBookingStatus().equals(BookingStatus.CANCELLED)){
 
                        responseBody = new Response("booking is not in a valid state to be completed");
                        return ApiGatewayResponse.builder()
@@ -93,12 +95,14 @@ private final Logger logger = LogManager.getLogger(this.getClass());
                    }
                    //complete
                    booking.setBookingStatus(BookingStatus.COMPLETED);
+                   newState = BookingStatus.COMPLETED.toString();
+
                    //do other stuff?
                    break;
 
                case "cancel":
                    //validate if cancel is possible
-                   if(booking.getBookingStatus().equals(BookingStatus.VALID)){
+                   if(!booking.getBookingStatus().equals(BookingStatus.VALID)){
 
                        responseBody = new Response("booking is not in a valid state to be canceled");
                        return ApiGatewayResponse.builder()
@@ -109,10 +113,12 @@ private final Logger logger = LogManager.getLogger(this.getClass());
                    }
                    //cancel
                    booking.setBookingStatus(BookingStatus.CANCELLED);
+                   newState = BookingStatus.CANCELLED.toString();
+
                    //do other stuff?
                    break;
            }
-           responseBody = new Response("booking status set to: " + command);
+           responseBody = new Response("booking status set to: " + newState);
            booking.save(booking);
            return ApiGatewayResponse.builder()
                    .setStatusCode(200)

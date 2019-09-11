@@ -35,6 +35,7 @@ Globals:
       Variables:
         BOOKINGS_TABLE_NAME: !Ref TableName
         USER_POOL_ID: !Ref UserPoolId
+        BUCKET_NAME: !Ref BucketName
 
 Resources:
   MyApi:
@@ -102,21 +103,21 @@ Resources:
             Path: /users/{id}/bookings
             Method: get
             RestApiId: !Ref MyApi  # Add this line
-  BookingStatusFunction:
+  SetBookingStateFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: target/bookings-api-dev.jar
-      Handler: com.wirelessiths.handler.SetBookingStatusHandler::handleRequest
+      Handler: com.wirelessiths.handler.SetBookingStateHandler::handleRequest
       Runtime: java8
       Policies:
-        - DynamoDBReadPolicy:
+        - DynamoDBCrudPolicy:
             TableName: !Ref TableName
       Events:
         GetBooking:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /bookings/{id}/status
-            Method: get
+            Method: post
             RestApiId: !Ref MyApi  # Add this line
   DeleteBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -253,4 +254,8 @@ Outputs:
   UpdateBookingFunction:
     Description: "UpdateBooking Lambda Function ARN"
     Value: !GetAtt UpdateBookingFunction.Arn
+
+  SetBookingStateFunction:
+    Description: "SetBookingState Lambda Function ARN"
+    Value: !GetAtt SetBookingStateFunction.Arn
 

@@ -1,5 +1,6 @@
 package com.wirelessiths.s3;
 
+import java.io.IOException;
 import java.util.Map;
 
 import static com.wirelessiths.s3.ReadFile.readFileInBucket;
@@ -58,7 +59,7 @@ public class Settings {
      * Creates new hashmap for values retrieved from readFileInBucket() and sets the values to Settings variables.
      * @return settings
      */
-    public static Settings getSettings() {
+    public static Settings getSettings() throws IOException {
 
         //Create new hashmap "config" to receive hashmap in readFileInBucket().
         Map<String, Integer > config = readFileInBucket();
@@ -67,7 +68,7 @@ public class Settings {
         //setBuffer with config buffer value.
         settings.setBuffer(config.get("buffer"));
         settings.setMaxDuration(config.get("maxDuration"));
-        settings.setMaxBookings(config.get("maxBookings"));
+        settings.setMaxBookings(config.get("maxBookingsPerUser"));
         settings.setNotCheckedOut(config.get("notCheckedOut"));
 
         return settings;
