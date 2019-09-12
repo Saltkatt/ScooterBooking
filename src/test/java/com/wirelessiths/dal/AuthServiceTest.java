@@ -143,39 +143,6 @@ public class AuthServiceTest {
 
     }
 
-    @Test
-    public void isAdminWhenOneAdminString() {
-
-        innerMost.put("cognito:groups", "admin");
-        middle.put("claims", innerMost);
-        middleOut.put("authorizer", middle);
-        mostOut.put("requestContext", middleOut);
-
-        boolean result = AuthService.isAdmin(mostOut);
-        assertTrue(result);
-
-    }
-
-    @Test
-    public void isAdminTest() {
-        String cognitoGroups = "[\"admin\", \"users\"]";
-        if (cognitoGroups.startsWith("[") && cognitoGroups.endsWith("]")) {
-            ObjectMapper mapper = new ObjectMapper();
-            List<String> groupsList = new ArrayList<>();
-            try {
-                groupsList = Arrays.asList(mapper.readValue(cognitoGroups, String[].class));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            for (String s: groupsList) {
-                if(s.equals("admin")) {
-                   assertTrue(true);
-                }
-            }
-           assertFalse(false);
-        }
-        assertFalse(false);
-    }
 
 
 

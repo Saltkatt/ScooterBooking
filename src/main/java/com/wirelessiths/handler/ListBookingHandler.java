@@ -31,6 +31,10 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 		try {
+
+			Map<String,String> pathParameters =  (Map<String,String>)input.get("pathParameters");
+			logger.info(input.toString());
+			logger.info(context.getClientContext().toString());
 			// get all users
 			List<Booking> bookings = new Booking().list();
 

@@ -58,6 +58,7 @@ public class UserService {
 
         AWSCognitoIdentityProvider cognitoClient = UserService.getAwsCognitoIdentityProvider();
 
+
         ListUsersRequest listUsersRequest = new ListUsersRequest().withFilter("sub = \"" + sub + "\"").withUserPoolId(userPoolId);
         ListUsersResult userResults = cognitoClient.listUsers(listUsersRequest);
 
