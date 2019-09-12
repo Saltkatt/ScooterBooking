@@ -231,7 +231,15 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
-
+      LocalSecondatyIndexes:
+        - IndexName: endTimeIndex
+          KeySchema:
+          - AttributeName: date
+            KeyType: HASH
+          - AttributeName: endTime
+            KeyType: RANGE
+          Projection:
+            ProjectionType: KEYS_ONLY
 Outputs:
   GetBookingFunction:
     Description: "GetBooking Lambda Function ARN"
