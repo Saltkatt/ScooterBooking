@@ -37,9 +37,20 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 			Map<String,String> queryStringParameters = (Map<String,String>)input.get("queryStringParameters");
 
 			logger.info(queryStringParameters.toString());
-			logger.info(queryStringParameters.get("scooters"));
-			// get all users
-			List<Booking> bookings = new Booking().list();
+			logger.info(queryStringParameters.get("scooterId"));
+			List<Booking> bookings = null;
+
+			if (queryStringParameters.containsKey("scooterId")) {
+				bookings = new Booking().getByScooterId(queryStringParameters.get("scooterId"));
+			}
+
+
+
+			else{
+				// get all users
+				 bookings = new Booking().list();
+
+			}
 
 			// send the response back
 			return ApiGatewayResponse.builder()

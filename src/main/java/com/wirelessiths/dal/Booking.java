@@ -236,6 +236,24 @@ public class Booking {
         return results;
     }
 
+    public List<Booking> getByScooterId(String scooterId) throws IOException {
+        // Query with mapper
+        // Create Booking object with user id
+        Booking booking = new Booking();
+        booking.setScooterId(scooterId);
+        Map<String, AttributeValue> values = new HashMap<>();
+
+        values.put(":id", new AttributeValue().withS(booking.getScooterId()));
+        DynamoDBQueryExpression<Booking> queryExp =
+                new DynamoDBQueryExpression<>();
+        queryExp.withKeyConditionExpression("scooterId = :id");
+
+        final List<Booking> results =
+                mapper.query(Booking.class, queryExp);
+
+        return results;
+    }
+
     public Booking save(Booking booking) throws IOException {
 
             logger.info("Booking - save(): " + booking.toString());
