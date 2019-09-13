@@ -18,7 +18,7 @@ import java.util.Collections;
 import java.util.Map;
 
 public class DeleteBucket {
-    
+
     public static void deleteBucket() {
         final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
         //String bucketName = System.getenv("BUCKET_NAME");
