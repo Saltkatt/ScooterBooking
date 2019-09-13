@@ -21,8 +21,8 @@ public class DeleteBucket {
 
     public static void deleteBucket() {
         final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
-        //String bucketName = System.getenv("BUCKET_NAME");
-        String bucketName = "booking-admin-settings";
+        String bucketName = System.getenv("BUCKET_NAME");
+        //String bucketName = "booking-admin-settings";
         try {
             s3.deleteBucket(bucketName);
         }catch(AmazonServiceException ex){
