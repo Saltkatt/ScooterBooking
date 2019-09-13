@@ -20,10 +20,10 @@ import java.util.Map;
 
 public class DeleteFile {
 
-        public static void deleteFileInBucket() {
+    public static void deleteFileInBucket() {
 
         final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
-        String bucketName = "booking-admin-settings1567688833719";
+        String bucketName = System.getenv("BUCKET_NAME");
         String objectKey = "admin.txt";
 
         try{
@@ -37,5 +37,5 @@ public class DeleteFile {
             System.exit(1);
         }
 
-        }
+    }
 }
