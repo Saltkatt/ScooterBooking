@@ -24,66 +24,20 @@ import java.util.Map;
 
 public class CreateBucket {
 
- /*   private final Logger logger = LogManager.getLogger(this.getClass());
-
-    @Override
-    public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
-
-        try {
-            // get the 'body' from input
-            JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
-            final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
-            String bucketName = "booking-admin-settings";
-
-            if(!s3.doesBucketExistV2(bucketName)) {
-                s3.createBucket(bucketName);
-            }
-
-            // send the response back
-            return ApiGatewayResponse.builder()
-                    .setStatusCode(200)
-                    .setObjectBody()
-                    .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
-                    .build();
-
-        } catch (AmazonS3Exception ex) {
-            logger.error("Error in creating bucket: " + ex);
-            logger.error(ex.getMessage());
-            ex.printStackTrace();
-
-            // send the error response back
-            Response responseBody = new Response("AmazonS3Exception - missing key: " + ex.getMessage(), input);
-            return ApiGatewayResponse.builder()
-                    .setStatusCode(500)
-                    .setObjectBody(responseBody)
-                    .setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
-                    .build();
-
-        }catch (Exception ex){
-            logger.error("Error unknown Exception" + ex);
-            logger.error(ex.getMessage());
-            ex.printStackTrace();
-
-            // send the error response back
-
-            Response responseBody = new Response("Error in creating S3 bucket due to unknown exception: " + ex.getMessage(), input);
-            return ApiGatewayResponse.builder()
-                    .setStatusCode(500)
-                    .setObjectBody(responseBody)
-                    .setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
-                    .build();
-        }
-    }*/
-
     public static void createBucket() {
 
         final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
-        String bucketName = "booking-admin-settings" + System.currentTimeMillis();
+        String bucketName = System.getenv("BUCKET_NAME");
 
         try{
-            if(!s3.doesBucketExistV2(bucketName))
-            s3.createBucket(bucketName);
-            System.out.println("Created bucket: " + bucketName);
+            if(!s3.doesBucketExistV2(bucketName)){
+                s3.createBucket(bucketName);
+                System.out.println("Created bucket: " + bucketName);
+            }
+            else {
+                System.out.println("Bucket name already exists!");
+            }
+
         }catch(AmazonS3Exception ex) {
             //logger.error(ex.getMessage());
             ex.getMessage();
@@ -91,5 +45,6 @@ public class CreateBucket {
             System.out.println("AmazonServiceException");
             ex.getMessage();
         }
+
     }
 }

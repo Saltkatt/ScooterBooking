@@ -19,10 +19,10 @@ import java.util.Map;
 
 public class DeleteBucket {
 
-
     public static void deleteBucket() {
         final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
-        String bucketName = "booking-admin-settings1567688833719";
+        String bucketName = System.getenv("BUCKET_NAME");
+        //String bucketName = "booking-admin-settings";
         try {
             s3.deleteBucket(bucketName);
         }catch(AmazonServiceException ex){
