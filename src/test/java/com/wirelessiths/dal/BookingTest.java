@@ -16,7 +16,9 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -241,6 +243,22 @@ import static org.junit.Assert.*;
         assertEquals(0, list.size());
     }
 
+        @Test
+        public void getByScooterIdAllFilters(){
+            System.out.println("getByscooterId query: ");
+            Booking booking = new Booking(client, mapperConfig );
+            List<Booking> list = new ArrayList<>();
+            Map<String, String> filter = new HashMap<>();
+            filter.put("userId", "before-in");
+            try {
+                list = booking.getByScooterIdWithFilter("2",filter);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            list.forEach(System.out::println);
+            assertEquals(1, list.size());
+        }
+
     @Test
     public void getByDateGetsAll(){
         System.out.println("getByDate query: ");
@@ -275,8 +293,10 @@ import static org.junit.Assert.*;
         System.out.println("getByDate Filter by user query: ");
         Booking booking = new Booking(client, mapperConfig );
         List<Booking> list = new ArrayList<>();
+        Map<String, String> filter = new HashMap<>();
+        filter.put("userId", "before-in");
         try {
-            list = booking.getByDateWithFilterPerUser(LocalDate.parse("2019-09-02"), "before-in");
+            list = booking.getByDateWithFilter(LocalDate.parse("2019-09-02"), filter);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -285,21 +305,6 @@ import static org.junit.Assert.*;
 
     }
 
-        @Test
-        public void getByDateFilterByUserReturnsZero() {
-
-            System.out.println("getByDate Filter by user query ret zero: ");
-            Booking booking = new Booking(client, mapperConfig );
-            List<Booking> list = new ArrayList<>();
-            try {
-                list = booking.getByDateWithFilterPerUser(LocalDate.parse("2019-09-02"), "007");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            list.forEach(System.out::println);
-            assertEquals(0, list.size());
-
-        }
 
     @AfterClass
     public static void deleteTable(){
