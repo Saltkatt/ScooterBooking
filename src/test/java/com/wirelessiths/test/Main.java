@@ -1,22 +1,36 @@
 package com.wirelessiths.test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
+import com.wirelessiths.dal.Booking;
 
 import java.io.IOException;
 
 public class Main {
-//
-//    public static void main(String[] args) {
-//        String url = "http://www.google.com";
-//        GetExample example = new GetExample();
-//        try {
-//            System.out.println(example.run(url));
-//        }catch(Exception e){
-//            System.out.println(e.getMessage());
-//        }
-//    }
+
+    //input/requestContext/authorizer/claims/sub
+    //header authorizer: { clamims: {sub: "id"} }
+
+    public static void main(String[] args) {
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        String url = "http://www.google.com";
+        String baseUrl = "https://nkybxxmihd.execute-api.us-east-1.amazonaws.com/dev";
+        String path = "/bookings";
+        String bookingId = "b97aea7a-fb81-44f9-a859-6a0604dcfb76";
+        GetExample example = new GetExample();
+        try {
+           String result =  example.run(baseUrl + path + "/" + bookingId);
+            System.out.println(result);
+            Booking b = objectMapper.readValue(result, Booking.class);
+            System.out.println(b.getEndTime());
+
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
 
 
 }

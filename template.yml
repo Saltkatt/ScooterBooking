@@ -185,7 +185,7 @@ Resources:
           AttributeType: S
         - AttributeName: userId
           AttributeType: S
-        - AttributeName: date
+        - AttributeName: bookingDate
           AttributeType: S
         - AttributeName: startTime
           AttributeType: S
@@ -220,26 +220,26 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
-        - IndexName: dateIndex
+        - IndexName: endTimeIndex
           KeySchema:
-            - AttributeName: date
+            - AttributeName: bookingDate
               KeyType: HASH
-            - AttributeName: scooterId
+            - AttributeName: endTime
               KeyType: RANGE
           Projection:
-            ProjectionType: ALL
+            ProjectionType: KEYS_ONLY
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
-      LocalSecondatyIndexes:
-        - IndexName: endTimeIndex
-          KeySchema:
-          - AttributeName: date
-            KeyType: HASH
-          - AttributeName: endTime
-            KeyType: RANGE
-          Projection:
-            ProjectionType: KEYS_ONLY
+#      LocalSecondatyIndexes:
+#        - IndexName: endTimeIndex
+#          KeySchema:
+#          - AttributeName: date
+#            KeyType: HASH
+#          - AttributeName: endTime
+#            KeyType: RANGE
+#          Projection:
+#            ProjectionType: KEYS_ONLY
 Outputs:
   GetBookingFunction:
     Description: "GetBooking Lambda Function ARN"

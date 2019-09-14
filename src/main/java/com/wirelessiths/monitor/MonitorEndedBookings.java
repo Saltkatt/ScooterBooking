@@ -1,9 +1,16 @@
 package com.wirelessiths.monitor;
 
 import com.wirelessiths.dal.Booking;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.util.List;
 
 public class MonitorEndedBookings {
 
+    private final Logger logger = LogManager.getLogger(this.getClass());
+
+    //om quera på main table behövs info om vilka skootrar som finns så man kan göra en query per skooter
     //get matching booking
         //all valid bookings with endtime between now-11 min and now-10 min
         //alt1: for each scooter, get booking with endtime between (now-11 min) and (now-10 min)
@@ -11,7 +18,17 @@ public class MonitorEndedBookings {
     //see if there is a trip in position and journey for each boooking
     //add representation of trip to each booking object
 
-    Booking booking = new Booking();
-
-
+    public void doStuff(){
+        Booking booking = new Booking();
+        List<Booking> endedBookings = null;
+        try{
+             endedBookings = booking.bookingsByEndTime();
+             endedBookings.forEach((b)->{
+                 logger.info("got booking that ended: " + b);
+            });
+             logger.info("number of bookings ended: " + endedBookings.size());
+        }catch(Exception e) {
+            logger.info(e.getMessage());
+        }
+    }
 }

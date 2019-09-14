@@ -56,7 +56,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
                 return ApiGatewayResponse.builder()
                         .setStatusCode(409)
                         .setObjectBody(message)
-                        .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
+                        .setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
                         .build();
             }
 
@@ -66,7 +66,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
                 return ApiGatewayResponse.builder()
                         .setStatusCode(409)
                         .setObjectBody(message)
-                        .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
+                        .setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
                         .build();
             }
 
@@ -76,7 +76,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
                 return ApiGatewayResponse.builder()
                         .setStatusCode(409)
                         .setObjectBody(message)
-                        .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
+                        .setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
                         .build();
 
             }
@@ -84,7 +84,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
             return ApiGatewayResponse.builder()
                     .setStatusCode(201)
                     .setObjectBody(booking)
-                    .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
+                    .setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
                     .build();
 
         } catch (JsonProcessingException ex) {

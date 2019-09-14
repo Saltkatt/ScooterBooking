@@ -84,7 +84,7 @@ private final Logger logger = LogManager.getLogger(this.getClass());
 
                case "complete":
                    //validate if end is possible
-                   if(booking.getBookingStatus().equals(BookingStatus.CANCELLED)){
+                   if(!booking.getBookingStatus().equals(BookingStatus.ACTIVE)){
 
                        responseBody = new Response("booking is not in a valid state to be completed");
                        return ApiGatewayResponse.builder()
