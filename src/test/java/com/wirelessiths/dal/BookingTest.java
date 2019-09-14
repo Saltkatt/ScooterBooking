@@ -8,7 +8,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.*;
-import com.wirelessiths.s3.ReadFile;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,7 +17,6 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -221,13 +219,87 @@ import static org.junit.Assert.*;
         Booking booking = new Booking(client, mapperConfig );
         List<Booking> list = new ArrayList<>();
         try {
-            booking.getByScooterId("1");
+           list = booking.getByScooterId("3");
         } catch (IOException e) {
             e.printStackTrace();
         }
-        System.out.println(list);
+       list.forEach(System.out::println);
        assertEquals(2, list.size());
     }
+
+    @Test
+    public void getByScooterIdReturnsSizeZeroWhenNoMatching(){
+        System.out.println("getByscooterId query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        try {
+            list = booking.getByScooterId("987");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(0, list.size());
+    }
+
+    @Test
+    public void getByDateGetsAll(){
+        System.out.println("getByDate query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        try {
+            list = booking.getByDate(LocalDate.parse("2019-09-02"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(8, list.size());
+    }
+
+    @Test
+    public void getByDateSizeZeroWhenNoMatchingDate(){
+        System.out.println("getByDate query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        try {
+            list = booking.getByDate(LocalDate.parse("2019-09-03"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(0, list.size());
+    }
+
+    @Test
+    public void getByDateFilterByUser() {
+
+        System.out.println("getByDate Filter by user query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        try {
+            list = booking.getByDateWithFilterPerUser(LocalDate.parse("2019-09-02"), "before-in");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(1, list.size());
+
+    }
+
+        @Test
+        public void getByDateFilterByUserReturnsZero() {
+
+            System.out.println("getByDate Filter by user query ret zero: ");
+            Booking booking = new Booking(client, mapperConfig );
+            List<Booking> list = new ArrayList<>();
+            try {
+                list = booking.getByDateWithFilterPerUser(LocalDate.parse("2019-09-02"), "007");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            list.forEach(System.out::println);
+            assertEquals(0, list.size());
+
+        }
 
     @AfterClass
     public static void deleteTable(){

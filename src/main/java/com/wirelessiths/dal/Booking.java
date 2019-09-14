@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 
 
 /**
@@ -180,7 +181,6 @@ public class Booking {
         return mapper.query(Booking.class, queryExp);
     }
 
-
         // methods
     public Boolean ifTableExists() {
         return this.client.describeTable(BOOKINGS_TABLE_NAME).getTable().getTableStatus().equals("ACTIVE");
@@ -230,28 +230,69 @@ public class Booking {
         queryExpression.setHashKeyValues(booking);
         queryExpression.setIndexName("userIndex");
         queryExpression.setConsistentRead(false);
-        final List<Booking> results =
-                mapper.query(Booking.class, queryExpression);
 
-        return results;
+        return mapper.query(Booking.class, queryExpression);
     }
 
     public List<Booking> getByScooterId(String scooterId) throws IOException {
-        // Query with mapper
-        // Create Booking object with user id
+             Map<String, AttributeValue> values = new HashMap<>();
 
-        Map<String, AttributeValue> values = new HashMap<>();
-
-        values.put(":id", new AttributeValue().withS(scooterId));
+        values.put(":v1", new AttributeValue().withS(scooterId));
         DynamoDBQueryExpression<Booking> queryExp =
                 new DynamoDBQueryExpression<>();
-        queryExp.withKeyConditionExpression("scooterId = :id and ")
+        queryExp.withKeyConditionExpression("scooterId = :v1")
         .withExpressionAttributeValues(values)
-       // .withConsistentRead(true)
-       // .withFilterExpression("")
-        ;;
+        .withConsistentRead(true);
 
         return mapper.query(Booking.class, queryExp);
+    }
+
+    public List<Booking> getByDate(LocalDate date) throws IOException {
+
+        Booking booking = new Booking();
+        booking.setDate(date);
+
+        DynamoDBQueryExpression<Booking> queryExpression =
+                new DynamoDBQueryExpression<>();
+        queryExpression.setHashKeyValues(booking);
+        queryExpression.setIndexName("dateIndex");
+        queryExpression.setConsistentRead(false);
+
+        return mapper.query(Booking.class, queryExpression);
+    }
+
+    public List<Booking> getByDateWithFilterPerUser(LocalDate date, String userId) throws IOException {
+
+        DynamoDBQueryExpression<Booking> queryExpression = getBookingDynamoDBQueryExpression(date, userId);
+
+        return mapper.query(Booking.class, queryExpression);
+    }
+
+    private DynamoDBQueryExpression<Booking> getBookingDynamoDBQueryExpression(LocalDate date, Map<String, String> filter) {
+
+        // filter: userId = abc123
+        // values : :userId = abc123
+        Map<String, AttributeValue> values = new HashMap<>();
+
+        filter.forEach((s1, s2) -> values.put(":"+s1, new AttributeValue().withS(s2)));
+
+        StringBuilder filterExpression = new StringBuilder();
+
+        values.forEach((v1, v2) -> filterExpression.append(v1.substring(1)).append(" = ").append(v2));
+
+
+
+        Booking booking = new Booking();
+        booking.setDate(date);
+
+        DynamoDBQueryExpression<Booking> queryExpression =
+                new DynamoDBQueryExpression<>();
+        queryExpression.setHashKeyValues(booking);
+        queryExpression.setExpressionAttributeValues(values);
+        queryExpression.setIndexName("dateIndex");
+        queryExpression.setConsistentRead(false);
+        queryExpression.withFilterExpression("userId = :v1");
+        return queryExpression;
     }
 
     public Booking save(Booking booking) throws IOException {
