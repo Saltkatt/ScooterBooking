@@ -10,12 +10,13 @@ import com.squareup.okhttp.Response;
 public class GetExample {
 
     //OkHttpClient client = new OkHttpClient();
+    String token = "eyJraWQiOiJ5Y3RoWnIra2RqTGo0MkhYZGhJeEFpa294cUJrNXBqTXRjNGxlYWJRWkd3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJiNDUxZDU2Zi04OWU2LTRmZDQtYWJjNC1kNjVjN2UwZWVmMjMiLCJldmVudF9pZCI6ImUwNDgyOTY4LWU1M2YtNDE2Zi1iNjZiLWEzYzg4NWE4Nzc4ZiIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoib3BlbmlkIGVtYWlsIiwiYXV0aF90aW1lIjoxNTY4NDU5NTY1LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9DRURISHN1WUYiLCJleHAiOjE1Njg0NjMxNjUsImlhdCI6MTU2ODQ1OTU2NSwidmVyc2lvbiI6MiwianRpIjoiODVlYTc1ZmMtZDllNy00MTA2LTk2OWMtMTVmN2Q5ODllNzFlIiwiY2xpZW50X2lkIjoiN245Mjlta2tzbmpsM2Z0anRlcDJsZTZzcTQiLCJ1c2VybmFtZSI6ImNhcmwwOTEwIn0.ZAnXax00ZDrsSKuMz2felY9s1MnEVYdpPN3MhVfykFi-skM2lzl7P6bmynua9y8wgy3QNhdKHyhMt3o52VaASIFhlizFmmndzfqgdk9ghE1KQgmopbxk9EvFWqdCBTSHG1Pin5fnU6n26nqjUG6He8dy1w3Ln_fBeS_WIyfsNTRXkSbGJ115w7YZCmc9mcxIu-3oCC2kWv31mgHkH9Tj3hehVhRYZgLkWMllCp-Bejhh8gdul4oOCDaaiYPEjbe3WzzfsdOekvCYrATHO-8gJkZ7xWaMbdUyXoAIy7U3P7HTlWtVcg7ai2WG3r88DuHHoHt0qP7z6qSCqHp47imb3g";
 
     String run(String url) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(url)
-                .header("Authorization", "Bearer eyJraWQiOiJ5Y3RoWnIra2RqTGo0MkhYZGhJeEFpa294cUJrNXBqTXRjNGxlYWJRWkd3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiJiNDUxZDU2Zi04OWU2LTRmZDQtYWJjNC1kNjVjN2UwZWVmMjMiLCJldmVudF9pZCI6ImE3MmY5NGQ2LWFlYjEtNDJmZS1hNmJkLTY2ZGViODRiNmNlOSIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoib3BlbmlkIGVtYWlsIiwiYXV0aF90aW1lIjoxNTY4NDU1NTY5LCJpc3MiOiJodHRwczpcL1wvY29nbml0by1pZHAudXMtZWFzdC0xLmFtYXpvbmF3cy5jb21cL3VzLWVhc3QtMV9DRURISHN1WUYiLCJleHAiOjE1Njg0NTkxNjksImlhdCI6MTU2ODQ1NTU2OSwidmVyc2lvbiI6MiwianRpIjoiNDQwNTYxODctY2YzOS00YmFjLWEwZTQtMjViYTgxZjJmZjNlIiwiY2xpZW50X2lkIjoiN245Mjlta2tzbmpsM2Z0anRlcDJsZTZzcTQiLCJ1c2VybmFtZSI6ImNhcmwwOTEwIn0.P_qsGisJ3sFXZvPVUA0GoASsY0HB_zX12agtGM6Vi1jBquXSoPP3oy41QOZ9F9qPWVS9gIcmjchoA8VLCeOa0DNII0tQBAen9ylS8ARnnUADARcNCEgBkVmXIGk9R9vAmNvCFZ1MWQi2H78WaXkdz-JfvPWpvkyd6akIWlGOilGg3a9uujlVHpSuv3OT07xeXIF4S-HMNHeDuiBjjsQYSyA2gNpMQ2v6pLQEyX5f-8wSqk29cniP8GbhpyiBkKfkZf98ivQ9SaZCnc6omnBjqRWcBaBIfYGTMWhYSqte3GnU77n7VAJGu8v6WtP1G5TMTqkpZ5R49wLkGu47It863Q")
+                .header("Authorization", "Bearer " + token)
                 .build();
         Response response = null;
         try {
