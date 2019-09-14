@@ -239,19 +239,19 @@ public class Booking {
     public List<Booking> getByScooterId(String scooterId) throws IOException {
         // Query with mapper
         // Create Booking object with user id
-        Booking booking = new Booking();
-        booking.setScooterId(scooterId);
+
         Map<String, AttributeValue> values = new HashMap<>();
 
-        values.put(":id", new AttributeValue().withS(booking.getScooterId()));
+        values.put(":id", new AttributeValue().withS(scooterId));
         DynamoDBQueryExpression<Booking> queryExp =
                 new DynamoDBQueryExpression<>();
-        queryExp.withKeyConditionExpression("scooterId = :id");
+        queryExp.withKeyConditionExpression("scooterId = :id and ")
+        .withExpressionAttributeValues(values)
+       // .withConsistentRead(true)
+       // .withFilterExpression("")
+        ;;
 
-        final List<Booking> results =
-                mapper.query(Booking.class, queryExp);
-
-        return results;
+        return mapper.query(Booking.class, queryExp);
     }
 
     public Booking save(Booking booking) throws IOException {

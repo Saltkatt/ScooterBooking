@@ -13,6 +13,7 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -66,6 +67,7 @@ import static org.junit.Assert.*;
             System.out.println("msg: " + e.getMessage());
         }
     }
+
 
     @Test
     public void bookingLogicValidationPassTest(){
@@ -209,6 +211,22 @@ import static org.junit.Assert.*;
 
         }
 
+    }
+
+    //Tests for query methods
+
+    @Test
+    public void getByScooterIdReturnsScootersByThatId(){
+        System.out.println("getByscooterId query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        try {
+            booking.getByScooterId("1");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        System.out.println(list);
+       assertEquals(2, list.size());
     }
 
     @AfterClass

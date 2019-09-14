@@ -40,7 +40,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 			logger.info(queryStringParameters.get("scooterId"));
 			List<Booking> bookings = null;
 
-			if (queryStringParameters.containsKey("scooterId")) {
+			if (queryStringParameters.containsKey("scooterId") && queryStringParameters.containsKey("userId") && queryStringParameters.containsKey("date")) {
 				bookings = new Booking().getByScooterId(queryStringParameters.get("scooterId"));
 			}
 
