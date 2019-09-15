@@ -250,13 +250,14 @@ import static org.junit.Assert.*;
             List<Booking> list = new ArrayList<>();
             Map<String, String> filter = new HashMap<>();
             filter.put("userId", "before-in");
+            filter.put("date", "2019-09-03");
             try {
                 list = booking.getByScooterIdWithFilter("2",filter);
             } catch (IOException e) {
                 e.printStackTrace();
             }
             list.forEach(System.out::println);
-            assertEquals(1, list.size());
+            assertEquals(0, list.size());
         }
 
     @Test
@@ -304,6 +305,42 @@ import static org.junit.Assert.*;
         assertEquals(1, list.size());
 
     }
+
+    @Test
+    public void getByUserIdWithFilterTwoReturns() {
+        System.out.println("getByUserId Filter by user query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        Map<String, String> filter = new HashMap<>();
+        filter.put("date", "2019-09-02");
+        filter.put("scooterId", "2");
+        try {
+            list = booking.getByUserIdWithFilter("ok-cases", filter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(2, list.size());
+
+    }
+
+        @Test
+        public void getByUserIdWithFilterNoReturns() {
+            System.out.println("getByUserId Filter by user query: ");
+            Booking booking = new Booking(client, mapperConfig );
+            List<Booking> list = new ArrayList<>();
+            Map<String, String> filter = new HashMap<>();
+            filter.put("date", "2019-09-03");
+            filter.put("scooterId", "3");
+            try {
+                list = booking.getByUserIdWithFilter("ok-cases", filter);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            list.forEach(System.out::println);
+            assertEquals(0, list.size());
+
+        }
 
 
     @AfterClass

@@ -10,7 +10,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -36,21 +38,84 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 
 			Map<String,String> queryStringParameters = (Map<String,String>)input.get("queryStringParameters");
 
-			logger.info(queryStringParameters.toString());
-			logger.info(queryStringParameters.get("scooterId"));
 			List<Booking> bookings = null;
 
-			if (queryStringParameters.containsKey("scooterId") && queryStringParameters.containsKey("userId") && queryStringParameters.containsKey("date")) {
-				bookings = new Booking().getByScooterId(queryStringParameters.get("scooterId"));
+            //Query key prioritization at the moment (higher prio means that that key is queried and the others are filtered):
+            //1. Date
+            //2. UserId
+            //3. ScooterId
+
+            /*
+             * Handles the following cases:
+             * -userId & scooterId & date
+             * -userId & scooterId
+             * -userId & date
+             * -date & scooterId
+             * -date or userId or scooterId by themselves
+             * -queryParams is empty
+             * -queryParams contains other items than scooterId, userId and date
+             */
+
+			if (queryStringParameters.containsKey("scooterId") || queryStringParameters.containsKey("userId") || queryStringParameters.containsKey("date")) {
+
+                if (queryStringParameters.containsKey("scooterId") && queryStringParameters.containsKey("userId") && queryStringParameters.containsKey("date")) {
+                    String queryKey = queryStringParameters.get("date");
+                    Map<String, String> filter = new HashMap<>();
+                    //Copies all but the queryKey two the filter
+                    queryStringParameters.forEach((s1,s2)->{
+                        if (!s1.equals(queryKey)){
+                            filter.put(s1,s2);
+                        }
+                    } );
+                    bookings = new Booking().getByDateWithFilter(LocalDate.parse(queryKey), filter);
+                } else if(queryStringParameters.containsKey("userId") && queryStringParameters.containsKey("scooterId")){
+                    String queryKey = queryStringParameters.get("userId");
+                    Map<String, String> filter = new HashMap<>();
+                    //Copies all but the queryKey two the filter
+                    queryStringParameters.forEach((s1,s2)->{
+                        if (!s1.equals(queryKey)){
+                            filter.put(s1,s2);
+                        }
+                    } );
+                    bookings = new Booking().getByUserIdWithFilter(queryKey, filter);
+                }
+
+                else if(queryStringParameters.containsKey("date") && queryStringParameters.containsKey("scooterId") || queryStringParameters.containsKey("date") && queryStringParameters.containsKey("userId") ){
+                    String queryKey = queryStringParameters.get("date");
+                    Map<String, String> filter = new HashMap<>();
+                    //Copies all but the queryKey two the filter
+                    queryStringParameters.forEach((s1,s2)->{
+                        if (!s1.equals(queryKey)){
+                            filter.put(s1,s2);
+                        }
+                    } );
+                    bookings = new Booking().getByUserIdWithFilter(queryKey, filter);
+                }
+
+                else if(queryStringParameters.size()==1){
+                    if(queryStringParameters.containsKey("date")){
+                        bookings = new Booking().getByDate(LocalDate.parse(queryStringParameters.get("date")));
+                    } else if (queryStringParameters.containsKey("userId")){
+                        bookings = new Booking().getByUserId(queryStringParameters.get("userId"));
+                    } else if (queryStringParameters.containsKey("scooterId")) {
+                        bookings = new Booking().getByScooterId(queryStringParameters.get("scooterId"));
+                    }
+                }
+
+
 			}
+			else if (queryStringParameters.isEmpty()) {
+                // get all users
+                bookings = new Booking().list();
+            }
 
-
-
-			else{
-				// get all users
-				 bookings = new Booking().list();
-
-			}
+            else {
+                    Response responseBody = new Response("Inserted query parameters are not supported, you can only use scooterId, userId and date", input);
+                    return ApiGatewayResponse.builder()
+                            .setStatusCode(404)
+                            .setObjectBody(responseBody)
+                            .build();
+                }
 
 			// send the response back
 			return ApiGatewayResponse.builder()
