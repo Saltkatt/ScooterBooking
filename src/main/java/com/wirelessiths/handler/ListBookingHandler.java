@@ -6,6 +6,7 @@ import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
 import com.wirelessiths.exception.UnableToListBookingsException;
 import com.wirelessiths.dal.Booking;
+import com.wirelessiths.service.AuthService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -36,6 +37,9 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
             Map<String,String> queryStringParameters = null;
             List<Booking> bookings = null;
 
+            boolean isAdmin = AuthService.isAdmin(input);
+            String tokenUserId = AuthService.getUserId(input);
+
 			if(input.containsKey("queryStringParameters")) {
                 queryStringParameters = (Map<String, String>) input.get("queryStringParameters");
             }
@@ -43,7 +47,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 
             //Query key prioritization at the moment (higher prio means that that key is queried and the others are filtered):
             //1. Date
-            //2. UserId
+            //2. UserId (all queries with userId require admin or that your token uuid matches the one in the query
             //3. ScooterId
 
             /*
@@ -64,7 +68,16 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 			else if(queryStringParameters.containsKey("scooterId") || queryStringParameters.containsKey("userId") || queryStringParameters.containsKey("date")) {
 
                 if (queryStringParameters.containsKey("scooterId") && queryStringParameters.containsKey("userId") && queryStringParameters.containsKey("date")) {
-                    String queryKey = queryStringParameters.get("date");
+
+                    if(!isAuthorized(isAdmin, queryStringParameters.get("userId"), tokenUserId)) {
+                        Response responseBody = new Response("Unauthorized. You can only view your own bookings or you need to have admin privilege", input);
+                        return ApiGatewayResponse.builder()
+                                .setStatusCode(403)
+                                .setObjectBody(responseBody)
+                                .build();
+                    }
+                    String queryKey = "date";
+                    String queryValue = queryStringParameters.get("date");
                     Map<String, String> filter = new HashMap<>();
                     //Copies all but the queryKey two the filter
                     queryStringParameters.forEach((s1,s2)->{
@@ -72,8 +85,17 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
                             filter.put(s1,s2);
                         }
                     } );
-                    bookings = new Booking().getByDateWithFilter(LocalDate.parse(queryKey), filter);
+                    bookings = new Booking().getByDateWithFilter(LocalDate.parse(queryValue), filter);
                 } else if(queryStringParameters.containsKey("userId") && queryStringParameters.containsKey("scooterId")){
+
+                    if(!isAuthorized(isAdmin, queryStringParameters.get("userId"), tokenUserId)) {
+                        Response responseBody = new Response("Unauthorized. You can only view your own bookings or you need to have admin privilege", input);
+                        return ApiGatewayResponse.builder()
+                                .setStatusCode(403)
+                                .setObjectBody(responseBody)
+                                .build();
+                    }
+
                     String queryKey = "userId";
                     String queryValue = queryStringParameters.get("userId");
                     Map<String, String> filter = new HashMap<>();
@@ -87,6 +109,16 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
                 }
 
                 else if(queryStringParameters.containsKey("date") && queryStringParameters.containsKey("scooterId") || queryStringParameters.containsKey("date") && queryStringParameters.containsKey("userId") ){
+
+                    if(queryStringParameters.containsKey("userId") && !isAuthorized(isAdmin, queryStringParameters.get("userId"), tokenUserId)) {
+                        Response responseBody = new Response("Unauthorized. You can only view your own bookings or you need to have admin privilege", input);
+                        return ApiGatewayResponse.builder()
+                                .setStatusCode(403)
+                                .setObjectBody(responseBody)
+                                .build();
+                    }
+
+
                     String queryKey = "date";
                     String queryValue = queryStringParameters.get("date");
                     Map<String, String> filter = new HashMap<>();
@@ -104,6 +136,13 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
                     if(queryStringParameters.containsKey("date")){
                         bookings = new Booking().getByDate(LocalDate.parse(queryStringParameters.get("date")));
                     } else if (queryStringParameters.containsKey("userId")){
+                        if(!isAuthorized(isAdmin, queryStringParameters.get("userId"), tokenUserId)) {
+                            Response responseBody = new Response("Unauthorized. You can only view your own bookings or you need to have admin privilege", input);
+                            return ApiGatewayResponse.builder()
+                                    .setStatusCode(403)
+                                    .setObjectBody(responseBody)
+                                    .build();
+                        }
                         bookings = new Booking().getByUserId(queryStringParameters.get("userId"));
                     } else if (queryStringParameters.containsKey("scooterId")) {
                         bookings = new Booking().getByScooterId(queryStringParameters.get("scooterId"));
@@ -168,4 +207,8 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 					.build();
 		}
 	}
+
+	private boolean isAuthorized(boolean isAdmin, String queryUserId, String tokenUserId){
+        return isAdmin || queryUserId.equals(tokenUserId);
+    }
 }

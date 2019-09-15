@@ -363,7 +363,6 @@ public class Booking {
                 filterExpression.append(" and ");
             }
             if(v1.equals(":date")){
-                filterExpression.append("#d").append(" = ").append(v1);
                 expression.put("#d", "date");
             }
             else {
