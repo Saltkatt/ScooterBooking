@@ -143,6 +143,32 @@ public class AuthServiceTest {
 
     }
 
+    @Test
+    public void isAdminTestOnStringWithMultipleUsers() {
+
+        innerMost.put("cognito:groups", "admin,users");
+        middle.put("claims", innerMost);
+        middleOut.put("authorizer", middle);
+        mostOut.put("requestContext", middleOut);
+
+        boolean result = AuthService.isAdmin(mostOut);
+        assertTrue(result);
+
+    }
+
+    @Test
+    public void isAdminTestOnStringWithMultipleUsersWhenNoAdmin() {
+
+        innerMost.put("cognito:groups", "middleTier,users");
+        middle.put("claims", innerMost);
+        middleOut.put("authorizer", middle);
+        mostOut.put("requestContext", middleOut);
+
+        boolean result = AuthService.isAdmin(mostOut);
+        assertFalse(result);
+
+    }
+
 
 
 
