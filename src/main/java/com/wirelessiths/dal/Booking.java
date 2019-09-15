@@ -367,7 +367,9 @@ public class Booking {
         AtomicBoolean useHashKeyQueryType = new AtomicBoolean(false);
         Optional.ofNullable(booking.getScooterId()).ifPresent((s) -> {
            values.put(":scooterId", new AttributeValue().withS(s));
+           values.put(":date", new AttributeValue().withS(booking.getDate().toString()));
            useHashKeyQueryType.set(true);
+            expression.put("#d", "date");
        });
 
 
@@ -375,10 +377,13 @@ public class Booking {
         logger.info(filterExpression.toString());
         DynamoDBQueryExpression<Booking> queryExpression =
                 new DynamoDBQueryExpression<>();
-
+        if(useHashKeyQueryType.get()){
+            queryExpression.setKeyConditionExpression("#d = :date and scooterId = :scooterId");
+        } else {
+            queryExpression.setHashKeyValues(booking);
+        }
         queryExpression
         .withExpressionAttributeValues(values)
-        .withHashKeyValues(booking)
         .withFilterExpression(filterExpression.toString())
         .withIndexName("dateIndex")
         .withConsistentRead(false);
