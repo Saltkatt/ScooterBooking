@@ -336,6 +336,13 @@ public class Booking {
         return mapper.query(Booking.class, queryExpression);
     }
 
+    /**
+     *
+     * @param date Used as hashkey for query
+     * @param filter used for filtering results. If the filter contains the scooterId field the method will query with the scooterId as range key instead of of filtering with it.
+     * @return results of matching bookings
+     * @throws IOException from dynamodb.
+     */
     public List<Booking> getByDateWithFilter(LocalDate date, Map<String, String> filter) throws IOException {
 
         Booking booking = new Booking();
@@ -383,9 +390,11 @@ public class Booking {
             queryExpression.setHashKeyValues(booking);
         }
         queryExpression
-        .withExpressionAttributeValues(values)
-        .withFilterExpression(filterExpression.toString())
-        .withIndexName("dateIndex")
+        .setExpressionAttributeValues(values);
+        if(!filterExpression.toString().isEmpty()) {
+            queryExpression.setFilterExpression(filterExpression.toString());
+        }
+        queryExpression.withIndexName("dateIndex")
         .withConsistentRead(false);
         if(!expression.isEmpty()){
             queryExpression.setExpressionAttributeNames(expression);
