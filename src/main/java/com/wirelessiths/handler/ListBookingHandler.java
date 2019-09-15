@@ -11,10 +11,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 /**
@@ -36,9 +33,13 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 
 			logger.info(input.toString());
 
-			Map<String,String> queryStringParameters = (Map<String,String>)input.get("queryStringParameters");
+            Map<String,String> queryStringParameters = null;
+            List<Booking> bookings = null;
 
-			List<Booking> bookings = null;
+			if(input.containsKey("queryStringParameters")) {
+                queryStringParameters = (Map<String, String>) input.get("queryStringParameters");
+            }
+
 
             //Query key prioritization at the moment (higher prio means that that key is queried and the others are filtered):
             //1. Date
@@ -56,7 +57,11 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
              * -queryParams contains other items than scooterId, userId and date
              */
 
-			if (queryStringParameters.containsKey("scooterId") || queryStringParameters.containsKey("userId") || queryStringParameters.containsKey("date")) {
+            if (!Optional.ofNullable(queryStringParameters).isPresent()) {
+                bookings = new Booking().list();
+            }
+
+			else if(queryStringParameters.containsKey("scooterId") || queryStringParameters.containsKey("userId") || queryStringParameters.containsKey("date")) {
 
                 if (queryStringParameters.containsKey("scooterId") && queryStringParameters.containsKey("userId") && queryStringParameters.containsKey("date")) {
                     String queryKey = queryStringParameters.get("date");
@@ -69,7 +74,8 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
                     } );
                     bookings = new Booking().getByDateWithFilter(LocalDate.parse(queryKey), filter);
                 } else if(queryStringParameters.containsKey("userId") && queryStringParameters.containsKey("scooterId")){
-                    String queryKey = queryStringParameters.get("userId");
+                    String queryKey = "userId";
+                    String queryValue = queryStringParameters.get("userId");
                     Map<String, String> filter = new HashMap<>();
                     //Copies all but the queryKey two the filter
                     queryStringParameters.forEach((s1,s2)->{
@@ -77,19 +83,21 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
                             filter.put(s1,s2);
                         }
                     } );
-                    bookings = new Booking().getByUserIdWithFilter(queryKey, filter);
+                    bookings = new Booking().getByUserIdWithFilter(queryValue, filter);
                 }
 
                 else if(queryStringParameters.containsKey("date") && queryStringParameters.containsKey("scooterId") || queryStringParameters.containsKey("date") && queryStringParameters.containsKey("userId") ){
-                    String queryKey = queryStringParameters.get("date");
+                    String queryKey = "date";
+                    String queryValue = queryStringParameters.get("date");
                     Map<String, String> filter = new HashMap<>();
                     //Copies all but the queryKey two the filter
                     queryStringParameters.forEach((s1,s2)->{
                         if (!s1.equals(queryKey)){
                             filter.put(s1,s2);
+                            logger.info(s1 + " : " + s2);
                         }
                     } );
-                    bookings = new Booking().getByUserIdWithFilter(queryKey, filter);
+                    bookings = new Booking().getByDateWithFilter(LocalDate.parse(queryValue), filter);
                 }
 
                 else if(queryStringParameters.size()==1){
@@ -104,10 +112,6 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 
 
 			}
-			else if (queryStringParameters.isEmpty()) {
-                // get all users
-                bookings = new Booking().list();
-            }
 
             else {
                     Response responseBody = new Response("Inserted query parameters are not supported, you can only use scooterId, userId and date", input);

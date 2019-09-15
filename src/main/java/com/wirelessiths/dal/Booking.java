@@ -349,19 +349,27 @@ public class Booking {
             if (!filterExpression.toString().isEmpty()){
                 filterExpression.append(" and ");
             }
-            filterExpression.append(v1.substring(1)).append(" = ").append(v1);
+            if(v1.equals(":date")){
+                filterExpression.append("#d").append(" = ").append(v1);
+            } else {
+                filterExpression.append(v1.substring(1)).append(" = ").append(v1);
+            }
         });
 
         Booking booking = new Booking();
         booking.setDate(date);
 
+        Map<String, String> expression = new HashMap<>();
+        expression.put("#d", "date");
+
         DynamoDBQueryExpression<Booking> queryExpression =
                 new DynamoDBQueryExpression<>();
-        queryExpression.setHashKeyValues(booking);
-        queryExpression.setIndexName("dateIndex");
-        queryExpression.withExpressionAttributeValues(values);
-        queryExpression.withFilterExpression(filterExpression.toString());
-        queryExpression.setConsistentRead(false);
+        queryExpression.withHashKeyValues(booking)
+        .withIndexName("dateIndex")
+        .withExpressionAttributeValues(values)
+        .withFilterExpression(filterExpression.toString())
+        .withExpressionAttributeNames(expression)
+        .withConsistentRead(false);
 
         return mapper.query(Booking.class, queryExpression);
     }
