@@ -44,6 +44,13 @@ public class AuthService {
                 }
             }
             return false;
+        } else if (cognitoGroups.contains(",")){
+            List<String> items = Arrays.asList(cognitoGroups.split("\\s*,\\s*"));
+            for (String s: items) {
+                if(s.equals("admin")) {
+                    return true;
+                }
+            }
         }
         return cognitoGroups.equals("admin");
     }
