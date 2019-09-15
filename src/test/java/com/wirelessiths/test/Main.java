@@ -13,6 +13,10 @@ public class Main {
     //input/requestContext/authorizer/claims/sub
     //header authorizer: { clamims: {sub: "id"} }
 
+    //read up on http and payloads specifically
+    //understand http response from java code perspective
+    //trigger lambda from cloudwatch
+
     public static void main(String[] args) {
         ObjectMapper objectMapper = new ObjectMapper();
 
