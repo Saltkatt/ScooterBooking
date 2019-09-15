@@ -250,7 +250,7 @@ import static org.junit.Assert.*;
             List<Booking> list = new ArrayList<>();
             Map<String, String> filter = new HashMap<>();
             filter.put("userId", "before-in");
-            filter.put("date", "2019-09-03");
+          //  filter.put("date", "2019-09-03");
             try {
                 list = booking.getByScooterIdWithFilter("2",filter);
             } catch (IOException e) {
@@ -305,6 +305,25 @@ import static org.junit.Assert.*;
         assertEquals(1, list.size());
 
     }
+
+        @Test
+        public void getByDateFilterByScooter() {
+
+            System.out.println("getByDate Filter by user query: ");
+            Booking booking = new Booking(client, mapperConfig );
+            List<Booking> list = new ArrayList<>();
+            Map<String, String> filter = new HashMap<>();
+            filter.put("userId", "before-in");
+            filter.put("scooterId", "123abc");
+            try {
+                list = booking.getByDateWithFilter(LocalDate.parse("2019-09-02"), filter);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            list.forEach(System.out::println);
+            assertEquals(0, list.size());
+
+        }
 
     @Test
     public void getByUserIdWithFilterTwoReturns() {
