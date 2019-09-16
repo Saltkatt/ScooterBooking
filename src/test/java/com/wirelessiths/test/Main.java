@@ -24,15 +24,14 @@ public class Main {
         GetExample example = new GetExample();
         try {
            //String result =  example.run(baseUrl + path);
-            String result = example.run(tripsUrl, auth);
+            String result = example.run(tripsUrl + "/" + tripId, auth);
             System.out.println(result);
-            //result = result.split(":")[1];
-            //Trip t = objectMapper.readValue(result, Trip.class);
+            Trip t = objectMapper.readValue(result, Trip.class);
             //List<Trip> trips = objectMapper.readValue(result, Trip.class);
             //Trip[] trips = objectMapper.readValue(result, Trip[].class);
             //System.out.println(b.getEndTime());
             //System.out.println(t.getEndPosition().getLatitude());
-            //System.out.println(t);
+            System.out.println(t);
 
         }catch(Exception e){
             System.out.println(e.getMessage());
