@@ -9,9 +9,6 @@ import com.squareup.okhttp.Response;
 
 public class GetExample {
 
-    //OkHttpClient client = new OkHttpClient();
-    String token = "";
-
     String run(String url) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
