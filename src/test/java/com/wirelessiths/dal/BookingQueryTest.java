@@ -55,31 +55,31 @@ public class BookingQueryTest {
         b1.setUserId("a");
         b1.setStartTime(Instant.parse("2019-09-03T13:20:00.000Z"));
         b1.setEndTime(Instant.parse("2019-09-03T13:45:00.000Z"));
-        b1.setDate(LocalDate.parse("2019-09-03"));
+        b1.setBookingDate(LocalDate.parse("2019-09-03"));
 
         b2.setScooterId("2");
         b2.setUserId("b");
         b2.setStartTime(Instant.parse("2019-09-04T15:10:00.000Z"));
         b2.setEndTime(Instant.parse("2019-09-04T15:35:00.000Z"));
-        b2.setDate(LocalDate.parse("2019-09-04"));
+        b2.setBookingDate(LocalDate.parse("2019-09-04"));
 
         b3.setScooterId("1");
         b3.setUserId("c");
         b3.setStartTime(Instant.parse("2019-09-03T15:10:00.000Z"));
         b3.setEndTime(Instant.parse("2019-09-03T15:35:00.000Z"));
-        b3.setDate(LocalDate.parse("2019-09-03"));
+        b3.setBookingDate(LocalDate.parse("2019-09-03"));
 
         b4.setScooterId("4");
         b4.setUserId("c");
         b4.setStartTime(Instant.parse("2019-09-03T13:20:00.000Z"));
         b4.setEndTime(Instant.parse("2019-09-03T13:45:00.000Z"));
-        b4.setDate(LocalDate.parse("2019-09-03"));
+        b4.setBookingDate(LocalDate.parse("2019-09-03"));
 
         b5.setScooterId("4");
         b5.setUserId("d");
         b5.setStartTime(Instant.parse("2019-09-04T13:20:00.000Z"));
         b5.setEndTime(Instant.parse("2019-09-04T13:45:00.000Z"));
-        b5.setDate(LocalDate.parse("2019-09-04"));
+        b5.setBookingDate(LocalDate.parse("2019-09-04"));
 
         try{
             b1.save(b1);
@@ -152,7 +152,7 @@ public class BookingQueryTest {
         List<Booking> list = new ArrayList<>();
         Map<String, String> filter = new HashMap<>();
         filter.put("userId", "c");
-        filter.put("date", "2019-09-03");
+        filter.put("bookingDate", "2019-09-03");
         try {
             list = booking.getByScooterIdWithFilter("2",filter);
         } catch (IOException e) {
@@ -164,11 +164,11 @@ public class BookingQueryTest {
 
     @Test
     public void getByScooterIdFilterByDate(){
-        System.out.println("getByscooterId filter by date query: ");
+        System.out.println("getByscooterId filter by bookingDate query: ");
         Booking booking = new Booking(client, mapperConfig );
         List<Booking> list = new ArrayList<>();
         Map<String, String> filter = new HashMap<>();
-        filter.put("date", "2019-09-04");
+        filter.put("bookingDate", "2019-09-04");
         try {
             list = booking.getByScooterIdWithFilter("2",filter);
         } catch (IOException e) {
@@ -254,7 +254,7 @@ public class BookingQueryTest {
         Booking booking = new Booking(client, mapperConfig );
         List<Booking> list = new ArrayList<>();
         Map<String, String> filter = new HashMap<>();
-        filter.put("date", "2019-09-03");
+        filter.put("bookingDate", "2019-09-03");
         filter.put("scooterId", "1");
         try {
             list = booking.getByUserIdWithFilter("c", filter);
@@ -285,11 +285,11 @@ public class BookingQueryTest {
 
     @Test
     public void getByUserFilterByDate() {
-        System.out.println("getByUserId Filter by date query: ");
+        System.out.println("getByUserId Filter by bookingDate query: ");
         Booking booking = new Booking(client, mapperConfig );
         List<Booking> list = new ArrayList<>();
         Map<String, String> filter = new HashMap<>();
-        filter.put("date", "2019-09-03");
+        filter.put("bookingDate", "2019-09-03");
         try {
             list = booking.getByUserIdWithFilter("c", filter);
         } catch (IOException e) {
@@ -386,27 +386,48 @@ public class BookingQueryTest {
                 .withKeySchema(bookingIndexKeySchema)
                 .withProjection(new Projection().withProjectionType(ProjectionType.ALL));
 
-        //dateIndex
-        ArrayList<KeySchemaElement> dateIndexKeySchema = new ArrayList<>();
-        dateIndexKeySchema.add(new KeySchemaElement()
-                .withAttributeName("date")
+        //endTimeIndex
+        ArrayList<KeySchemaElement> endTimeIndexKeySchema = new ArrayList<>();
+        endTimeIndexKeySchema.add(new KeySchemaElement()
+                .withAttributeName("bookingDate")
                 .withKeyType(KeyType.HASH));  //Partition key
-        dateIndexKeySchema.add(new KeySchemaElement()
-                .withAttributeName("scooterId")
+        endTimeIndexKeySchema.add(new KeySchemaElement()
+                .withAttributeName("endTime")
                 .withKeyType(KeyType.RANGE));  //Sort key
 
-        GlobalSecondaryIndex dateIndex = new GlobalSecondaryIndex()
-                .withIndexName("dateIndex")
+        GlobalSecondaryIndex endTimeIndex = new GlobalSecondaryIndex()
+                .withIndexName("endTimeIndex")
                 .withProvisionedThroughput(new ProvisionedThroughput()
                         .withReadCapacityUnits((long) 1)
                         .withWriteCapacityUnits((long) 1))
-                .withKeySchema(dateIndexKeySchema)
+                .withKeySchema(endTimeIndexKeySchema)
                 .withProjection(new Projection().withProjectionType(ProjectionType.ALL));
 
 
         globalSecondaryIndexes.add(userIndex);
         globalSecondaryIndexes.add(bookingIndex);
-        globalSecondaryIndexes.add(dateIndex);
+        globalSecondaryIndexes.add(endTimeIndex);
+
+        //local secondary indexes
+//        ArrayList<LocalSecondaryIndex> localSecondaryIndexes = new
+//                ArrayList<>();
+//
+//        ArrayList<KeySchemaElement> endTimeIndexKeySchema = new ArrayList<>();
+//
+//        endTimeIndexKeySchema.add(new KeySchemaElement()
+//                .withAttributeName("date")
+//                .withKeyType(KeyType.HASH));
+//
+//        endTimeIndexKeySchema.add(new KeySchemaElement()
+//                .withAttributeName("endTime")
+//                .withKeyType(KeyType.RANGE));
+//
+//        LocalSecondaryIndex endTimeIndex = new LocalSecondaryIndex()
+//                .withIndexName("endTimeIndex")
+//                .withKeySchema(endTimeIndexKeySchema)
+//                .withProjection(new Projection().withProjectionType(ProjectionType.KEYS_ONLY));
+//
+//        localSecondaryIndexes.add(endTimeIndex);
 
 
         //all fields used as keys
@@ -424,24 +445,31 @@ public class BookingQueryTest {
                 .withAttributeName("bookingId")
                 .withAttributeType(ScalarAttributeType.S));
         attributeDefinitions.add(new AttributeDefinition()
-                .withAttributeName("date")
+                .withAttributeName("bookingDate")
                 .withAttributeType(ScalarAttributeType.S));
         attributeDefinitions.add(new AttributeDefinition()
                 .withAttributeName("startTime")
                 .withAttributeType(ScalarAttributeType.S));
 
 
+        try{
+            CreateTableRequest createTableRequest = new CreateTableRequest()
+                    .withTableName(tableName)
+                    .withKeySchema(elements)
+                    .withProvisionedThroughput(new ProvisionedThroughput()
+                            .withReadCapacityUnits(1L)
+                            .withWriteCapacityUnits(1L))
+                    .withGlobalSecondaryIndexes(globalSecondaryIndexes)
+                    //.withLocalSecondaryIndexes(localSecondaryIndexes)
+                    .withAttributeDefinitions(attributeDefinitions);
+            client.createTable(createTableRequest);
+        }catch(Exception e){
+            System.out.println("error creating table: " + e.getMessage());
 
-        CreateTableRequest createTableRequest = new CreateTableRequest()
-                .withTableName(tableName)
-                .withKeySchema(elements)
-                .withProvisionedThroughput(new ProvisionedThroughput()
-                        .withReadCapacityUnits(1L)
-                        .withWriteCapacityUnits(1L))
-                .withGlobalSecondaryIndexes(globalSecondaryIndexes)
-                .withAttributeDefinitions(attributeDefinitions);
-        client.createTable(createTableRequest);
+        }
         System.out.println("table created.");
+
+
     }
 
 }
