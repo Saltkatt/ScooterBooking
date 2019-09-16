@@ -58,6 +58,8 @@ public class MonitorEndedBookings {
         //if no trips log and return
         //else log and append trip to booking
 
+        //how query for dates??
+
         //String secret = getSecret();
 
         Booking booking = new Booking();
@@ -76,19 +78,21 @@ public class MonitorEndedBookings {
 
         String url = String.format("%s/%s%s", baseUrl, vehicleId, tripEndpoint);
         endedBookings.forEach((b)->{
+
             logger.info("booking ended: " + b);
-            String queryUrl = url + "?startDate=" + b.getStartTime();
+            String queryUrl = url + "?startDate=" + b.getStartTime() + "&endDate=" + b.getEndTime() ;
             try{
                 String result = getRequest.run(queryUrl, authHeader);
                 ArrayNode trips = (ArrayNode) objectMapper.readTree(result)
                         .path("trip_overview_list");
+
                 if(trips.size() < 1){
                     logger.info("No trips for booking:" + b);
-                    return;
+                }else{
+                    List<Trip> newTrips = objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
+                    logger.info("appending " + trips.size() + " new trips to booking: " + b);
+                    b.getTrips().addAll(newTrips);
                 }
-                List<Trip> newTrips = objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
-                logger.info("appending " + trips.size() + " new trips to booking: " + b);
-                b.getTrips().addAll(newTrips);
 
             }catch(IOException e){
                 logger.info(e.getMessage());
