@@ -1,6 +1,5 @@
-package com.wirelessiths.dal.Trip;
+package com.wirelessiths.dal.trip;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import java.time.Instant;
@@ -67,7 +66,7 @@ public class Trip {
     public String getTripId() {
         return tripId;
     }
-    @JsonSetter("trip_id")
+
     public void setTripId(String tripId) {
         this.tripId = tripId;
     }
@@ -83,7 +82,7 @@ public class Trip {
     public Location getStartPosition() {
         return startPosition;
     }
-    @JsonSetter("start_position")
+
     public void setStartPosition(Location startPosition) {
         this.startPosition = startPosition;
     }
@@ -92,7 +91,6 @@ public class Trip {
         return endPosition;
     }
 
-    @JsonSetter("end_position")
     public void setEndPosition(Location endPosition) {
         this.endPosition = endPosition;
     }
@@ -108,7 +106,6 @@ public class Trip {
         return endTime;
     }
 
-    @JsonSetter("end_time")
     public void setEndTime(Instant endTime) {
         this.endTime = endTime;
     }
@@ -117,7 +114,6 @@ public class Trip {
         return totalDistanceMeters;
     }
 
-    @JsonSetter("total_distance_meter")
     public void setTotalDistanceMeters(double totalDistanceMeters) {
         this.totalDistanceMeters = totalDistanceMeters;
     }
@@ -142,7 +138,6 @@ public class Trip {
         return sectionType;
     }
 
-    @JsonSetter("section_type")
     public void setSectionType(String sectionType) {
         this.sectionType = sectionType;
     }
@@ -151,7 +146,6 @@ public class Trip {
         return customAttributes;
     }
 
-    @JsonSetter("custom_attributes")
     public void setCustomAttributes(Map<String, String> customAttributes) {
         this.customAttributes = customAttributes;
     }
@@ -168,7 +162,7 @@ public class Trip {
 
     @Override
     public String toString() {
-        return "Trip{" +
+        return "trip{" +
                 "identifiers=" + identifiers +
                 ", tripId='" + tripId + '\'' +
                 ", market='" + market + '\'' +

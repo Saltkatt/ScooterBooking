@@ -1,7 +1,4 @@
-package com.wirelessiths.dal.Trip;
-
-import java.time.Instant;
-import java.util.List;
+package com.wirelessiths.dal.trip;
 
 public class Location {
 
@@ -22,5 +19,13 @@ public class Location {
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
+    }
+
+    @Override
+    public String toString() {
+        return "Location{" +
+                "latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
     }
 }

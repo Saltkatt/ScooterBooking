@@ -5,6 +5,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.wirelessiths.dal.trip.Trip;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
@@ -35,6 +37,8 @@ public class Booking {
     private Instant endTime;
     private LocalDate bookingDate;
     private BookingStatus bookingStatus;
+
+    private List<Trip> trips;
 
 
     private static DynamoDBAdapter db_adapter;
@@ -141,6 +145,14 @@ public class Booking {
         this.bookingStatus = bookingStatus;
     }
 
+    public List<Trip> getTrips() {
+        return trips;
+    }
+
+    @JsonSetter("trip_overview_list")
+    public void setTrips(List<Trip> trips) {
+        this.trips = trips;
+    }
 
     @Override
     public String toString() {

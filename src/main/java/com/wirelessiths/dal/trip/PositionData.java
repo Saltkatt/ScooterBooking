@@ -1,6 +1,5 @@
-package com.wirelessiths.dal.Trip;
+package com.wirelessiths.dal.trip;
 
-import com.amazonaws.services.dynamodbv2.xspec.S;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import java.util.Map;
@@ -15,7 +14,7 @@ public class PositionData {
         return speedKph;
     }
 
-    @JsonSetter("speed_kph")
+    //@JsonSetter("speed_kph")
     public void setSpeedKph(double speedKph) {
         this.speedKph = speedKph;
     }
@@ -24,7 +23,7 @@ public class PositionData {
         return altitudeMeter;
     }
 
-    @JsonSetter("altitude_meter")
+    //@JsonSetter("altitude_meter")
     public void setAltitudeMeter(double altitudeMeter) {
         this.altitudeMeter = altitudeMeter;
     }
@@ -32,8 +31,17 @@ public class PositionData {
     public Map<String, String> getCustomAttributes() {
         return customAttributes;
     }
-    @JsonSetter("custom_attributes")
+    //@JsonSetter("custom_attributes")
     public void setCustomAttributes(Map<String, String> customAttributes) {
         this.customAttributes = customAttributes;
+    }
+
+    @Override
+    public String toString() {
+        return "PositionData{" +
+                "speedKph=" + speedKph +
+                ", altitudeMeter=" + altitudeMeter +
+                ", customAttributes=" + customAttributes +
+                '}';
     }
 }

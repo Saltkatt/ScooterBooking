@@ -1,9 +1,9 @@
-package com.wirelessiths.dal.Trip;
+package com.wirelessiths.dal.trip;
 
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import java.time.Instant;
-import java.time.LocalDate;
+import java.util.Arrays;
 
 public class Position {
 
@@ -49,6 +49,15 @@ public class Position {
     @JsonSetter("position_created")
     public void setPositionCreatedString(String time){
         setPositionCreated(Instant.parse(time));
+    }
 
+    @Override
+    public String toString() {
+        return "Position{" +
+                "positionCreated=" + positionCreated +
+                ", tags=" + Arrays.toString(tags) +
+                ", location=" + location +
+                ", positionData=" + positionData +
+                '}';
     }
 }
