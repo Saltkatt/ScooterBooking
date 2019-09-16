@@ -9,11 +9,13 @@ import com.squareup.okhttp.Response;
 
 public class GetExample {
 
+
     String run(String url) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(url)
                 //.header("Authorization", "Bearer " + token)
+                .header("Authorization", "wcar-scooter")
                 .build();
         Response response = null;
         try {
