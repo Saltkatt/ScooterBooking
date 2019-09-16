@@ -15,34 +15,59 @@ import java.util.Map;
 
 public class ReadFile {
 
+    /**
+     * Reads the file in the S3 bucket and transfers the information to a HashMap.
+     * @return HashMap s3Content
+     */
+    public static HashMap<String, Integer> readFileInBucket() throws IOException {
+        String keyName = "admin.txt";
+        String bucketName = System.getenv("BUCKET_NAME");
+        //String bucketName = "carl-bucket-29";
 
-   public static Map<String, Integer> readFileInBucket() throws IOException{
-       String keyName = "admin.txt";
-       String bucketName = System.getenv("BUCKET_NAME");
+        final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
+        S3Object object = s3.getObject(new GetObjectRequest(bucketName, keyName));
+        InputStream objectData = object.getObjectContent();
+        //process the objectData stream
 
-       final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
-       S3Object object = s3.getObject(new GetObjectRequest(bucketName, keyName));
-       InputStream objectData = object.getObjectContent();
-       //process the objectData stream
+        HashMap<String, String> setMap = new HashMap<>();
+        HashMap<String, Integer> s3Content = new HashMap<>();
 
-       HashMap<String, Integer> setMap = new HashMap<>();
+        BufferedReader reader = new BufferedReader(new InputStreamReader(object.getObjectContent()));
+        String line;
 
-           BufferedReader reader = new BufferedReader(new InputStreamReader(object.getObjectContent()));
-           String line;
+        while ((line = reader.readLine()) != null) {
+            if (line.contains("=")) {
+                String[] settings = line.split("=");
+                //setMap.put(settings[0], Integer.parseInt(settings[1]));
+                setMap.put(settings[0], settings[1]);
+            }
+        }
+        for (Map.Entry<String, String> entry : setMap.entrySet()) {
+            //System.out.println( entry.getKey() + " "+ entry.getValue());
+            String key = entry.getKey();
+            String value = entry.getValue();
 
-           while ((line = reader.readLine()) != null) {
-               if(line.contains("=")){
-                   String[]settings= line.split("=");
-                   setMap.put(settings[0], Integer.parseInt(settings[1]));
-               }
-           }
-           //System.out.println(setMap);
+            // if string value contains * split the string and place in array numbers.
+            if (value.contains("*")) {
+                String[] numbers = value.split("\\*");
+                int sum = 1;
+                // loop through array parse string to integers and multiply.
+                for (int i = 0; i < numbers.length; i++) {
+                    sum = sum * Integer.parseInt(numbers[i]);
+                }
+                // put the String key and the int sum in hashmap: s3Content.
+                s3Content.put(key, sum);
 
-         /*  for (Map.Entry<String, Integer> entry : setMap.entrySet()) {
-               System.out.println( entry.getKey() + " "+ entry.getValue());
-           }*/
-           objectData.close();
-       return setMap;
-   }
+            } else {
+                // if string value does not contain * , parse value into a new int oneValue.
+                int oneValue = Integer.parseInt(value);
+                // put the String key and the int oneValue in hashmap: s3Content.
+                s3Content.put(key, oneValue);
+            }
+        }
+        objectData.close();
+
+        return s3Content;
+    }
 
 }

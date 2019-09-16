@@ -11,8 +11,6 @@ import com.wirelessiths.dal.*;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
@@ -155,7 +153,7 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                     if (n.matches(String.valueOf(DATE_PATTERN))) {
                         try {
                             LocalDateConverter converter = new LocalDateConverter();
-                            booking.setDate(converter.unconvert(n));
+                            booking.setBookingDate(converter.unconvert(n));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
