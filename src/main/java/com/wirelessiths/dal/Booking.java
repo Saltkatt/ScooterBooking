@@ -5,8 +5,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonSetter;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
@@ -36,7 +34,6 @@ public class Booking {
     private Instant startTime;
     private Instant endTime;
     private LocalDate bookingDate;
-    private LocalDate date;// temp for testing json
     private BookingStatus bookingStatus;
 
 
@@ -45,7 +42,6 @@ public class Booking {
     private final DynamoDBMapper mapper;
     private final DynamoDB dynamoDB;
 
-    //private final Logger logger = LogManager.getLogger(this.getClass());
     private final LoggerAdapter logger;
     private final StringBuilder sb = new StringBuilder();
 
@@ -144,27 +140,6 @@ public class Booking {
         this.bookingStatus = bookingStatus;
     }
 
-
-
-    //temp for de-serializing json
-    @JsonSetter("startTime")
-    public void setStartTimeFromString(String startTime){
-        this.startTime = Instant.parse(startTime);
-    }
-
-    @JsonSetter("endTime")
-    public void setEndTimeFromString(String endTime){
-        this.endTime = Instant.parse(endTime);
-    }
-
-    @JsonIgnore
-    public void setDate(){
-
-    }
-    @JsonIgnore
-    public LocalDate getDate(){
-        return null;
-    }
 
     @Override
     public String toString() {

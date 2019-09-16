@@ -115,7 +115,7 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: !Ref TableName
       Events:
-        GetBooking:
+        SetState:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
             Path: /bookings/{id}/state
@@ -171,6 +171,25 @@ Resources:
             Path: /bookings/{id}
             Method: put
             RestApiId: !Ref MyApi  # Add this line
+  MonitorEndedBookingsFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: target/bookings-api-dev.jar
+      Handler: com.wirelessiths.monitor.MonitorEndedBookings::doStuff
+      Runtime: java8
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TableName
+
+        #secret-arn
+        #secret-name
+      Events:
+#        MonitorEnd:
+#          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+#          Properties:
+#            Path: /bookings/{id}
+#            Method: put
+#            RestApiId: !Ref MyApi  # Add this line
 
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
