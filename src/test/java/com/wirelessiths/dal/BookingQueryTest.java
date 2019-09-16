@@ -27,9 +27,6 @@ public class BookingQueryTest {
     private static DynamoDBMapperConfig mapperConfig;
     private static String tableName = "query-test-table";
 
-    private static int maxDuration = 7200;
-    private static int buffer = 300;
-    private static int maxBookings = 3;
 
 
     @BeforeClass
@@ -80,9 +77,9 @@ public class BookingQueryTest {
 
         b5.setScooterId("4");
         b5.setUserId("d");
-        b5.setStartTime(Instant.parse("2019-09-03T13:20:00.000Z"));
-        b5.setEndTime(Instant.parse("2019-09-03T13:45:00.000Z"));
-        b5.setDate(LocalDate.parse("2019-09-03"));
+        b5.setStartTime(Instant.parse("2019-09-04T13:20:00.000Z"));
+        b5.setEndTime(Instant.parse("2019-09-04T13:45:00.000Z"));
+        b5.setDate(LocalDate.parse("2019-09-04"));
 
         try{
             b1.save(b1);
@@ -102,7 +99,7 @@ public class BookingQueryTest {
     //Tests for query methods
 
     @Test
-    public void getByScooterIdReturnsScootersByThatId(){
+    public void getByScooterIdNoFilter(){
 
         System.out.println("getByscooterId query: ");
         Booking booking = new Booking(client, mapperConfig );
@@ -113,7 +110,7 @@ public class BookingQueryTest {
             e.printStackTrace();
         }
         list.forEach(System.out::println);
-        assertEquals(1, list.size());
+        assertEquals(2, list.size());
     }
 
     @Test
@@ -165,7 +162,8 @@ public class BookingQueryTest {
         assertEquals(0, list.size());
     }
 
-    public void getByScooterIdOneFilters(){
+    @Test
+    public void getByScooterIdFilterByDate(){
         System.out.println("getByscooterId filter by date query: ");
         Booking booking = new Booking(client, mapperConfig );
         List<Booking> list = new ArrayList<>();
@@ -173,6 +171,22 @@ public class BookingQueryTest {
         filter.put("date", "2019-09-04");
         try {
             list = booking.getByScooterIdWithFilter("2",filter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(1, list.size());
+    }
+
+    @Test
+    public void getByScooterIdFilterByUserId(){
+        System.out.println("getByscooterId filter by userId query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        Map<String, String> filter = new HashMap<>();
+        filter.put("userId", "c");
+        try {
+            list = booking.getByScooterIdWithFilter("4",filter);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -249,6 +263,40 @@ public class BookingQueryTest {
         }
         list.forEach(System.out::println);
         assertEquals(1, list.size());
+
+    }
+
+    @Test
+    public void getByUserFilterByScooterId() {
+        System.out.println("getByUserId Filter by scooterId query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        Map<String, String> filter = new HashMap<>();
+        filter.put("scooterId", "1");
+        try {
+            list = booking.getByUserIdWithFilter("c", filter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(1, list.size());
+
+    }
+
+    @Test
+    public void getByUserFilterByDate() {
+        System.out.println("getByUserId Filter by date query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        Map<String, String> filter = new HashMap<>();
+        filter.put("date", "2019-09-03");
+        try {
+            list = booking.getByUserIdWithFilter("c", filter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(2, list.size());
 
     }
 

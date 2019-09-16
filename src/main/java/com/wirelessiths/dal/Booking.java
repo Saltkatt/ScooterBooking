@@ -287,7 +287,6 @@ public class Booking {
     public List<Booking> getByScooterIdWithFilter(String scooterId, Map<String, String> filter) throws IOException {
         Map<String, AttributeValue> values = new HashMap<>();
 
-        values.put(":v1", new AttributeValue().withS(scooterId));
 
         filter.forEach((s1, s2) -> values.put(":"+s1, new AttributeValue().withS(s2)));
 
@@ -307,6 +306,7 @@ public class Booking {
                 }
         });
 
+        values.put(":v1", new AttributeValue().withS(scooterId));
 
         DynamoDBQueryExpression<Booking> queryExp =
                 new DynamoDBQueryExpression<>();
