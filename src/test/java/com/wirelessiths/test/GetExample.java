@@ -10,12 +10,12 @@ import com.squareup.okhttp.Response;
 public class GetExample {
 
 
-    String run(String url) throws IOException {
+    String run(String url, String auth) throws IOException {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(url)
-                //.header("Authorization", "Bearer " + token)
-                .header("Authorization", "wcar-scooter")
+                //.header("Authorization", "Bearer " + auth)
+                .header("Authorization", auth)
                 .build();
         Response response = null;
         try {

@@ -1,7 +1,8 @@
-package com.wirelessiths.dal;
+package com.wirelessiths.dal.Trip;
 
-import java.awt.*;
-import java.awt.geom.Point2D;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonSetter;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -37,16 +38,16 @@ public class Trip {
 //    }
 //    }
 
+    private Map<String, String> identifiers;
     private String tripId;
-    private String vehicleId;
     private String market;
-    private Point startPosition;
-    private Point endPosition;
+    private Location startPosition;
+    private Location endPosition;
     private Instant startTime;
     private Instant endTime;
     private double totalDistanceMeters;
     private List<String> tags;
-    private List<Point> positions;
+    private List<Position> positions;
     private String sectionType;
     private Map<String, String> customAttributes;
 
@@ -55,20 +56,20 @@ public class Trip {
     public Trip() {
     }
 
+    public Map<String, String> getIdentifiers() {
+        return identifiers;
+    }
+
+    public void setIdentifiers(Map<String, String> identifiers) {
+        this.identifiers = identifiers;
+    }
+
     public String getTripId() {
         return tripId;
     }
-
+    @JsonSetter("trip_id")
     public void setTripId(String tripId) {
         this.tripId = tripId;
-    }
-
-    public String getVehicleId() {
-        return vehicleId;
-    }
-
-    public void setVehicleId(String vehicleId) {
-        this.vehicleId = vehicleId;
     }
 
     public String getMarket() {
@@ -79,26 +80,26 @@ public class Trip {
         this.market = market;
     }
 
-    public Point getStartPosition() {
+    public Location getStartPosition() {
         return startPosition;
     }
-
-    public void setStartPosition(Point startPosition) {
+    @JsonSetter("start_position")
+    public void setStartPosition(Location startPosition) {
         this.startPosition = startPosition;
     }
 
-    public Point getEndPosition() {
+    public Location getEndPosition() {
         return endPosition;
     }
 
-    public void setEndPosition(Point endPosition) {
+    @JsonSetter("end_position")
+    public void setEndPosition(Location endPosition) {
         this.endPosition = endPosition;
     }
 
     public Instant getStartTime() {
         return startTime;
     }
-
     public void setStartTime(Instant startTime) {
         this.startTime = startTime;
     }
@@ -107,6 +108,7 @@ public class Trip {
         return endTime;
     }
 
+    @JsonSetter("end_time")
     public void setEndTime(Instant endTime) {
         this.endTime = endTime;
     }
@@ -115,6 +117,7 @@ public class Trip {
         return totalDistanceMeters;
     }
 
+    @JsonSetter("total_distance_meter")
     public void setTotalDistanceMeters(double totalDistanceMeters) {
         this.totalDistanceMeters = totalDistanceMeters;
     }
@@ -127,28 +130,57 @@ public class Trip {
         this.tags = tags;
     }
 
-    public List<Point> getPositions() {
+    public List<Position> getPositions() {
         return positions;
     }
 
-    public void setPositions(List<Point> positions) {
+    public void setPositions(List<Position> positions) {
         this.positions = positions;
-    }
-
-
-    public Map<String, String> getCustomAttributes() {
-        return customAttributes;
-    }
-
-    public void setCustomAttributes(Map<String, String> customAttributes) {
-        this.customAttributes = customAttributes;
     }
 
     public String getSectionType() {
         return sectionType;
     }
 
+    @JsonSetter("section_type")
     public void setSectionType(String sectionType) {
         this.sectionType = sectionType;
+    }
+
+    public Map<String, String> getCustomAttributes() {
+        return customAttributes;
+    }
+
+    @JsonSetter("custom_attributes")
+    public void setCustomAttributes(Map<String, String> customAttributes) {
+        this.customAttributes = customAttributes;
+    }
+    //-----------------------------------
+    @JsonSetter("start_time")
+    public void setStartTimeString(String time){
+        setStartTime(Instant.parse(time));
+    }
+
+    @JsonSetter("end_time")
+    public void setEndTimeString(String time){
+        setStartTime(Instant.parse(time));
+    }
+
+    @Override
+    public String toString() {
+        return "Trip{" +
+                "identifiers=" + identifiers +
+                ", tripId='" + tripId + '\'' +
+                ", market='" + market + '\'' +
+                ", startPosition=" + startPosition +
+                ", endPosition=" + endPosition +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", totalDistanceMeters=" + totalDistanceMeters +
+                ", tags=" + tags +
+                ", positions=" + positions +
+                ", sectionType='" + sectionType + '\'' +
+                ", customAttributes=" + customAttributes +
+                '}';
     }
 }
