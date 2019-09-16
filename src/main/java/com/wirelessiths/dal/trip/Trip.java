@@ -157,7 +157,7 @@ public class Trip {
 
     @JsonSetter("end_time")
     public void setEndTimeString(String time){
-        setStartTime(Instant.parse(time));
+        setEndTime(Instant.parse(time));
     }
 
     @Override

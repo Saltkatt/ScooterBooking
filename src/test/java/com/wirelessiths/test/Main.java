@@ -1,10 +1,13 @@
 package com.wirelessiths.test;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.sun.xml.internal.bind.v2.model.core.TypeRef;
 import com.wirelessiths.dal.trip.Trip;
 import io.github.cdimascio.dotenv.Dotenv;
 
@@ -33,22 +36,26 @@ public class Main {
 
         try {
            //String result =  example.run(baseUrl + path);
-            String result = example.run(tripsUrl + "/" + tripId, auth);
+            String result = example.run(tripsUrl, auth);
             System.out.println(result);
 
-            //JsonNode trips = objectMapper.readTree(result)
-//                    .path("trip_overview_list");
+            ArrayNode trips = (ArrayNode) objectMapper.readTree(result)
+                    .path("trip_overview_list");
+            System.out.println(trips.size());
+            List<Trip> trips2 = objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
+            trips2.forEach(System.out::println);
+
 //            trips.forEach(p->{
 //                System.out.println(p);
 //                Trip t = objectMapper.readValue(p, Trip.class);
 //            });
            //List<Trip> trips200 = objectMapper.treeToValue(trips);
-            Trip t = objectMapper.readValue(result, Trip.class);
+            //Trip t = objectMapper.readValue(result, Trip.class);
             //List<trip> trips = objectMapper.readValue(result, trip.class);
             //Trip[] trips = objectMapper.readValue(result, Trip[].class);
             //System.out.println(b.getEndTime());
             //System.out.println(t.getEndPosition().getLatitude());
-            System.out.println(t);
+            //System.out.println(t);
 
         }catch(Exception e){
             System.out.println(e.getMessage());
