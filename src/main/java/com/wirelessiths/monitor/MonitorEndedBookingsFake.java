@@ -45,6 +45,7 @@ public class MonitorEndedBookingsFake {
 
     //complete fake endedBookingsMonitor
     //get trips from today
+    //check if they are not cancelled
     //connect trips to bookings
     //save trips to bookings
 
@@ -62,7 +63,7 @@ public class MonitorEndedBookingsFake {
         //private final SecretCache cache = new SecretCache();
         //final String secret = cache.getSecretString("");
 
-        //check if ended bookings
+        //check if ended not cancelled bookings
         //if not log and return
         //else log and check p&j for trips
         //if no trips log and return
