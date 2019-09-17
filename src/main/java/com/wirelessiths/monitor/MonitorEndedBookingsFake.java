@@ -34,15 +34,6 @@ public class MonitorEndedBookingsFake {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
 
-
-    //om quera på main table, behövs info om vilka skootrar som finns, så man kan göra en query per skooter
-    //get matching booking
-        //all valid bookings with endtime between now-11 min and now-10 min
-        //alt1: for each scooter, get booking with endtime between (now-11 min) and (now-10 min)
-        //date and endtime index: get bookings from today with endtime between (now-11 min) and (now-10 min)
-    //see if there is a trip in position and journey for each boooking
-    //add representation of trip to each booking object
-
     //complete fake endedBookingsMonitor
     //get trips from today
     //check if they are not cancelled

@@ -9,7 +9,7 @@
 //import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 //import com.fasterxml.jackson.databind.node.ArrayNode;
 //import com.wirelessiths.dal.Booking;
-//import com.wirelessiths.dal.trip.Trip;
+//import com.wirelessiths.dal.trip.trip;
 //import com.wirelessiths.service.HTTPGetService;
 //import io.github.cdimascio.dotenv.Dotenv;
 //import org.apache.logging.log4j.LogManager;
@@ -87,7 +87,7 @@
 //                if(trips.size() < 1){
 //                    logger.info("No trips for booking:" + b);
 //                }else{
-//                    List<Trip> newTrips = objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
+//                    List<trip> newTrips = objectMapper.convertValue(trips, new TypeReference<List<trip>>(){});
 //                    logger.info("appending " + trips.size() + " new trips to booking: " + b);
 //                    b.getTrips().addAll(newTrips);
 //                }

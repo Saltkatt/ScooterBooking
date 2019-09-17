@@ -31,7 +31,7 @@ public class Main {
 //        String tripId = dotenv.get("TRIP_ID");
 //
 //        GetExample example = new GetExample();
-//        List<Trip> trips100 = new ArrayList<>();
+//        List<trip> trips100 = new ArrayList<>();
 //
 //
 //        try {
@@ -42,17 +42,17 @@ public class Main {
 //            ArrayNode trips = (ArrayNode) objectMapper.readTree(result)
 //                    .path("trip_overview_list");
 //            System.out.println(trips.size());
-//            List<Trip> trips2 = objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
+//            List<trip> trips2 = objectMapper.convertValue(trips, new TypeReference<List<trip>>(){});
 //            trips2.forEach(System.out::println);
 //
 ////            trips.forEach(p->{
 ////                System.out.println(p);
-////                Trip t = objectMapper.readValue(p, Trip.class);
+////                trip t = objectMapper.readValue(p, trip.class);
 ////            });
-//           //List<Trip> trips200 = objectMapper.treeToValue(trips);
-//            //Trip t = objectMapper.readValue(result, Trip.class);
+//           //List<trip> trips200 = objectMapper.treeToValue(trips);
+//            //trip t = objectMapper.readValue(result, trip.class);
 //            //List<trip> trips = objectMapper.readValue(result, trip.class);
-//            //Trip[] trips = objectMapper.readValue(result, Trip[].class);
+//            //trip[] trips = objectMapper.readValue(result, trip[].class);
 //            //System.out.println(b.getEndTime());
 //            //System.out.println(t.getEndPosition().getLatitude());
 //            //System.out.println(t);
