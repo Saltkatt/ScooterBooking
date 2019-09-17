@@ -38,7 +38,7 @@ public class Booking {
     private LocalDate bookingDate;
     private BookingStatus bookingStatus;
 
-    private List<Trip> trips;
+    private List<Trip> trips = new ArrayList<>();
 
 
     private static DynamoDBAdapter db_adapter;
@@ -145,11 +145,12 @@ public class Booking {
         this.bookingStatus = bookingStatus;
     }
 
+    @DynamoDBAttribute(attributeName = "trips")
     public List<Trip> getTrips() {
         return trips;
     }
 
-    @JsonSetter("trip_overview_list")
+    //@JsonSetter("trip_overview_list")
     public void setTrips(List<Trip> trips) {
         this.trips = trips;
     }
@@ -166,6 +167,8 @@ public class Booking {
                 ", bookingStatus=" + bookingStatus +
                 '}';
     }
+
+
 
     public List<Booking> validateBooking(Booking booking, int maxDuration, int buffer) throws IOException{
 
