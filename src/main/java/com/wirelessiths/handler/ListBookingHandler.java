@@ -34,6 +34,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 			// get all users
 			List<Booking> bookings = new Booking().list();
 
+
 			// send the response back
 			return ApiGatewayResponse.builder()
 					.setStatusCode(200)
