@@ -13,7 +13,7 @@ Parameters:
     Default: xxx
   TableName:
     Type: String
-    Default: xxx
+    Default: test-table
   BucketName:
     Type: String
     Default: xxx
@@ -180,16 +180,13 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TableName
-
-        #secret-arn
-        #secret-name
       Events:
-#        MonitorEnd:
-#          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-#          Properties:
-#            Path: /bookings/{id}
-#            Method: put
-#            RestApiId: !Ref MyApi  # Add this line
+        MonitorEnd:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /bookings/{id}
+            Method: put
+            RestApiId: !Ref MyApi  # Add this line
 
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table

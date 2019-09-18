@@ -9,6 +9,7 @@ import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.*;
 import org.junit.AfterClass;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -37,7 +38,7 @@ import static org.junit.Assert.*;
     @BeforeClass
     public static void setUpClientAndTable(){
 
-        startLocalDynamoDB();
+        //startLocalDynamoDB();
         createClient();
         createTable();
         populateForOkValidationTest();
@@ -132,7 +133,7 @@ import static org.junit.Assert.*;
         }
     }
 
-    //@Before
+    @Before
     public static void populateForFailValidationTest(){
         System.out.println("adding fail validation test cases to table..");
 
