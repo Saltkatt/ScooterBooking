@@ -26,7 +26,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class Booking {
 
     // get the table name from env. var. set in serverless.yml
-    private static final String BOOKINGS_TABLE_NAME = "test-table";
+    private static final String BOOKINGS_TABLE_NAME = "carl-bookings-09-17-3";
+
+
 
     private String type;
     private String scooterId;

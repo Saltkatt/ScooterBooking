@@ -10,6 +10,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 public class IntegrationTestSAM {
 
     // deploy locally - SAM
@@ -26,8 +29,13 @@ public class IntegrationTestSAM {
 
 
     }*/
+
+    /**
+     * Tests ListBookingsFunction response code is 200.
+     * @throws IOException
+     */
     @Test
-    public void createBookingTest() throws IOException {
+    public void listBookingsOkResponseCode200() throws IOException {
         // ListBookingFunction
         URL url = new URL("http://127.0.0.1:3000/bookings");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -50,7 +58,10 @@ public class IntegrationTestSAM {
         in.close();
 
         // print result.
-        System.out.println(response.toString());
+        //System.out.println(response.toString());
+        assertEquals(String.valueOf(responseCode), 200, responseCode);
+   
+
 
         //return response.toString();
 
