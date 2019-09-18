@@ -146,6 +146,7 @@ public class Booking {
     }
 
     @DynamoDBAttribute(attributeName = "trips")
+    @DynamoDBTypeConverted(converter = ListConverter.class)
     public List<Trip> getTrips() {
         return trips;
     }
@@ -165,10 +166,9 @@ public class Booking {
                 ", endTime=" + endTime +
                 ", bookingDate=" + bookingDate +
                 ", bookingStatus=" + bookingStatus +
+                ", trips=" + trips +
                 '}';
     }
-
-
 
     public List<Booking> validateBooking(Booking booking, int maxDuration, int buffer) throws IOException{
 
@@ -241,11 +241,14 @@ public class Booking {
         values.put(":today", new AttributeValue().withS(today.toString()));
         values.put(":end1", new AttributeValue().withS(now.minusSeconds(60 * 11).toString()));
         values.put(":end2", new AttributeValue().withS(now.minusSeconds(60 * 10).toString()));
-        values.put(":invalidState", new AttributeValue().withS(BookingStatus.CANCELLED.toString()));
+        values.put(":validState1", new AttributeValue().withS(BookingStatus.VALID.toString()));
+        values.put(":validState2", new AttributeValue().withS(BookingStatus.ACTIVE.toString()));
+
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
         queryExp.withKeyConditionExpression("bookingDate = :today and endTime between :end1 and :end2")
-                .withFilterExpression("bookingStatus <> :invalidState")
+                .withFilterExpression("bookingStatus = :validState1 or bookingStatus = :validState2")
+                //.withFilterExpression("bookingStatus = :validState1")
                 .withIndexName("endTimeIndex")
                 .withExpressionAttributeValues(values)
                 .withConsistentRead(false);

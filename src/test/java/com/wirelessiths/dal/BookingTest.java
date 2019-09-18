@@ -8,15 +8,14 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.*;
+import com.wirelessiths.dal.trip.Trip;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -242,14 +241,14 @@ import static org.junit.Assert.*;
         b3.setStartTime(now.minusSeconds(60 * 60 + 20 * 60));
         b3.setEndTime(now.minusSeconds(60 * 10 + 10));
         b3.setScooterId("12345");
-        b3.setBookingStatus(BookingStatus.VALID);
+        b3.setBookingStatus(BookingStatus.ACTIVE);
 
 
 
         b4.setStartTime(now.minusSeconds(60 * 60));
         b4.setEndTime(now.minusSeconds(60 * 14));
         b4.setScooterId("100");
-        b4.setBookingStatus(BookingStatus.VALID);
+        b4.setBookingStatus(BookingStatus.ACTIVE);
 
 
 
@@ -324,6 +323,31 @@ import static org.junit.Assert.*;
 
         }
 
+    }
+    @Test
+    public void addTrips(){
+        Instant now = Instant.now();
+        Trip trip = new Trip();
+        Booking booking = new Booking(client, mapperConfig);
+        booking.setStartTime(now.minusSeconds(60 * 60 + 20 * 60));
+        booking.setEndTime(now.minusSeconds(60 * 10 + 10));
+        booking.setScooterId("12345");
+        booking.setBookingStatus(BookingStatus.ACTIVE);
+
+
+        try{
+            System.out.println("in ad trip: " + booking.getBookingId());
+            booking.getTrips().add(trip);
+            booking.save(booking);
+            System.out.println(booking);
+
+            String bookingId = booking.getBookingId();
+            Booking b2 = booking.get(bookingId);
+            System.out.println("b2: " + b2);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            fail();
+        }
     }
 
 
