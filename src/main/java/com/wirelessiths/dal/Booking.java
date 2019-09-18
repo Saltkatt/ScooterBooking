@@ -241,11 +241,11 @@ public class Booking {
         values.put(":today", new AttributeValue().withS(today.toString()));
         values.put(":end1", new AttributeValue().withS(now.minusSeconds(60 * 11).toString()));
         values.put(":end2", new AttributeValue().withS(now.minusSeconds(60 * 10).toString()));
-        values.put(":validState", new AttributeValue().withS(BookingStatus.VALID.toString()));
+        values.put(":invalidState", new AttributeValue().withS(BookingStatus.CANCELLED.toString()));
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
         queryExp.withKeyConditionExpression("bookingDate = :today and endTime between :end1 and :end2")
-                .withFilterExpression("bookingStatus = :validState")
+                .withFilterExpression("bookingStatus <> :invalidState")
                 .withIndexName("endTimeIndex")
                 .withExpressionAttributeValues(values)
                 .withConsistentRead(false);
