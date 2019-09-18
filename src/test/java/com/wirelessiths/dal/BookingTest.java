@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
     @BeforeClass
     public static void setUpClientAndTable(){
 
-        startLocalDynamoDB();
+       // startLocalDynamoDB();
         createClient();
         createTable();
         populateForOkValidationTest();
