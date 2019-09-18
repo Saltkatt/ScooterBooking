@@ -115,10 +115,10 @@ Resources:
         - DynamoDBCrudPolicy:
             TableName: !Ref TableName
       Events:
-        GetBooking:
+        SetState:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
           Properties:
-            Path: /bookings/{id}/status
+            Path: /bookings/{id}/state
             Method: post
             RestApiId: !Ref MyApi  # Add this line
   DeleteBookingFunction:
@@ -171,6 +171,25 @@ Resources:
             Path: /bookings/{id}
             Method: put
             RestApiId: !Ref MyApi  # Add this line
+  MonitorEndedBookingsFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: target/bookings-api-dev.jar
+      Handler: com.wirelessiths.monitor.MonitorEndedBookingsFake::doStuff
+      Runtime: java8
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TableName
+
+        #secret-arn
+        #secret-name
+      Events:
+#        MonitorEnd:
+#          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+#          Properties:
+#            Path: /bookings/{id}
+#            Method: put
+#            RestApiId: !Ref MyApi  # Add this line
 
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
@@ -185,7 +204,7 @@ Resources:
           AttributeType: S
         - AttributeName: userId
           AttributeType: S
-        - AttributeName: date
+        - AttributeName: bookingDate
           AttributeType: S
         - AttributeName: startTime
           AttributeType: S
@@ -220,18 +239,26 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
-        - IndexName: dateIndex
+        - IndexName: endTimeIndex
           KeySchema:
-            - AttributeName: date
+            - AttributeName: bookingDate
               KeyType: HASH
-            - AttributeName: scooterId
+            - AttributeName: endTime
               KeyType: RANGE
           Projection:
             ProjectionType: ALL
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
-
+#      LocalSecondatyIndexes:
+#        - IndexName: endTimeIndex
+#          KeySchema:
+#          - AttributeName: date
+#            KeyType: HASH
+#          - AttributeName: endTime
+#            KeyType: RANGE
+#          Projection:
+#            ProjectionType: KEYS_ONLY
 Outputs:
   GetBookingFunction:
     Description: "GetBooking Lambda Function ARN"

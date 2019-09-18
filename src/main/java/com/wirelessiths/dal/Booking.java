@@ -5,6 +5,8 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.wirelessiths.dal.trip.Trip;
 import org.apache.logging.log4j.LogManager;
 
 import java.io.IOException;
@@ -33,8 +35,10 @@ public class Booking {
 
     private Instant startTime;
     private Instant endTime;
-    private LocalDate date;
+    private LocalDate bookingDate;
     private BookingStatus bookingStatus;
+
+    private List<Trip> trips;
 
 
     private static DynamoDBAdapter db_adapter;
@@ -42,7 +46,6 @@ public class Booking {
     private final DynamoDBMapper mapper;
     private final DynamoDB dynamoDB;
 
-    //private final Logger logger = LogManager.getLogger(this.getClass());
     private final LoggerAdapter logger;
     private final StringBuilder sb = new StringBuilder();
 
@@ -84,6 +87,7 @@ public class Booking {
     //@JsonFormat(pattern = "yyyy-MM-dd T HH:mm:ss", timezone = "UTC")
     @DynamoDBRangeKey(attributeName = "endTime")
     @DynamoDBAttribute(attributeName = "endTime")
+    @DynamoDBIndexRangeKey(attributeName = "endTime", globalSecondaryIndexName = "endTimeIndex")
     @DynamoDBTypeConverted( converter = InstantConverter.class )
     public Instant getEndTime() {
         return endTime;
@@ -95,23 +99,23 @@ public class Booking {
 
 
 
-    @DynamoDBIndexRangeKey(attributeName = "startTime", globalSecondaryIndexName = "dateIndex")
+    @DynamoDBIndexRangeKey(attributeName = "startTime", globalSecondaryIndexName = "bookingIndex")
     @DynamoDBTypeConverted( converter = InstantConverter.class )
     public Instant getStartTime() {
         return startTime;
     }
     public void setStartTime(Instant startTime) {
-        this.date = LocalDate.parse(startTime.toString().split("T")[0]);
+        this.bookingDate = LocalDate.parse(startTime.toString().split("T")[0]);
         this.startTime = startTime;
     }
 
-    @DynamoDBIndexHashKey(attributeName = "date", globalSecondaryIndexName = "dateIndex")
+    @DynamoDBIndexHashKey(attributeName = "bookingDate", globalSecondaryIndexName = "endTimeIndex")
     @DynamoDBTypeConverted( converter = LocalDateConverter.class )
-    public LocalDate getDate() {
-        return date;
+    public LocalDate getBookingDate() {
+        return bookingDate;
     }
-    public void setDate(LocalDate date) {
-        this.date = date;
+    public void setBookingDate(LocalDate bookingDate) {
+        this.bookingDate = bookingDate;
     }
 
     @DynamoDBIndexHashKey(attributeName = "bookingId", globalSecondaryIndexName = "bookingIndex")
@@ -141,6 +145,15 @@ public class Booking {
         this.bookingStatus = bookingStatus;
     }
 
+    public List<Trip> getTrips() {
+        return trips;
+    }
+
+    @JsonSetter("trip_overview_list")
+    public void setTrips(List<Trip> trips) {
+        this.trips = trips;
+    }
+
     @Override
     public String toString() {
         return "Booking{" +
@@ -149,14 +162,13 @@ public class Booking {
                 ", userId='" + userId + '\'' +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
-                ", date=" + date +
+                ", bookingDate=" + bookingDate +
                 ", bookingStatus=" + bookingStatus +
                 '}';
     }
 
     public List<Booking> validateBooking(Booking booking, int maxDuration, int buffer) throws IOException{
 
-        //int maxDurationSeconds = 60 * 60 * 7;//temporary hardcoding of 7 hour max booking length
 
         String start = booking.getStartTime().minusSeconds(buffer).toString();
         String end = booking.getEndTime().plusSeconds(buffer).toString();
@@ -178,8 +190,10 @@ public class Booking {
         return mapper.query(Booking.class, queryExp);
     }
 
-        // methods
+
     public Boolean ifTableExists() {
+        System.out.println("i iftabelexists");
+
         return this.client.describeTable(BOOKINGS_TABLE_NAME).getTable().getTableStatus().equals("ACTIVE");
     }
 
@@ -214,8 +228,25 @@ public class Booking {
         return booking;
     }
 
-    public List<Booking> getByUserId(String userId) throws IOException {
+    public List<Booking> bookingsByEndTime()throws IOException, Exception{
 
+        LocalDate today = LocalDate.now();
+        Instant now = Instant.now();
+
+        Map<String, AttributeValue> values = new HashMap<>();
+        values.put(":today", new AttributeValue().withS(today.toString()));
+        values.put(":end1", new AttributeValue().withS(now.minusSeconds(60 * 11).toString()));
+        values.put(":end2", new AttributeValue().withS(now.minusSeconds(60 * 10).toString()));
+
+        DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
+        queryExp.withKeyConditionExpression("bookingDate = :today and endTime between :end1 and :end2")
+                .withIndexName("endTimeIndex")
+                .withExpressionAttributeValues(values)
+                .withConsistentRead(false);
+        return mapper.query(Booking.class, queryExp);
+    }
+
+    public List<Booking> getByUserId(String userId) throws IOException {
         // Query with mapper
         // Create Booking object with user id
         Booking booking = new Booking();
@@ -238,21 +269,13 @@ public class Booking {
         Map<String, AttributeValue> values = new HashMap<>();
         filter.forEach((s1, s2) -> values.put(":"+s1, new AttributeValue().withS(s2)));
         StringBuilder filterExpression = new StringBuilder();
-        Map<String, String> expression = new HashMap<>();
-
 
         values.forEach((v1, v2) -> {
             // Don't put an "and" the first time
             if (!filterExpression.toString().isEmpty()) {
                 filterExpression.append(" and ");
             }
-            //date is a reserved expression by dynamodb uses #d as expressionattributename
-            if(v1.equals(":date")){
-                filterExpression.append("#d").append(" = ").append(v1);
-                expression.put("#d", "date");
-            } else {
-                filterExpression.append(v1.substring(1)).append(" = ").append(v1);
-            }
+            filterExpression.append(v1.substring(1)).append(" = ").append(v1);
         });
 
 
@@ -264,9 +287,6 @@ public class Booking {
         .withFilterExpression(filterExpression.toString())
         .withIndexName("userIndex")
         .withConsistentRead(false);
-        if(!expression.isEmpty()){
-            queryExpression.setExpressionAttributeNames(expression);
-        }
 
         return mapper.query(Booking.class, queryExpression);
     }
@@ -287,7 +307,6 @@ public class Booking {
     public List<Booking> getByScooterIdWithFilter(String scooterId, Map<String, String> filter) throws IOException {
         Map<String, AttributeValue> values = new HashMap<>();
 
-        values.put(":v1", new AttributeValue().withS(scooterId));
 
         filter.forEach((s1, s2) -> values.put(":"+s1, new AttributeValue().withS(s2)));
 
@@ -307,6 +326,7 @@ public class Booking {
                 }
         });
 
+        values.put(":v1", new AttributeValue().withS(scooterId));
 
         DynamoDBQueryExpression<Booking> queryExp =
                 new DynamoDBQueryExpression<>();
@@ -325,12 +345,12 @@ public class Booking {
     public List<Booking> getByDate(LocalDate date) throws IOException {
 
         Booking booking = new Booking();
-        booking.setDate(date);
+        booking.setBookingDate(date);
 
         DynamoDBQueryExpression<Booking> queryExpression =
                 new DynamoDBQueryExpression<>();
         queryExpression.setHashKeyValues(booking);
-        queryExpression.setIndexName("dateIndex");
+        queryExpression.setIndexName("endTimeIndex");
         queryExpression.setConsistentRead(false);
 
         return mapper.query(Booking.class, queryExpression);
@@ -346,59 +366,31 @@ public class Booking {
     public List<Booking> getByDateWithFilter(LocalDate date, Map<String, String> filter) throws IOException {
 
         Booking booking = new Booking();
-        booking.setDate(date);
+        booking.setBookingDate(date);
         Map<String, AttributeValue> values = new HashMap<>();
-        if(filter.containsKey("scooterId")){
-            booking.setScooterId(filter.get("scooterId"));
-            filter.remove("scooterId");
-
-        }
         filter.forEach((s1, s2) -> values.put(":"+s1, new AttributeValue().withS(s2)));
         StringBuilder filterExpression = new StringBuilder();
-        Map<String, String> expression = new HashMap<>();
-
 
         values.forEach((v1, v2) -> {
             if (!filterExpression.toString().isEmpty()){
                 filterExpression.append(" and ");
             }
-            if(v1.equals(":date")){
-                expression.put("#d", "date");
-            }
-            else {
                 filterExpression.append(v1.substring(1)).append(" = ").append(v1);
-            }
         });
-
-        AtomicBoolean useHashKeyQueryType = new AtomicBoolean(false);
-        Optional.ofNullable(booking.getScooterId()).ifPresent((s) -> {
-           values.put(":scooterId", new AttributeValue().withS(s));
-           values.put(":date", new AttributeValue().withS(booking.getDate().toString()));
-           useHashKeyQueryType.set(true);
-            expression.put("#d", "date");
-       });
-
 
 
         logger.info(filterExpression.toString());
         DynamoDBQueryExpression<Booking> queryExpression =
                 new DynamoDBQueryExpression<>();
-        if(useHashKeyQueryType.get()){
-            queryExpression.setKeyConditionExpression("#d = :date and scooterId = :scooterId");
-        } else {
-            queryExpression.setHashKeyValues(booking);
-        }
+
+            queryExpression.withHashKeyValues(booking);
         queryExpression
         .setExpressionAttributeValues(values);
         if(!filterExpression.toString().isEmpty()) {
             queryExpression.setFilterExpression(filterExpression.toString());
         }
-        queryExpression.withIndexName("dateIndex")
+        queryExpression.withIndexName("endTimeIndex")
         .withConsistentRead(false);
-        if(!expression.isEmpty()){
-            queryExpression.setExpressionAttributeNames(expression);
-        }
-
 
 
         return mapper.query(Booking.class, queryExpression);
@@ -450,12 +442,12 @@ public class Booking {
                 userId.equals(booking.userId) &&
                 startTime.equals(booking.startTime) &&
                 endTime.equals(booking.endTime) &&
-                date.equals(booking.date);
+                bookingDate.equals(booking.bookingDate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(scooterId, bookingId, userId, startTime, endTime, date);
+        return Objects.hash(scooterId, bookingId, userId, startTime, endTime, bookingDate);
     }
 }
 //TODO: if booking is not checked out in allotted time, will we want to keep it in the db, delete it or move it to another db? it should cancel to leave timespan available for others to book

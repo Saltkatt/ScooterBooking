@@ -1,5 +1,6 @@
 package com.wirelessiths.dal;
 
+
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
@@ -8,9 +9,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.*;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -18,204 +17,69 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
-    public class BookingTest {
+public class BookingQueryTest {
 
     private static AmazonDynamoDB client;
     private static DynamoDBMapperConfig mapperConfig;
-    private static String tableName = "test-table";
+    private static String tableName = "query-test-table";
 
-    private static int maxDuration = 7200;
-    private static int buffer = 300;
-    private static int maxBookings = 3;
 
 
     @BeforeClass
     public static void setUpClientAndTable(){
         createClient();
         createTable();
-        populateForOkValidationTest();
-        populateForFailValidationTest();
+        populateForQueryTests();
     }
 
-    //@Before
-    public static void populateForOkValidationTest(){
-        System.out.println("adding passing test cases to table..");
-        Booking b1 = new Booking(client, mapperConfig );
-        Booking b2 = new Booking(client, mapperConfig);
-
-        b1.setScooterId("3");
-        b1.setUserId("ok-cases");
-        b1.setStartTime(Instant.parse("2019-09-02T13:20:00.000Z"));
-        b1.setEndTime(Instant.parse("2019-09-02T13:45:00.000Z"));
-        //b1.setBookingDate(LocalDate.parse("2019-09-02"));
-
-        b2.setScooterId("3");
-        b2.setUserId("ok-cases");
-        b2.setStartTime(Instant.parse("2019-09-02T15:10:00.000Z"));
-        b2.setEndTime(Instant.parse("2019-09-02T15:35:00.000Z"));
-        //b2.setBookingDate(LocalDate.parse("2019-09-02"));
-
-        try{
-            b1.save(b1);
-            b2.save(b2);
-        }catch(Exception e){
-            fail();
-            System.out.println("error in populateForOkValidationTest()100");
-            System.out.println("msg: " + e.getMessage());
-        }
+    @AfterClass
+    public static void deleteTableAfterTests() {
+        deleteTable();
     }
 
 
-    @Test
-    public void bookingLogicValidationPassTest(){
-        Booking testCase = new Booking(client, mapperConfig);
+    private static void populateForQueryTests() {
 
-        testCase.setScooterId("3");
-        testCase.setUserId("before-and-after");
-        testCase.setStartTime(Instant.parse("2019-09-02T14:00:00.000Z"));
-        testCase.setEndTime(Instant.parse("2019-09-02T15:00:00.000Z"));
-        testCase.setBookingDate(LocalDate.parse("2019-09-02"));
-        //testCase.generateValidationKey();
-
-
-        try{
-            List<Booking> bookings = testCase.validateBooking(testCase, maxDuration, buffer );
-            System.out.println("pass test bookings:");
-            bookings.forEach(System.out::println);
-            System.out.println("pass test bookings.size(): " + bookings.size());
-            assert(bookings.size() == 0);
-        }catch(Exception e){
-            fail();
-            System.out.println("error in bookingLogicValidationPassTest()");
-
-            System.out.println(e.getMessage());
-        }
-    }
-
-    //@Before
-    public static void populateForFailValidationTest(){
-        System.out.println("adding fail validation test cases to table..");
-
+        System.out.println("adding query test cases to table..");
         Booking b1 = new Booking(client, mapperConfig );
         Booking b2 = new Booking(client, mapperConfig);
         Booking b3 = new Booking(client, mapperConfig);
         Booking b4 = new Booking(client, mapperConfig);
         Booking b5 = new Booking(client, mapperConfig);
-        Booking b6 = new Booking(client, mapperConfig);
 
-
-        b1.setScooterId("2");
-        b1.setUserId("over");
-        b1.setBookingId("100");
-        b1.setStartTime(Instant.parse("2019-09-02T13:30:00.000Z"));
-        b1.setEndTime(Instant.parse("2019-09-02T15:45:00.000Z"));
-        b1.setBookingDate(LocalDate.parse("2019-09-02"));
+        b1.setScooterId("1");
+        b1.setUserId("a");
+        b1.setStartTime(Instant.parse("2019-09-03T13:20:00.000Z"));
+        b1.setEndTime(Instant.parse("2019-09-03T13:45:00.000Z"));
+        b1.setBookingDate(LocalDate.parse("2019-09-03"));
 
         b2.setScooterId("2");
-        b2.setUserId("before-in");
-        b2.setStartTime(Instant.parse("2019-09-02T11:10:00.000Z"));
-        b2.setEndTime(Instant.parse("2019-09-02T14:35:00.000Z"));
-        b2.setBookingDate(LocalDate.parse("2019-09-02"));
+        b2.setUserId("b");
+        b2.setStartTime(Instant.parse("2019-09-04T15:10:00.000Z"));
+        b2.setEndTime(Instant.parse("2019-09-04T15:35:00.000Z"));
+        b2.setBookingDate(LocalDate.parse("2019-09-04"));
 
-        b3.setScooterId("2");
-        b3.setUserId("after-out");
-        b3.setStartTime(Instant.parse("2019-09-02T14:30:00.000Z"));
-        b3.setEndTime(Instant.parse("2019-09-02T15:30:00.000Z"));
-        b3.setBookingDate(LocalDate.parse("2019-09-02"));
+        b3.setScooterId("1");
+        b3.setUserId("c");
+        b3.setStartTime(Instant.parse("2019-09-03T15:10:00.000Z"));
+        b3.setEndTime(Instant.parse("2019-09-03T15:35:00.000Z"));
+        b3.setBookingDate(LocalDate.parse("2019-09-03"));
 
-        b4.setScooterId("2");
-        b4.setUserId("between");
-        b4.setStartTime(Instant.parse("2019-09-02T14:10:00.000Z"));
-        b4.setEndTime(Instant.parse("2019-09-02T14:40:00.000Z"));
-        b4.setBookingDate(LocalDate.parse("2019-09-02"));
+        b4.setScooterId("4");
+        b4.setUserId("c");
+        b4.setStartTime(Instant.parse("2019-09-03T13:20:00.000Z"));
+        b4.setEndTime(Instant.parse("2019-09-03T13:45:00.000Z"));
+        b4.setBookingDate(LocalDate.parse("2019-09-03"));
 
-        b5.setScooterId("2");
-        b5.setUserId("ok-cases");
-        b5.setStartTime(Instant.parse("2019-09-02T13:20:00.000Z"));
-        b5.setEndTime(Instant.parse("2019-09-02T13:45:00.000Z"));
-        b5.setBookingDate(LocalDate.parse("2019-09-02"));
-
-        b6.setScooterId("2");
-        b6.setUserId("ok-cases");
-        b6.setStartTime(Instant.parse("2019-09-02T15:10:00.000Z"));
-        b6.setEndTime(Instant.parse("2019-09-02T15:35:00.000Z"));
-        b6.setBookingDate(LocalDate.parse("2019-09-02"));
-
-        try{
-            b1.save(b1);
-            b2.save(b2);
-            b3.save(b3);
-            b4.save(b4);
-            b5.save(b5);
-            b6.save(b6);
-        }catch(Exception e){
-            fail();
-            System.out.println("error in populateForFailValidationTest()");
-            System.out.println(e.getMessage());
-        }
-    }
-
-    @Test
-    public void bookingLogicValidationFailTest(){
-        Booking testCase = new Booking(client, mapperConfig);
-
-        testCase.setScooterId("2");
-        testCase.setUserId("testCase");
-        testCase.setStartTime(Instant.parse("2019-09-02T14:00:00.000Z"));
-        testCase.setEndTime(Instant.parse("2019-09-02T15:00:00.000Z"));
-        testCase.setBookingDate(LocalDate.parse("2019-09-02"));
-
-        try{
-            List<Booking> bookings = testCase.validateBooking(testCase, maxDuration, buffer);
-            System.out.println("fail test bookings.size(): " + bookings.size());
-
-            bookings.forEach(System.out::println);
-            assert(bookings.size() == 4);
-        }catch(Exception e){
-            fail();
-            System.out.println("error in bookingLogicValidationFailTest()");
-
-            System.out.println(e.getMessage());
-        }
-    }
-
-    @Test
-    public void bookingsByEndTimeTest(){
-        LocalDate today = LocalDate.now();
-        Instant now = Instant.now();
-
-        Booking b1 = new Booking(client, mapperConfig);
-        Booking b2 = new Booking(client, mapperConfig);
-        Booking b3 = new Booking(client, mapperConfig);
-        Booking b4 = new Booking(client, mapperConfig);
-        Booking b5 = new Booking(client, mapperConfig);
-
-        b1.setStartTime(now.minusSeconds(60 * 60 + 30 * 60));
-        b1.setEndTime(now.minusSeconds(60 * 10 + 30));
-        b1.setScooterId("123");
-
-        b2.setStartTime(now.minusSeconds(60 * 60));
-        b2.setEndTime(now.minusSeconds(60 * 10 + 50));
-        b2.setScooterId("1234");
-
-
-        b3.setStartTime(now.minusSeconds(60 * 60 + 20 * 60));
-        b3.setEndTime(now.minusSeconds(60 * 10 + 10));
-        b3.setScooterId("12345");
-
-
-        b4.setStartTime(now.minusSeconds(60 * 60));
-        b4.setEndTime(now.minusSeconds(60 * 14));
-        b4.setScooterId("1");
-
-
-        b5.setStartTime(now.minusSeconds(60 * 60 + 20 * 60));
-        b5.setEndTime(now.minusSeconds(60 * 5));
-        b5.setScooterId("12");
-
+        b5.setScooterId("4");
+        b5.setUserId("d");
+        b5.setStartTime(Instant.parse("2019-09-04T13:20:00.000Z"));
+        b5.setEndTime(Instant.parse("2019-09-04T13:45:00.000Z"));
+        b5.setBookingDate(LocalDate.parse("2019-09-04"));
 
         try{
             b1.save(b1);
@@ -224,51 +88,218 @@ import static org.junit.Assert.*;
             b4.save(b4);
             b5.save(b5);
 
-            List<Booking> bookings = b1.bookingsByEndTime();
-            System.out.println("ending bookings: " + bookings.size());
-            assert(bookings.size() == 3);
-            bookings.forEach( p -> System.out.println("ending booking: " + p));
-
         }catch(Exception e){
-            System.out.println("error in bookingsbyendtime: " + e.getMessage());
-            fail();
+            System.out.println("error in populate for query test");
+            System.out.println("msg: " + e.getMessage());
         }
+
     }
 
 
+    //Tests for query methods
+
     @Test
-    public void daoCrudTest(){
+    public void getByScooterIdNoFilter(){
+
+        System.out.println("getByscooterId query: ");
         Booking booking = new Booking(client, mapperConfig );
-
-        booking.setScooterId("1");
-        booking.setUserId("test-1");
-        booking.setStartTime(Instant.parse("2019-09-02T14:00:00.000Z"));
-        booking.setEndTime(Instant.parse("2019-09-02T15:00:00.000Z"));
-        booking.setBookingDate(LocalDate.parse("2019-09-02"));
-
-        try{
-            //create booking
-            Booking savedBooking = booking.save(booking);
-            //read by bookingId
-            assertEquals(savedBooking, booking.get(savedBooking.getBookingId()));
-            //update
-            String newUserId = "test-2";
-            booking.setUserId(newUserId);
-            booking.update(booking);
-            assertEquals(booking.getUserId(), newUserId);
-
-            //delete booking
-            assert(booking.delete(savedBooking.getBookingId()));
-            //delete deleted booking
-            assert(!booking.delete(savedBooking.getBookingId()));
-        }catch(Exception e){
-            fail();
-
-            System.out.println(e.getMessage());
-
+        List<Booking> list = new ArrayList<>();
+        try {
+            list = booking.getByScooterId("4");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        list.forEach(System.out::println);
+        assertEquals(2, list.size());
+    }
+
+    @Test
+    public void getByUserId(){
+
+        System.out.println("getByUserId query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        try {
+            list = booking.getByUserId("c");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(2, list.size());
+    }
+
+    @Test
+    public void getByDate(){
+
+        System.out.println("getByUserId query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        try {
+            list = booking.getByDate(LocalDate.parse("2019-09-03"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(3, list.size());
+    }
+
+
+
+    @Test
+    public void getByScooterIdAllFilters(){
+        System.out.println("getByscooterId query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        Map<String, String> filter = new HashMap<>();
+        filter.put("userId", "c");
+        filter.put("bookingDate", "2019-09-03");
+        try {
+            list = booking.getByScooterIdWithFilter("2",filter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(0, list.size());
+    }
+
+    @Test
+    public void getByScooterIdFilterByDate(){
+        System.out.println("getByscooterId filter by bookingDate query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        Map<String, String> filter = new HashMap<>();
+        filter.put("bookingDate", "2019-09-04");
+        try {
+            list = booking.getByScooterIdWithFilter("2",filter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(1, list.size());
+    }
+
+    @Test
+    public void getByScooterIdFilterByUserId(){
+        System.out.println("getByscooterId filter by userId query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        Map<String, String> filter = new HashMap<>();
+        filter.put("userId", "c");
+        try {
+            list = booking.getByScooterIdWithFilter("4",filter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(1, list.size());
+    }
+
+    @Test
+    public void getByDateAllFilters(){
+        System.out.println("getByDate all filters query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        Map<String, String> filter = new HashMap<>();
+        filter.put("userId", "c");
+        filter.put("scooterId", "4");
+        try {
+            list = booking.getByDateWithFilter(LocalDate.parse("2019-09-03"),filter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(1, list.size());
+    }
+
+
+    @Test
+    public void getByDateFilterByUser() {
+
+        System.out.println("getByDate Filter by user query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        Map<String, String> filter = new HashMap<>();
+        filter.put("userId", "c");
+        try {
+            list = booking.getByDateWithFilter(LocalDate.parse("2019-09-03"), filter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(2, list.size());
 
     }
+
+    @Test
+    public void getByDateFilterByScooter() {
+
+        System.out.println("getByDate Filter by scooter query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        Map<String, String> filter = new HashMap<>();
+        filter.put("scooterId", "2");
+        try {
+            list = booking.getByDateWithFilter(LocalDate.parse("2019-09-04"), filter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(1, list.size());
+
+    }
+
+    @Test
+    public void getByUserAllFilters() {
+        System.out.println("getByUserId Filter by user query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        Map<String, String> filter = new HashMap<>();
+        filter.put("bookingDate", "2019-09-03");
+        filter.put("scooterId", "1");
+        try {
+            list = booking.getByUserIdWithFilter("c", filter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(1, list.size());
+
+    }
+
+    @Test
+    public void getByUserFilterByScooterId() {
+        System.out.println("getByUserId Filter by scooterId query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        Map<String, String> filter = new HashMap<>();
+        filter.put("scooterId", "1");
+        try {
+            list = booking.getByUserIdWithFilter("c", filter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(1, list.size());
+
+    }
+
+    @Test
+    public void getByUserFilterByDate() {
+        System.out.println("getByUserId Filter by bookingDate query: ");
+        Booking booking = new Booking(client, mapperConfig );
+        List<Booking> list = new ArrayList<>();
+        Map<String, String> filter = new HashMap<>();
+        filter.put("bookingDate", "2019-09-03");
+        try {
+            list = booking.getByUserIdWithFilter("c", filter);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        list.forEach(System.out::println);
+        assertEquals(2, list.size());
+
+    }
+
 
 
     @AfterClass
@@ -370,7 +401,7 @@ import static org.junit.Assert.*;
                         .withReadCapacityUnits((long) 1)
                         .withWriteCapacityUnits((long) 1))
                 .withKeySchema(endTimeIndexKeySchema)
-                .withProjection(new Projection().withProjectionType(ProjectionType.KEYS_ONLY));
+                .withProjection(new Projection().withProjectionType(ProjectionType.ALL));
 
 
         globalSecondaryIndexes.add(userIndex);
@@ -440,4 +471,6 @@ import static org.junit.Assert.*;
 
 
     }
+
 }
+
