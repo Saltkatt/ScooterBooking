@@ -220,29 +220,55 @@ import static org.junit.Assert.*;
         Booking b3 = new Booking(client, mapperConfig);
         Booking b4 = new Booking(client, mapperConfig);
         Booking b5 = new Booking(client, mapperConfig);
+        Booking b6 = new Booking(client, mapperConfig);
+        Booking b7 = new Booking(client, mapperConfig);
+
+
 
         b1.setStartTime(now.minusSeconds(60 * 60 + 30 * 60));
         b1.setEndTime(now.minusSeconds(60 * 10 + 30));
         b1.setScooterId("123");
+        b1.setBookingStatus(BookingStatus.VALID);
+
 
         b2.setStartTime(now.minusSeconds(60 * 60));
         b2.setEndTime(now.minusSeconds(60 * 10 + 50));
         b2.setScooterId("1234");
+        b2.setBookingStatus(BookingStatus.VALID);
+
+
 
 
         b3.setStartTime(now.minusSeconds(60 * 60 + 20 * 60));
         b3.setEndTime(now.minusSeconds(60 * 10 + 10));
         b3.setScooterId("12345");
+        b3.setBookingStatus(BookingStatus.VALID);
+
 
 
         b4.setStartTime(now.minusSeconds(60 * 60));
         b4.setEndTime(now.minusSeconds(60 * 14));
-        b4.setScooterId("1");
+        b4.setScooterId("100");
+        b4.setBookingStatus(BookingStatus.VALID);
+
 
 
         b5.setStartTime(now.minusSeconds(60 * 60 + 20 * 60));
         b5.setEndTime(now.minusSeconds(60 * 5));
-        b5.setScooterId("12");
+        b5.setScooterId("200");
+        b5.setBookingStatus(BookingStatus.VALID);
+
+        b6.setStartTime(now.minusSeconds(60 * 60));
+        b6.setEndTime(now.minusSeconds(60 * 10));
+        b6.setScooterId("1000");
+        b6.setBookingStatus(BookingStatus.CANCELLED);
+
+
+        b7.setStartTime(now.minusSeconds(60 * 60));
+        b7.setEndTime(now.minusSeconds(60 * 10));
+        b7.setScooterId("10000");
+        b7.setBookingStatus(BookingStatus.COMPLETED);
+
 
 
         try{
@@ -251,6 +277,8 @@ import static org.junit.Assert.*;
             b3.save(b3);
             b4.save(b4);
             b5.save(b5);
+            b6.save(b6);
+            b7.save(b7);
 
             List<Booking> bookings = b1.bookingsByEndTime();
             System.out.println("ending bookings: " + bookings.size());
@@ -398,7 +426,7 @@ import static org.junit.Assert.*;
                         .withReadCapacityUnits((long) 1)
                         .withWriteCapacityUnits((long) 1))
                 .withKeySchema(endTimeIndexKeySchema)
-                .withProjection(new Projection().withProjectionType(ProjectionType.KEYS_ONLY));
+                .withProjection(new Projection().withProjectionType(ProjectionType.ALL));//Todo: change to only include bookingStatus
 
 
         globalSecondaryIndexes.add(userIndex);

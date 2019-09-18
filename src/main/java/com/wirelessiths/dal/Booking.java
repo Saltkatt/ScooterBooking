@@ -182,14 +182,14 @@ public class Booking {
         values.put(":start", new AttributeValue().withS(start));
         values.put(":endPlusMaxDur", new AttributeValue().withS(endPlusMaxDur));
         values.put(":end", new AttributeValue().withS(end));
-        values.put(":bookingState", new AttributeValue().withS(BookingStatus.VALID.toString()));
+        values.put(":validState", new AttributeValue().withS(BookingStatus.VALID.toString()));
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
 
         queryExp.withKeyConditionExpression("scooterId = :id and endTime between :start and :endPlusMaxDur")
                 .withExpressionAttributeValues(values)
                 .withConsistentRead(true)
-                .withFilterExpression("startTime < :end AND bookingStatus = :bookingState");
+                .withFilterExpression("startTime < :end AND bookingStatus = :validState");
 
         return mapper.query(Booking.class, queryExp);
     }
@@ -241,11 +241,11 @@ public class Booking {
         values.put(":today", new AttributeValue().withS(today.toString()));
         values.put(":end1", new AttributeValue().withS(now.minusSeconds(60 * 11).toString()));
         values.put(":end2", new AttributeValue().withS(now.minusSeconds(60 * 10).toString()));
-        values.put(":bookingState", new AttributeValue().withS(BookingStatus.VALID.toString()));
+        values.put(":validState", new AttributeValue().withS(BookingStatus.VALID.toString()));
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
         queryExp.withKeyConditionExpression("bookingDate = :today and endTime between :end1 and :end2")
-                .withFilterExpression("bookingsStatus = :bookingState")
+                .withFilterExpression("bookingStatus = :validState")
                 .withIndexName("endTimeIndex")
                 .withExpressionAttributeValues(values)
                 .withConsistentRead(false);
