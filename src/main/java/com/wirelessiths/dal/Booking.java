@@ -182,13 +182,15 @@ public class Booking {
         values.put(":start", new AttributeValue().withS(start));
         values.put(":endPlusMaxDur", new AttributeValue().withS(endPlusMaxDur));
         values.put(":end", new AttributeValue().withS(end));
+        values.put(":bookingState", new AttributeValue().withS(BookingStatus.VALID.toString()));
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
 
         queryExp.withKeyConditionExpression("scooterId = :id and endTime between :start and :endPlusMaxDur")
                 .withExpressionAttributeValues(values)
                 .withConsistentRead(true)
-                .withFilterExpression("startTime < :end");
+                .withFilterExpression("startTime < :end")
+                .withFilterExpression("bookingState = :bookingState");
 
         return mapper.query(Booking.class, queryExp);
     }

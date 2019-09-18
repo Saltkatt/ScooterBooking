@@ -1,14 +1,12 @@
 package com.wirelessiths.monitor;
 
-import com.amazonaws.services.secretsmanager.AWSSecretsManager;
-import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
-import com.amazonaws.services.secretsmanager.model.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.wirelessiths.dal.Booking;
+import com.wirelessiths.dal.BookingStatus;
 import com.wirelessiths.dal.trip.Trip;
 import com.wirelessiths.service.HTTPGetService;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -16,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.Base64;
 import java.util.List;
 
 public class MonitorEndedBookingsFake {
@@ -64,7 +61,8 @@ public class MonitorEndedBookingsFake {
         }catch(Exception e) {
             logger.info(e.getMessage());
         }
-        if(endedBookings == null || endedBookings.size()  < 1){
+
+        if(endedBookings == null || endedBookings.size()  == 0){
             logger.info("No ended bookings");
             return;
         }
@@ -72,28 +70,47 @@ public class MonitorEndedBookingsFake {
 
         endedBookings.forEach((endedBooking)->{
 
+            if(endedBooking.getBookingStatus().equals(BookingStatus.CANCELLED)){//do this check on dao method instead?
+                return;
+            }
+            endedBooking.setBookingStatus(BookingStatus.COMPLETED);
+            logger.info("setting bookingStatus to 'COMPLETED': " + endedBooking);
+
             String url = String.format("%s/%s%s", baseUrl, endedBooking.getScooterId(), tripEndpoint);
             logger.info("booking ended: " + endedBooking);
             String queryUrl = url + "?startDate=" + endedBooking.getBookingDate();
+
             try{
                 String result = getRequest.run(queryUrl, authHeader);
                 ArrayNode trips = (ArrayNode) objectMapper.readTree(result)
                         .path("trip_overview_list");
 
-                if(trips.size() < 1){
+                if(trips.size() == 0){
                     logger.info("No trips for booking:" + endedBooking);
-                }else{
-                    List<Trip> newTrips = objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
-                    newTrips.forEach(trip->{
-
-                        if(trip.getStartTime().isAfter(endedBooking.getStartTime()) &&
-                           trip.getEndTime().isBefore(endedBooking.getEndTime())){
-                            logger.info("appending trip to booking: " + endedBooking);
-                            endedBooking.getTrips().add(trip);
-                        }
-                    });
+                    endedBooking.save(endedBooking);
+                    return;
                 }
+                logger.info("number of trips found: " + trips.size());
+                List<Trip> newTrips = objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
 
+                newTrips.forEach(trip->{
+                    logger.info("checking for match..");
+                    if(!trip.getStartTime().isAfter(endedBooking.getStartTime()) ||
+                        !trip.getEndTime().isBefore(endedBooking.getEndTime().plusSeconds(60 * 5))) {
+                        logger.info("trip doesnt match");
+                        return;
+                    }
+                    endedBooking.getTrips().add(trip);
+                    logger.info("appending trip to booking: " + endedBooking);
+                });
+
+                try{
+                endedBooking.save(endedBooking);
+                logger.info("saving updated booking");
+
+                }catch(IOException e){
+                    logger.info("error saving updated booking: " + e.getMessage());
+                }
             }catch(IOException e){
                 logger.info("IOException: " + e.getMessage());
             }catch(Exception e){
