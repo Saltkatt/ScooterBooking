@@ -31,6 +31,7 @@ public class BookingQueryTest {
 
     @BeforeClass
     public static void setUpClientAndTable(){
+        BookingTest.startLocalDynamoDB();
         createClient();
         createTable();
         populateForQueryTests();

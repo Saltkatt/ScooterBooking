@@ -105,6 +105,11 @@
       <artifactId>aws-java-sdk-ses</artifactId>
       <version>1.11.624</version>
     </dependency>
+    <dependency>
+      <groupId>com.amazonaws</groupId>
+      <artifactId>aws-java-sdk-sns</artifactId>
+      <version>1.11.633</version>
+    </dependency>
     <!-- https://mvnrepository.com/artifact/com.squareup.okhttp/okhttp -->
     <dependency>
       <groupId>com.squareup.okhttp</groupId>

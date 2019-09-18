@@ -12,7 +12,9 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -34,13 +36,48 @@ import static org.junit.Assert.*;
 
     @BeforeClass
     public static void setUpClientAndTable(){
+
+        startLocalDynamoDB();
         createClient();
         createTable();
         populateForOkValidationTest();
         populateForFailValidationTest();
     }
 
-    //@Before
+        public static void startLocalDynamoDB() {
+            String line = "";
+            try {
+                Process p = Runtime.getRuntime().exec("docker ps --filter ancestor=amazon/dynamodb-local");
+                BufferedReader bri = new BufferedReader
+                        (new InputStreamReader(p.getInputStream()));
+                BufferedReader bre = new BufferedReader
+                        (new InputStreamReader(p.getErrorStream()));
+                while ((line = bri.readLine()) != null) {
+                    System.out.println(line);
+                }
+                bri.close();
+                while ((line = bre.readLine()) != null) {
+                    System.out.println(line);
+                }
+                bre.close();
+                p.waitFor();
+                System.out.println("Done.");
+            }
+            catch (Exception err) {
+                err.printStackTrace();
+            }
+            if (!line.contains("amazon/dynamodb-local")) {
+                Runtime rt = Runtime.getRuntime();
+                try {
+                    Process pr = rt.exec("docker run -d -p 8000:8000 amazon/dynamodb-local");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+            }
+        }
+
+        //@Before
     public static void populateForOkValidationTest(){
         System.out.println("adding passing test cases to table..");
         Booking b1 = new Booking(client, mapperConfig );
