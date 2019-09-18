@@ -15,7 +15,7 @@
 
         <h1>Welcome {{userInfo.username}}</h1>
         <div class="alert alert-info">
-          {{userInfo.email}}
+          {{userInfo}}
         </div>
 
         </header>
