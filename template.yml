@@ -7,7 +7,7 @@ Description: >
 Parameters:
   TableName:
     Type: String
-    Default: test-table
+    Default: carl-bookings-09-17-3
   BucketName:
     Type: String
     Default: xxx
@@ -272,12 +272,12 @@ Resources:
         #secret-arn
         #secret-name
       Events:
-#        MonitorEnd:
-#          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-#          Properties:
-#            Path: /bookings/{id}
-#            Method: put
-#            RestApiId: !Ref MyApi  # Add this line
+        MonitorEnd:
+          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Properties:
+            Path: /bookings/{id}
+            Method: put
+            RestApiId: !Ref MyApi  # Add this line
 
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
