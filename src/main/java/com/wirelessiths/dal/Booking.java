@@ -189,8 +189,7 @@ public class Booking {
         queryExp.withKeyConditionExpression("scooterId = :id and endTime between :start and :endPlusMaxDur")
                 .withExpressionAttributeValues(values)
                 .withConsistentRead(true)
-                .withFilterExpression("startTime < :end")
-                .withFilterExpression("bookingState = :bookingState");
+                .withFilterExpression("startTime < :end AND bookingStatus = :bookingState");
 
         return mapper.query(Booking.class, queryExp);
     }

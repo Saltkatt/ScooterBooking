@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.util.List;
 
 public class MonitorEndedBookingsFake {
