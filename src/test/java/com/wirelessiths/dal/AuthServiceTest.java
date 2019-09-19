@@ -169,6 +169,44 @@ public class AuthServiceTest {
 
     }
 
+    @Test
+    public void getPhoneNumberFromCognito() {
+        User user = new User();
+        user.setPhoneNumber("+001002003");
+        List<User> users = new ArrayList<>();
+        users.add(user);
+        String result = "";
+        if (!users.isEmpty()){
+            result = Optional.ofNullable(users.get(0).getPhoneNumber()).orElse("");
+        } else
+            result = "";
+        assertEquals("+001002003", result);
+    }
+
+    @Test
+    public void getPhoneNumberFromCognitoNoMatchedUsersReturnsEmptyString() {
+        List<User> users = new ArrayList<>();
+        String result = "";
+        if (!users.isEmpty()){
+            result = Optional.ofNullable(users.get(0).getPhoneNumber()).orElse("");
+        } else
+            result = "";
+        assertEquals("", result);
+    }
+
+    @Test
+    public void getPhoneNumberFromCognitoNoPhoneNumberReturnsEmptyString() {
+        User user = new User();
+        List<User> users = new ArrayList<>();
+        users.add(user);
+        String result = "";
+        if (!users.isEmpty()){
+            result = Optional.ofNullable(users.get(0).getPhoneNumber()).orElse("");
+        } else
+            result = "";
+        assertEquals("", result);
+    }
+
 
 
 

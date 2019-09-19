@@ -82,12 +82,6 @@ Resources:
       Policies:
         - DynamoDBReadPolicy:
             TableName: !Ref TableName
-        - Statement:
-          - Sid: snsaccess
-            Effect: Allow
-            Action:
-            - sns:*
-            Resource: '*'
       Events:
         GetBookings:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -186,7 +180,12 @@ Resources:
       Policies:
         - DynamoDBCrudPolicy:
             TableName: !Ref TableName
-
+        - Statement:
+            - Sid: snsaccess
+              Effect: Allow
+              Action:
+                - sns:*
+              Resource: '*'
         #secret-arn
         #secret-name
       Events:

@@ -5,6 +5,8 @@ import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.amazonaws.services.sns.model.PublishRequest;
 import com.amazonaws.services.sns.model.PublishResult;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +14,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class SNSService {
+
+    private static final Logger logger = LogManager.getLogger(AuthService.class);
 
     // Publish a message to an Amazon SNS topic.
 
@@ -69,13 +73,25 @@ public class SNSService {
         return result.getMessageId();
     }
 
+    /**
+     * @param snsClient The client that should send the sms
+     * @param message The message that you want to send
+     * @param phoneNumber The phoneNumber. If the phone number is empty dont send any message.
+     * @param smsAttributes Attributes for the message
+     */
     public static void sendSMSMessage(AmazonSNSClient snsClient, String message,
                                       String phoneNumber, Map<String, MessageAttributeValue> smsAttributes) {
-        PublishResult result = snsClient.publish(new PublishRequest()
-                .withMessage(message)
-                .withPhoneNumber(phoneNumber)
-                .withMessageAttributes(smsAttributes));
-        System.out.println(result); // Prints the message ID.
+        if (!phoneNumber.isEmpty()) {
+            PublishResult result = snsClient.publish(new PublishRequest()
+                    .withMessage(message)
+                    .withPhoneNumber(phoneNumber)
+                    .withMessageAttributes(smsAttributes));
+            logger.info(result);
+        }
+    }
+
+    public static AmazonSNSClient getAmazonSNSClient() {
+        return new AmazonSNSClient();
     }
 
 }

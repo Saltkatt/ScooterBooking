@@ -1,5 +1,7 @@
 package com.wirelessiths.monitor;
 
+import com.amazonaws.services.sns.AmazonSNSClient;
+import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -7,14 +9,22 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.wirelessiths.dal.Booking;
 import com.wirelessiths.dal.BookingStatus;
+import com.wirelessiths.dal.User;
 import com.wirelessiths.dal.trip.Trip;
 import com.wirelessiths.service.HTTPGetService;
+import com.wirelessiths.service.UserService;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+import static com.wirelessiths.service.SNSService.getAmazonSNSClient;
+import static com.wirelessiths.service.SNSService.sendSMSMessage;
 
 public class MonitorEndedBookingsFake {
 
@@ -106,7 +116,19 @@ public class MonitorEndedBookingsFake {
 
                 try{
                 endedBooking.save(endedBooking);
+
+                Optional.ofNullable(endedBooking.getTrips()).ifPresent(ts -> {
+                    String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
+                    AmazonSNSClient snsClient = getAmazonSNSClient();
+                    double totalDistance = ts.stream().mapToDouble(Trip::getTotalDistanceMeters).sum();
+                    String message = "Thank you for completing your trip. You traveled " + totalDistance + " meters";
+                    Map<String, MessageAttributeValue> smsAttributes =
+                            new HashMap<String, MessageAttributeValue>();
+                    //<set SMS attributes>
+                    sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
+                } );
                 logger.info("saving updated booking");
+
 
                 }catch(IOException e){
                     logger.info("error saving updated booking: " + e.getMessage());
