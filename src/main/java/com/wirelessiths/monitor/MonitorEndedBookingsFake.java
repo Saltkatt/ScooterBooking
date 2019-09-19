@@ -14,7 +14,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.time.Instant;
 import java.util.List;
 
 public class MonitorEndedBookingsFake {
@@ -63,7 +62,7 @@ public class MonitorEndedBookingsFake {
             logger.info(e.getMessage());
         }
 
-        if(endedBookings == null || endedBookings.size()  == 0){
+        if(endedBookings == null || endedBookings.isEmpty()){
             logger.info("No ended bookings");
             return;
         }
@@ -74,8 +73,8 @@ public class MonitorEndedBookingsFake {
             if(endedBooking.getBookingStatus().equals(BookingStatus.CANCELLED)){//do this check on dao method instead?
                 return;
             }
-            endedBooking.setBookingStatus(BookingStatus.COMPLETED);
-            logger.info("setting bookingStatus to 'COMPLETED': " + endedBooking);
+            //endedBooking.setBookingStatus(BookingStatus.COMPLETED);
+            //logger.info("setting bookingStatus to 'COMPLETED': " + endedBooking);
 
             String url = String.format("%s/%s%s", baseUrl, endedBooking.getScooterId(), tripEndpoint);
             logger.info("booking ended: " + endedBooking);
