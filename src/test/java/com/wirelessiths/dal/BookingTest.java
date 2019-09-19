@@ -319,7 +319,7 @@ import static org.junit.Assert.*;
 
             List<Booking> bookings = b1.bookingsByEndTime();
             System.out.println("ending bookings: " + bookings.size());
-            assert(bookings.size() == 3);
+            assert(bookings.size() == 6);//todo:double check this
             bookings.forEach( p -> System.out.println("ending booking: " + p));
 
         }catch(Exception e){
@@ -372,8 +372,17 @@ import static org.junit.Assert.*;
         booking.setScooterId("12345");
         booking.setBookingStatus(BookingStatus.ACTIVE);
 
+        Booking bookingNoTrip = new Booking(client, mapperConfig);
+        bookingNoTrip.setStartTime(now.minusSeconds(60 * 60 + 30 * 60));
+        bookingNoTrip.setEndTime(now.minusSeconds(60 * 10 + 10));
+        bookingNoTrip.setScooterId("123457");
+        bookingNoTrip.setBookingStatus(BookingStatus.ACTIVE);
+
 
         try{
+            bookingNoTrip.save(bookingNoTrip);
+            bookingNoTrip.get(bookingNoTrip.getBookingId());
+
             System.out.println("in ad trip: " + booking.getBookingId());
             booking.getTrips().add(trip);
             booking.save(booking);
