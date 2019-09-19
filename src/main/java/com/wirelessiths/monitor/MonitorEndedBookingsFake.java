@@ -98,6 +98,14 @@ public class MonitorEndedBookingsFake {
                 if(trips.size() == 0){
                     logger.info("No trips for booking:" + endedBooking);
                     //endedBooking.save(endedBooking);
+                    String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
+                    AmazonSNSClient snsClient = getAmazonSNSClient();
+                    String message = "No trip registered for your booking, if you didnt use the scooter, please cancel the booking next time";
+                    Map<String, MessageAttributeValue> smsAttributes =
+                            new HashMap<String, MessageAttributeValue>();
+                    //<set SMS attributes>
+                    logger.info("sending angry sms");
+                    sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
                     return;
                 }
                 logger.info("number of trips found: " + trips.size());
@@ -108,15 +116,6 @@ public class MonitorEndedBookingsFake {
                     if(!trip.getStartTime().isAfter(endedBooking.getStartTime()) ||
                         !trip.getEndTime().isBefore(endedBooking.getEndTime().plusSeconds(60 * 5))) {
                         logger.info("trip doesnt match");
-
-                        String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
-                        AmazonSNSClient snsClient = getAmazonSNSClient();
-                        String message = "No trip registered for your booking, if you didnt use the scooter, please cancel the booking next time";
-                        Map<String, MessageAttributeValue> smsAttributes =
-                                new HashMap<String, MessageAttributeValue>();
-                        //<set SMS attributes>
-                        logger.info("sending angry sms");
-                        sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
                         return;
                     }
                     String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
