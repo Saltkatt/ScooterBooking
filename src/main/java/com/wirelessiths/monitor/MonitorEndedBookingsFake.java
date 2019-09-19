@@ -70,9 +70,9 @@ public class MonitorEndedBookingsFake {
 
         endedBookings.forEach((endedBooking)->{
 
-            if(endedBooking.getBookingStatus().equals(BookingStatus.CANCELLED)){//do this check on dao method instead?
-                return;
-            }
+//            if(endedBooking.getBookingStatus().equals(BookingStatus.CANCELLED)){//do this check on dao method instead?
+//                return;
+//            }
             //endedBooking.setBookingStatus(BookingStatus.COMPLETED);
             //logger.info("setting bookingStatus to 'COMPLETED': " + endedBooking);
 
@@ -87,7 +87,7 @@ public class MonitorEndedBookingsFake {
 
                 if(trips.size() == 0){
                     logger.info("No trips for booking:" + endedBooking);
-                    endedBooking.save(endedBooking);
+                    //endedBooking.save(endedBooking);
                     return;
                 }
                 logger.info("number of trips found: " + trips.size());
