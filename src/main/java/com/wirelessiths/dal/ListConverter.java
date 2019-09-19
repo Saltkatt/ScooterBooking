@@ -16,7 +16,7 @@ import java.util.List;
 
 public class ListConverter implements DynamoDBTypeConverter<String, List<Trip>> {
 
-            private Logger logger = new LoggerAdapter(LogManager.getLogger(this.getClass()));
+            //private Logger logger = new LoggerAdapter(LogManager.getLogger(this.getClass()));
 
 
     @Override
@@ -26,7 +26,7 @@ public class ListConverter implements DynamoDBTypeConverter<String, List<Trip>> 
         try{
             mapper.writeValue(out, trips);
         }catch(Exception e){
-            logger.info(e.getMessage());
+            //logger.info(e.getMessage());
             System.out.println(e.getMessage());
         }
         final byte[] data = out.toByteArray();
@@ -41,7 +41,7 @@ public class ListConverter implements DynamoDBTypeConverter<String, List<Trip>> 
         try{
             trips = Arrays.asList(mapper.readValue(s, Trip[].class));
         }catch(Exception e){
-            logger.info(e.getMessage());
+            //logger.info(e.getMessage());
 
             System.out.println(e.getMessage());
         }

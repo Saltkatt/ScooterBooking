@@ -108,39 +108,34 @@ public class MonitorEndedBookingsFake {
                     if(!trip.getStartTime().isAfter(endedBooking.getStartTime()) ||
                         !trip.getEndTime().isBefore(endedBooking.getEndTime().plusSeconds(60 * 5))) {
                         logger.info("trip doesnt match");
+
+                        String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
+                        AmazonSNSClient snsClient = getAmazonSNSClient();
+                        String message = "No trip registered for your booking, if you didnt use the scooter, please cancel the booking next time";
+                        Map<String, MessageAttributeValue> smsAttributes =
+                                new HashMap<String, MessageAttributeValue>();
+                        //<set SMS attributes>
+                        logger.info("sending angry sms");
+                        sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
                         return;
                     }
+                    String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
+                    AmazonSNSClient snsClient = getAmazonSNSClient();
+                    double totalDistance = endedBooking.getTrips().stream().mapToDouble(Trip::getTotalDistanceMeters).sum();
+                    String message = "Thank you for completing your trip. You traveled " + totalDistance + " meters";
+                    Map<String, MessageAttributeValue> smsAttributes =
+                            new HashMap<String, MessageAttributeValue>();
+                    //<set SMS attributes>
+                    logger.info("sending happy sms");
+
+                    sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
                     endedBooking.getTrips().add(trip);
                     logger.info("appending trip to booking: " + endedBooking);
                 });
 
                 try{
                 endedBooking.save(endedBooking);
-                if(Optional.ofNullable(endedBooking.getTrips()).isPresent() && !endedBooking.getTrips().isEmpty()) {
-
-                        String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
-                        AmazonSNSClient snsClient = getAmazonSNSClient();
-                        double totalDistance = endedBooking.getTrips().stream().mapToDouble(Trip::getTotalDistanceMeters).sum();
-                        String message = "Thank you for completing your trip. You traveled " + totalDistance + " meters";
-                        Map<String, MessageAttributeValue> smsAttributes =
-                                new HashMap<String, MessageAttributeValue>();
-                        //<set SMS attributes>
-                        sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
-
-                } else {
-
-                    String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
-                    AmazonSNSClient snsClient = getAmazonSNSClient();
-                    String message = "No trip registered for your booking, if you didnt use the scooter, please cancel the booking next time";
-                    Map<String, MessageAttributeValue> smsAttributes =
-                            new HashMap<String, MessageAttributeValue>();
-                    //<set SMS attributes>
-                    sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
-
-                }
                 logger.info("saving updated booking");
-
-
                 }catch(IOException e){
                     logger.info("error saving updated booking: " + e.getMessage());
                 }
