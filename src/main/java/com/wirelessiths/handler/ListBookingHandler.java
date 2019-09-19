@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
+import static com.wirelessiths.service.SNSService.getAmazonSNSClient;
 import static com.wirelessiths.service.SNSService.sendSMSMessage;
 
 
@@ -39,16 +40,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 		try {
 
-			logger.info(input.toString());
-
-            AmazonSNSClient snsClient = new AmazonSNSClient();
-            String message = "List bookings SMS";
-            String phoneNumber = "+46707954435";
-            Map<String, MessageAttributeValue> smsAttributes =
-                    new HashMap<String, MessageAttributeValue>();
-            //<set SMS attributes>
-            sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
-
+			//logger.info(input.toString());
 
             Map<String,String> queryStringParameters = null;
             List<Booking> bookings = null;

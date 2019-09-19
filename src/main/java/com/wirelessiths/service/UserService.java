@@ -8,7 +8,9 @@ import com.wirelessiths.dal.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class UserService {
@@ -84,13 +86,54 @@ public class UserService {
         return users;
     }
 
+    /**
+     * @param userId is the UUID that we use to fetch the user from Cognito
+     * @param userPoolId the userPool where the user is
+     * @return if user found and has phone number, returns phone number as String. Else return empty string.
+     */
+    public static String getUserPhoneNumber(String userId, String userPoolId) {
+        List<User> users = listUsers(userId, userPoolId);
+        if (!users.isEmpty()){
+           return Optional.ofNullable(users.get(0).getPhoneNumber()).orElse("");
+        }
+        else {
+            return "";
+        }
+
+    }
+
+    /**
+     * @param userId is the UUID that we use to fetch the user from Cognito
+     * @param userPoolId the userPool where the user is
+     * @return if user found and have an email, returns email as String. Else return empty string.
+     */
+    public static String getUserEmail(String userId, String userPoolId) {
+        List<User> users = listUsers(userId, userPoolId);
+        if (!users.isEmpty()){
+            return Optional.ofNullable(users.get(0).getEmail()).orElse("");
+        }
+        else {
+            return "";
+        }
+
+    }
 
 
+    /**
+     *
+     * @return defaultclient with US_EAST_1 config
+     */
 
     public static AWSCognitoIdentityProvider getAwsCognitoIdentityProvider() {
         return AWSCognitoIdentityProviderClientBuilder.standard().withRegion(Regions.US_EAST_1).defaultClient();
     }
 
+    /**
+     *
+     * @param username UserName in the cognitoPool
+     * @param userPoolId The pool id
+     * @return User object with fields set from user in cognito.
+     */
     public static User getUserInfo(String username, String userPoolId) {
 
         AWSCognitoIdentityProvider cognitoClient = getAwsCognitoIdentityProvider();
@@ -112,6 +155,9 @@ public class UserService {
             for (AttributeType attribute : userAttributes) {
                 if (attribute.getName().equals("email")) {
                     user.setEmail(attribute.getValue());
+                }
+                else if(attribute.getName().equals("phone_number")) {
+                    user.setPhoneNumber(attribute.getValue());
                 }
             }
             cognitoClient.shutdown();
