@@ -116,17 +116,28 @@ public class MonitorEndedBookingsFake {
 
                 try{
                 endedBooking.save(endedBooking);
+                if(Optional.ofNullable(endedBooking.getTrips()).isPresent() && !endedBooking.getTrips().isEmpty()) {
 
-                Optional.ofNullable(endedBooking.getTrips()).ifPresent(ts -> {
+                        String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
+                        AmazonSNSClient snsClient = getAmazonSNSClient();
+                        double totalDistance = endedBooking.getTrips().stream().mapToDouble(Trip::getTotalDistanceMeters).sum();
+                        String message = "Thank you for completing your trip. You traveled " + totalDistance + " meters";
+                        Map<String, MessageAttributeValue> smsAttributes =
+                                new HashMap<String, MessageAttributeValue>();
+                        //<set SMS attributes>
+                        sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
+
+                } else {
+
                     String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
                     AmazonSNSClient snsClient = getAmazonSNSClient();
-                    double totalDistance = ts.stream().mapToDouble(Trip::getTotalDistanceMeters).sum();
-                    String message = "Thank you for completing your trip. You traveled " + totalDistance + " meters";
+                    String message = "No trip registered for your booking, if you didnt use the scooter, please cancel the booking next time";
                     Map<String, MessageAttributeValue> smsAttributes =
                             new HashMap<String, MessageAttributeValue>();
                     //<set SMS attributes>
                     sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
-                } );
+
+                }
                 logger.info("saving updated booking");
 
 
