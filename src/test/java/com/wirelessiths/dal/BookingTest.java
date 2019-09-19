@@ -8,6 +8,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.*;
+import com.wirelessiths.dal.trip.Trip;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -18,7 +19,6 @@ import java.io.InputStreamReader;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -88,20 +88,24 @@ import static org.junit.Assert.*;
         b1.setStartTime(Instant.parse("2019-09-02T13:20:00.000Z"));
         b1.setEndTime(Instant.parse("2019-09-02T13:45:00.000Z"));
         //b1.setBookingDate(LocalDate.parse("2019-09-02"));
+        b1.setBookingStatus(BookingStatus.VALID);
+
 
         b2.setScooterId("3");
         b2.setUserId("ok-cases");
         b2.setStartTime(Instant.parse("2019-09-02T15:10:00.000Z"));
         b2.setEndTime(Instant.parse("2019-09-02T15:35:00.000Z"));
         //b2.setBookingDate(LocalDate.parse("2019-09-02"));
+        b2.setBookingStatus(BookingStatus.VALID);
+
 
         try{
             b1.save(b1);
             b2.save(b2);
         }catch(Exception e){
-            fail();
             System.out.println("error in populateForOkValidationTest()100");
             System.out.println("msg: " + e.getMessage());
+            fail();
         }
     }
 
@@ -115,6 +119,7 @@ import static org.junit.Assert.*;
         testCase.setStartTime(Instant.parse("2019-09-02T14:00:00.000Z"));
         testCase.setEndTime(Instant.parse("2019-09-02T15:00:00.000Z"));
         testCase.setBookingDate(LocalDate.parse("2019-09-02"));
+        testCase.setBookingStatus(BookingStatus.VALID);
         //testCase.generateValidationKey();
 
 
@@ -125,10 +130,9 @@ import static org.junit.Assert.*;
             System.out.println("pass test bookings.size(): " + bookings.size());
             assert(bookings.size() == 0);
         }catch(Exception e){
-            fail();
             System.out.println("error in bookingLogicValidationPassTest()");
-
             System.out.println(e.getMessage());
+            fail();
         }
     }
 
@@ -136,12 +140,14 @@ import static org.junit.Assert.*;
     public static void populateForFailValidationTest(){
         System.out.println("adding fail validation test cases to table..");
 
-        Booking b1 = new Booking(client, mapperConfig );
+        Booking b1 = new Booking(client, mapperConfig);
         Booking b2 = new Booking(client, mapperConfig);
         Booking b3 = new Booking(client, mapperConfig);
         Booking b4 = new Booking(client, mapperConfig);
         Booking b5 = new Booking(client, mapperConfig);
         Booking b6 = new Booking(client, mapperConfig);
+        Booking b7 = new Booking(client, mapperConfig);
+
 
 
         b1.setScooterId("2");
@@ -150,36 +156,55 @@ import static org.junit.Assert.*;
         b1.setStartTime(Instant.parse("2019-09-02T13:30:00.000Z"));
         b1.setEndTime(Instant.parse("2019-09-02T15:45:00.000Z"));
         b1.setBookingDate(LocalDate.parse("2019-09-02"));
+        b1.setBookingStatus(BookingStatus.VALID);
 
         b2.setScooterId("2");
         b2.setUserId("before-in");
         b2.setStartTime(Instant.parse("2019-09-02T11:10:00.000Z"));
         b2.setEndTime(Instant.parse("2019-09-02T14:35:00.000Z"));
         b2.setBookingDate(LocalDate.parse("2019-09-02"));
+        b2.setBookingStatus(BookingStatus.VALID);
+
 
         b3.setScooterId("2");
         b3.setUserId("after-out");
         b3.setStartTime(Instant.parse("2019-09-02T14:30:00.000Z"));
         b3.setEndTime(Instant.parse("2019-09-02T15:30:00.000Z"));
         b3.setBookingDate(LocalDate.parse("2019-09-02"));
+        b3.setBookingStatus(BookingStatus.VALID);
+
 
         b4.setScooterId("2");
         b4.setUserId("between");
         b4.setStartTime(Instant.parse("2019-09-02T14:10:00.000Z"));
         b4.setEndTime(Instant.parse("2019-09-02T14:40:00.000Z"));
         b4.setBookingDate(LocalDate.parse("2019-09-02"));
+        b4.setBookingStatus(BookingStatus.VALID);
+
 
         b5.setScooterId("2");
         b5.setUserId("ok-cases");
         b5.setStartTime(Instant.parse("2019-09-02T13:20:00.000Z"));
         b5.setEndTime(Instant.parse("2019-09-02T13:45:00.000Z"));
         b5.setBookingDate(LocalDate.parse("2019-09-02"));
+        b5.setBookingStatus(BookingStatus.VALID);
+
 
         b6.setScooterId("2");
         b6.setUserId("ok-cases");
         b6.setStartTime(Instant.parse("2019-09-02T15:10:00.000Z"));
         b6.setEndTime(Instant.parse("2019-09-02T15:35:00.000Z"));
         b6.setBookingDate(LocalDate.parse("2019-09-02"));
+        b6.setBookingStatus(BookingStatus.VALID);
+
+
+        b7.setScooterId("2");//-------------------------------
+        b7.setUserId("after-out2");
+        b7.setStartTime(Instant.parse("2019-09-02T14:35:00.000Z"));
+        b7.setEndTime(Instant.parse("2019-09-02T15:30:00.000Z"));
+        b7.setBookingDate(LocalDate.parse("2019-09-02"));
+        b7.setBookingStatus(BookingStatus.VALID);
+
 
         try{
             b1.save(b1);
@@ -188,10 +213,11 @@ import static org.junit.Assert.*;
             b4.save(b4);
             b5.save(b5);
             b6.save(b6);
+            //b7.save(b7);
         }catch(Exception e){
-            fail();
             System.out.println("error in populateForFailValidationTest()");
             System.out.println(e.getMessage());
+            fail();
         }
     }
 
@@ -204,18 +230,20 @@ import static org.junit.Assert.*;
         testCase.setStartTime(Instant.parse("2019-09-02T14:00:00.000Z"));
         testCase.setEndTime(Instant.parse("2019-09-02T15:00:00.000Z"));
         testCase.setBookingDate(LocalDate.parse("2019-09-02"));
+        //testCase.setBookingStatus(BookingStatus.VALID);
+
 
         try{
             List<Booking> bookings = testCase.validateBooking(testCase, maxDuration, buffer);
             System.out.println("fail test bookings.size(): " + bookings.size());
 
             bookings.forEach(System.out::println);
+            System.out.println(bookings.size());
             assert(bookings.size() == 4);
         }catch(Exception e){
-            fail();
             System.out.println("error in bookingLogicValidationFailTest()");
-
             System.out.println(e.getMessage());
+            fail();
         }
     }
 
@@ -229,29 +257,55 @@ import static org.junit.Assert.*;
         Booking b3 = new Booking(client, mapperConfig);
         Booking b4 = new Booking(client, mapperConfig);
         Booking b5 = new Booking(client, mapperConfig);
+        Booking b6 = new Booking(client, mapperConfig);
+        Booking b7 = new Booking(client, mapperConfig);
+
+
 
         b1.setStartTime(now.minusSeconds(60 * 60 + 30 * 60));
         b1.setEndTime(now.minusSeconds(60 * 10 + 30));
         b1.setScooterId("123");
+        b1.setBookingStatus(BookingStatus.VALID);
+
 
         b2.setStartTime(now.minusSeconds(60 * 60));
         b2.setEndTime(now.minusSeconds(60 * 10 + 50));
         b2.setScooterId("1234");
+        b2.setBookingStatus(BookingStatus.VALID);
+
+
 
 
         b3.setStartTime(now.minusSeconds(60 * 60 + 20 * 60));
         b3.setEndTime(now.minusSeconds(60 * 10 + 10));
         b3.setScooterId("12345");
+        b3.setBookingStatus(BookingStatus.ACTIVE);
+
 
 
         b4.setStartTime(now.minusSeconds(60 * 60));
         b4.setEndTime(now.minusSeconds(60 * 14));
-        b4.setScooterId("1");
+        b4.setScooterId("100");
+        b4.setBookingStatus(BookingStatus.ACTIVE);
+
 
 
         b5.setStartTime(now.minusSeconds(60 * 60 + 20 * 60));
         b5.setEndTime(now.minusSeconds(60 * 5));
-        b5.setScooterId("12");
+        b5.setScooterId("200");
+        b5.setBookingStatus(BookingStatus.VALID);
+
+        b6.setStartTime(now.minusSeconds(60 * 60));
+        b6.setEndTime(now.minusSeconds(60 * 10));
+        b6.setScooterId("1000");
+        b6.setBookingStatus(BookingStatus.CANCELLED);
+
+
+        b7.setStartTime(now.minusSeconds(60 * 60));
+        b7.setEndTime(now.minusSeconds(60 * 10));
+        b7.setScooterId("10000");
+        b7.setBookingStatus(BookingStatus.COMPLETED);
+
 
 
         try{
@@ -260,6 +314,8 @@ import static org.junit.Assert.*;
             b3.save(b3);
             b4.save(b4);
             b5.save(b5);
+            b6.save(b6);
+            b7.save(b7);
 
             List<Booking> bookings = b1.bookingsByEndTime();
             System.out.println("ending bookings: " + bookings.size());
@@ -305,6 +361,31 @@ import static org.junit.Assert.*;
 
         }
 
+    }
+    @Test
+    public void addTrips(){
+        Instant now = Instant.now();
+        Trip trip = new Trip();
+        Booking booking = new Booking(client, mapperConfig);
+        booking.setStartTime(now.minusSeconds(60 * 60 + 20 * 60));
+        booking.setEndTime(now.minusSeconds(60 * 10 + 10));
+        booking.setScooterId("12345");
+        booking.setBookingStatus(BookingStatus.ACTIVE);
+
+
+        try{
+            System.out.println("in ad trip: " + booking.getBookingId());
+            booking.getTrips().add(trip);
+            booking.save(booking);
+            System.out.println(booking);
+
+            String bookingId = booking.getBookingId();
+            Booking b2 = booking.get(bookingId);
+            System.out.println("b2: " + b2);
+        }catch(Exception e){
+            System.out.println(e.getMessage());
+            fail();
+        }
     }
 
 
@@ -407,7 +488,7 @@ import static org.junit.Assert.*;
                         .withReadCapacityUnits((long) 1)
                         .withWriteCapacityUnits((long) 1))
                 .withKeySchema(endTimeIndexKeySchema)
-                .withProjection(new Projection().withProjectionType(ProjectionType.KEYS_ONLY));
+                .withProjection(new Projection().withProjectionType(ProjectionType.ALL));//Todo: change to only include bookingStatus
 
 
         globalSecondaryIndexes.add(userIndex);

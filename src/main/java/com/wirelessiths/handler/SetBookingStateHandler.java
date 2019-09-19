@@ -51,8 +51,17 @@ private final Logger logger = LogManager.getLogger(this.getClass());
            command = body.get("command").asText();
 
            booking = booking.get(incomingBookingId);
+           if(booking == null){
+               responseBody = new Response("no booking found for bookingId: " + incomingBookingId);
+               return ApiGatewayResponse.builder()
+                       .setStatusCode(404)
+                       .setObjectBody(responseBody)
+                       .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
+                       .build();
+           }
 
-           Instant now = LocalDateTime.now().toInstant(ZoneOffset.ofHours(-2));//temp until we switch  region
+           //Instant now = LocalDateTime.now().toInstant(ZoneOffset.ofHours(-2));//temp until we switch  region
+           Instant now = Instant.now();
            Instant startTime = booking.getStartTime();
            int deadlineSeconds = 60 * 10;
 

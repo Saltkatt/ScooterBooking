@@ -38,7 +38,7 @@ public class Booking {
     private LocalDate bookingDate;
     private BookingStatus bookingStatus;
 
-    private List<Trip> trips;
+    private List<Trip> trips = new ArrayList<>();
 
 
     private static DynamoDBAdapter db_adapter;
@@ -145,11 +145,13 @@ public class Booking {
         this.bookingStatus = bookingStatus;
     }
 
+    @DynamoDBAttribute(attributeName = "trips")
+    @DynamoDBTypeConverted(converter = ListConverter.class)
     public List<Trip> getTrips() {
         return trips;
     }
 
-    @JsonSetter("trip_overview_list")
+    //@JsonSetter("trip_overview_list")
     public void setTrips(List<Trip> trips) {
         this.trips = trips;
     }
@@ -164,6 +166,7 @@ public class Booking {
                 ", endTime=" + endTime +
                 ", bookingDate=" + bookingDate +
                 ", bookingStatus=" + bookingStatus +
+                ", trips=" + trips +
                 '}';
     }
 
@@ -179,13 +182,14 @@ public class Booking {
         values.put(":start", new AttributeValue().withS(start));
         values.put(":endPlusMaxDur", new AttributeValue().withS(endPlusMaxDur));
         values.put(":end", new AttributeValue().withS(end));
+        values.put(":validState", new AttributeValue().withS(BookingStatus.VALID.toString()));
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
 
         queryExp.withKeyConditionExpression("scooterId = :id and endTime between :start and :endPlusMaxDur")
                 .withExpressionAttributeValues(values)
                 .withConsistentRead(true)
-                .withFilterExpression("startTime < :end");
+                .withFilterExpression("startTime < :end AND bookingStatus = :validState");
 
         return mapper.query(Booking.class, queryExp);
     }
@@ -237,9 +241,14 @@ public class Booking {
         values.put(":today", new AttributeValue().withS(today.toString()));
         values.put(":end1", new AttributeValue().withS(now.minusSeconds(60 * 11).toString()));
         values.put(":end2", new AttributeValue().withS(now.minusSeconds(60 * 10).toString()));
+        values.put(":validState1", new AttributeValue().withS(BookingStatus.VALID.toString()));
+        values.put(":validState2", new AttributeValue().withS(BookingStatus.ACTIVE.toString()));
+
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
         queryExp.withKeyConditionExpression("bookingDate = :today and endTime between :end1 and :end2")
+                .withFilterExpression("bookingStatus = :validState1 or bookingStatus = :validState2")
+                //.withFilterExpression("bookingStatus = :validState1")
                 .withIndexName("endTimeIndex")
                 .withExpressionAttributeValues(values)
                 .withConsistentRead(false);
