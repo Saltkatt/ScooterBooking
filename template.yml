@@ -186,6 +186,13 @@ Resources:
               Action:
                 - sns:*
               Resource: '*'
+        - Statement:
+            Effect: Allow
+            Action:
+              - cognito-idp:AdminGetUser
+              - cognito-idp:ListUsers
+            Resource:
+              Ref: UserPoolArn
         #secret-arn
         #secret-name
       Events:
