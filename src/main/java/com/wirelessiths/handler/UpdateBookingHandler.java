@@ -181,9 +181,6 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                         }
                     }
                 });
-
-
-
             } );
 
 

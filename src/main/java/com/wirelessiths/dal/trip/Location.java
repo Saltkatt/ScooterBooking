@@ -1,5 +1,8 @@
 package com.wirelessiths.dal.trip;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
+
+@DynamoDBDocument
 public class Location {
 
     private double latitude;

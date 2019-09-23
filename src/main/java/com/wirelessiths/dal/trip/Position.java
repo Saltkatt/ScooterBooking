@@ -1,10 +1,12 @@
 package com.wirelessiths.dal.trip;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import java.time.Instant;
 import java.util.Arrays;
 
+@DynamoDBDocument
 public class Position {
 
     private Instant positionCreated;

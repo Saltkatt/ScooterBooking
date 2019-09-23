@@ -1,9 +1,11 @@
 package com.wirelessiths.dal;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.wirelessiths.dal.trip.Trip;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -18,6 +20,7 @@ public class UpdateBookingRequest {
     private String endTime;
     private String date;
     private String tripStatus;
+    private List<Trip> trips;
 /*
 TODO: Check how status is being saved in db. Might need to alter how enum is set.
  */
@@ -73,6 +76,14 @@ TODO: Check how status is being saved in db. Might need to alter how enum is set
         this.date = date;
     }
 
+    public Optional<List<Trip>> getTrips() {
+        return Optional.ofNullable(trips);
+    }
+
+    public void setTrips(List<Trip> trips) {
+        this.trips = trips;
+    }
+
     @Override
     public String toString() {
         return "UpdateBookingRequest{" +
@@ -95,7 +106,8 @@ TODO: Check how status is being saved in db. Might need to alter how enum is set
                 Objects.equals(getUserId(), that.getUserId()) &&
                 Objects.equals(getStartTime(), that.getStartTime()) &&
                 Objects.equals(getEndTime(), that.getEndTime()) &&
-                Objects.equals(getDate(), that.getDate());
+                Objects.equals(getDate(), that.getDate()) &&
+                Objects.equals(getTrips(), that.getTrips());
     }
 
     @Override

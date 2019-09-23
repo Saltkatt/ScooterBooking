@@ -1,9 +1,11 @@
 package com.wirelessiths.dal.trip;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import java.util.Map;
 
+@DynamoDBDocument
 public class PositionData {
 
     private double speedKph;
