@@ -87,7 +87,11 @@ public class TripSerializationTest {
     }
 
     @Test
+<<<<<<< HEAD
     public void serializeTripTest() {
+=======
+    public void serializeTripTest(){
+>>>>>>> fix looping bug in MonitorEndedBookingsTemp, change name from MonitorEndedBookingsFake to ..BookingsTemp
         Booking booking = new Booking(client, mapperConfig);
         Booking booking3 = new Booking(client, mapperConfig);
 

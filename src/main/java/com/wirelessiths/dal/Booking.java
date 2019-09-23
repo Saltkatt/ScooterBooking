@@ -201,6 +201,7 @@ public class Booking {
                 .withConsistentRead(true)
                 //.withFilterExpression("startTime < :end AND bookingStatus = :validState")//Todo: add bookingState to range key, for more effective querying?
                 .withFilterExpression("startTime < :end AND bookingStatus <> :invalidState AND bookingStatus <> :invalidState2");
+
         return mapper.query(Booking.class, queryExp);
     }
 
@@ -243,6 +244,7 @@ public class Booking {
     }
 
 
+
     //get bookings by startTime that has passed from now minus deadline
     public List<Booking> bookingsByStartTime(int deadlineSeconds){
         Instant startCheck = Instant.now().minusSeconds(deadlineSeconds);
@@ -262,6 +264,7 @@ public class Booking {
                 .withConsistentRead(false);
         return mapper.query(Booking.class, queryExp);
     }
+
 
 
     //return all bookings that has ended (now-6) to (now-5) minutes ago and that is not in a cancelled state
