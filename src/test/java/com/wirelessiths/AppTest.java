@@ -7,7 +7,6 @@ import com.wirelessiths.dal.Booking;
 import com.wirelessiths.dal.trip.Trip;
 import org.junit.Test;
 
-import java.awt.print.Book;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,9 +32,9 @@ public class AppTest
         List<Trip> trips = new ArrayList<>();
         trips.add(trip1);
         trips.add(trip2);
-        trip1.setTotalDistanceMeters(2000);
-        trip2.setTotalDistanceMeters(1500);
-        double totalDistance = trips.stream().mapToDouble(Trip::getTotalDistanceMeters).sum();
+        trip1.setTotalDistanceMeter(2000);
+        trip2.setTotalDistanceMeter(1500);
+        double totalDistance = trips.stream().mapToDouble(Trip::getTotalDistanceMeter).sum();
         System.out.println(totalDistance);
         assertEquals(3500, 3.14, totalDistance);
 

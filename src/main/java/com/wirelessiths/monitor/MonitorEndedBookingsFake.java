@@ -8,8 +8,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.wirelessiths.dal.Booking;
-import com.wirelessiths.dal.BookingStatus;
-import com.wirelessiths.dal.User;
 import com.wirelessiths.dal.trip.Trip;
 import com.wirelessiths.service.HTTPGetService;
 import com.wirelessiths.service.UserService;
@@ -21,7 +19,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import static com.wirelessiths.service.SNSService.getAmazonSNSClient;
 import static com.wirelessiths.service.SNSService.sendSMSMessage;
@@ -120,20 +117,20 @@ public class MonitorEndedBookingsFake {
                     }
                     String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
                     AmazonSNSClient snsClient = getAmazonSNSClient();
-                    double totalDistance = endedBooking.getTrips().stream().mapToDouble(Trip::getTotalDistanceMeters).sum();
+                    double totalDistance = endedBooking.getTrips().stream().mapToDouble(Trip::getTotalDistanceMeter).sum();
                     String message = "Thank you for completing your trip. You traveled " + totalDistance + " meters";
                     Map<String, MessageAttributeValue> smsAttributes =
                             new HashMap<String, MessageAttributeValue>();
                     //<set SMS attributes>
                     logger.info("sending happy sms");
-
+                    logger.info("match found, trip: " + trip);
                     sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
                     endedBooking.getTrips().add(trip);
-                    logger.info("appending trip to booking: " + endedBooking);
+                    logger.info("appending trip to booking");
                 });
 
                 try{
-                endedBooking.save(endedBooking);
+                endedBooking.update(endedBooking);
                 logger.info("saving updated booking");
                 }catch(IOException e){
                     logger.info("error saving updated booking: " + e.getMessage());
@@ -142,6 +139,7 @@ public class MonitorEndedBookingsFake {
                 logger.info("IOException: " + e.getMessage());
             }catch(Exception e){
                 logger.info("something went wrong: " + e.getMessage());
+                logger.info(e);
             }
         });
     }

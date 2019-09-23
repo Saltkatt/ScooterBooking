@@ -38,7 +38,7 @@ public class Booking {
     private LocalDate bookingDate;
     private BookingStatus bookingStatus;
 
-    private List<Trip> trips = new ArrayList<>();
+    private ArrayList<Trip> trips = new ArrayList<>();
 
 
     private static DynamoDBAdapter db_adapter;
@@ -146,13 +146,12 @@ public class Booking {
     }
 
     @DynamoDBAttribute(attributeName = "trips")
-    @DynamoDBTypeConverted(converter = ListConverter.class)
-    public List<Trip> getTrips() {
+    public ArrayList<Trip> getTrips() {
         return trips;
     }
 
     //@JsonSetter("trip_overview_list")
-    public void setTrips(List<Trip> trips) {
+    public void setTrips(ArrayList<Trip> trips) {
         this.trips = trips;
     }
 
@@ -234,13 +233,17 @@ public class Booking {
 
     public List<Booking> bookingsByEndTime()throws IOException, Exception{
 
-        LocalDate today = LocalDate.now();
+        LocalDate today = LocalDate.parse(Instant.now().toString().split("T")[0]);
         Instant now = Instant.now();
+        System.out.println("today from dao: " + today);
+        System.out.println("now from dao: " + now);
+        System.out.println("checking from: " + now.minusSeconds(60 * 6));
+        System.out.println("to: " + now.minusSeconds(60 * 5));
 
         Map<String, AttributeValue> values = new HashMap<>();
         values.put(":today", new AttributeValue().withS(today.toString()));
-        values.put(":end1", new AttributeValue().withS(now.minusSeconds(60 * 11).toString()));
-        values.put(":end2", new AttributeValue().withS(now.minusSeconds(60 * 10).toString()));
+        values.put(":end1", new AttributeValue().withS(now.minusSeconds(60 * 6).toString()));
+        values.put(":end2", new AttributeValue().withS(now.minusSeconds(60 * 5).toString()));
         values.put(":invalidState", new AttributeValue().withS(BookingStatus.CANCELLED.toString()));
         //values.put(":validState1", new AttributeValue().withS(BookingStatus.VALID.toString()));
         //values.put(":validState2", new AttributeValue().withS(BookingStatus.ACTIVE.toString()));

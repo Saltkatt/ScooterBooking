@@ -90,7 +90,7 @@ public class BookingQueryTest {
             b5.save(b5);
 
         }catch(Exception e){
-            System.out.println("error in populate for query test");
+            System.out.println("error in getTrips for query test");
             System.out.println("msg: " + e.getMessage());
         }
 

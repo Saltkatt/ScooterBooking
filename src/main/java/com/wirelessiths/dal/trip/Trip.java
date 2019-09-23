@@ -1,11 +1,15 @@
 package com.wirelessiths.dal.trip;
 
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBDocument;
+import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverted;
 import com.fasterxml.jackson.annotation.JsonSetter;
+import com.wirelessiths.dal.InstantConverter;
 
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
+@DynamoDBDocument
 public class Trip {
 
 //    {
@@ -35,7 +39,18 @@ public class Trip {
 //                "driver_behaviour_score": "265",
 //                "driver_behaviour_smooth": "180"
 //    }
-//    }
+//    }from old p&j
+//    "start_time": "2019-09-23T08:40:19Z",
+//            "end_time": "2019-09-23T08:43:36Z",
+//            "start_odometer": 292.63,
+//            "end_odometer": 293.275,
+//            "total_distance_meter": 644.9999999999818,
+//            "average_speed_kph": 144.0,
+//            "electrical_distance_meter": 644.9999999999818,
+
+
+//from real p&j
+//customAttributes={driver_behaviour_turns=85, driver_behaviour_focused=0, driver_behaviour_speed=0, driver_behaviour_score=265, driver_behaviour_smooth=180
 
     private Map<String, String> identifiers;
     private String tripId;
@@ -44,11 +59,12 @@ public class Trip {
     private Location endPosition;
     private Instant startTime;
     private Instant endTime;
-    private double totalDistanceMeters;
+    private double totalDistanceMeter;
     private List<String> tags;
     private List<Position> positions;
     private String sectionType;
-    private Map<String, String> customAttributes;
+    private Map<String, String> userTripInformation;
+    private Map<String, Double> customAttributes;
 
 
 
@@ -95,6 +111,7 @@ public class Trip {
         this.endPosition = endPosition;
     }
 
+    @DynamoDBTypeConverted( converter = InstantConverter.class )
     public Instant getStartTime() {
         return startTime;
     }
@@ -102,6 +119,7 @@ public class Trip {
         this.startTime = startTime;
     }
 
+    @DynamoDBTypeConverted( converter = InstantConverter.class )
     public Instant getEndTime() {
         return endTime;
     }
@@ -110,12 +128,12 @@ public class Trip {
         this.endTime = endTime;
     }
 
-    public double getTotalDistanceMeters() {
-        return totalDistanceMeters;
+    public double getTotalDistanceMeter() {
+        return totalDistanceMeter;
     }
 
-    public void setTotalDistanceMeters(double totalDistanceMeters) {
-        this.totalDistanceMeters = totalDistanceMeters;
+    public void setTotalDistanceMeter(double totalDistanceMeter) {
+        this.totalDistanceMeter = totalDistanceMeter;
     }
 
     public List<String> getTags() {
@@ -142,11 +160,19 @@ public class Trip {
         this.sectionType = sectionType;
     }
 
-    public Map<String, String> getCustomAttributes() {
+    public Map<String, String> getUserTripInformation() {
+        return userTripInformation;
+    }
+
+    public void setUserTripInformation(Map<String, String> userTripInformation) {
+        this.userTripInformation = userTripInformation;
+    }
+
+    public Map<String, Double> getCustomAttributes() {
         return customAttributes;
     }
 
-    public void setCustomAttributes(Map<String, String> customAttributes) {
+    public void setCustomAttributes(Map<String, Double> customAttributes) {
         this.customAttributes = customAttributes;
     }
     //-----------------------------------
@@ -162,7 +188,7 @@ public class Trip {
 
     @Override
     public String toString() {
-        return "trip{" +
+        return "Trip{" +
                 "identifiers=" + identifiers +
                 ", tripId='" + tripId + '\'' +
                 ", market='" + market + '\'' +
@@ -170,10 +196,11 @@ public class Trip {
                 ", endPosition=" + endPosition +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
-                ", totalDistanceMeters=" + totalDistanceMeters +
+                ", totalDistanceMeter=" + totalDistanceMeter +
                 ", tags=" + tags +
                 ", positions=" + positions +
                 ", sectionType='" + sectionType + '\'' +
+                ", userTripInformation=" + userTripInformation +
                 ", customAttributes=" + customAttributes +
                 '}';
     }
