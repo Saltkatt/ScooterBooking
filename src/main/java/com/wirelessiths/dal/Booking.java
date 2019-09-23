@@ -188,7 +188,7 @@ public class Booking {
         queryExp.withKeyConditionExpression("scooterId = :id and endTime between :start and :endPlusMaxDur")
                 .withExpressionAttributeValues(values)
                 .withConsistentRead(true)
-                .withFilterExpression("startTime < :end AND bookingStatus = :validState");
+                .withFilterExpression("startTime < :end AND bookingStatus = :validState");//Todo: if bookingState is active, this will not work. fix! add bookingState to range key, for more effective querying?
 
         return mapper.query(Booking.class, queryExp);
     }
@@ -231,7 +231,7 @@ public class Booking {
         return booking;
     }
 
-    public List<Booking> bookingsByEndTime()throws IOException, Exception{
+    public List<Booking> bookingsByEndTime()throws IOException, Exception{//TODO: make a more generic timespan query method?
 
         LocalDate today = LocalDate.parse(Instant.now().toString().split("T")[0]);
         Instant now = Instant.now();
@@ -245,9 +245,6 @@ public class Booking {
         values.put(":end1", new AttributeValue().withS(now.minusSeconds(60 * 6).toString()));
         values.put(":end2", new AttributeValue().withS(now.minusSeconds(60 * 5).toString()));
         values.put(":invalidState", new AttributeValue().withS(BookingStatus.CANCELLED.toString()));
-        //values.put(":validState1", new AttributeValue().withS(BookingStatus.VALID.toString()));
-        //values.put(":validState2", new AttributeValue().withS(BookingStatus.ACTIVE.toString()));
-
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
         queryExp.withKeyConditionExpression("bookingDate = :today and endTime between :end1 and :end2")

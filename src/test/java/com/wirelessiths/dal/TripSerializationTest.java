@@ -90,7 +90,7 @@ public class TripSerializationTest {
     }
 
     @Test
-    public void serializeTripTest(){//TODO: if serialized from jackson maybe need to deserialize with same method. not in with jackson and out with dbdocument?
+    public void serializeTripTest(){
         Booking booking = new Booking(client, mapperConfig);
         Booking booking3 = new Booking(client, mapperConfig);
 

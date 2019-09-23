@@ -19,11 +19,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.wirelessiths.service.SNSService.getAmazonSNSClient;
 import static com.wirelessiths.service.SNSService.sendSMSMessage;
 
-public class MonitorEndedBookingsFake {
+public class MonitorEndedBookingsTemp {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
     private HTTPGetService getRequest = new HTTPGetService();
@@ -108,6 +109,7 @@ public class MonitorEndedBookingsFake {
                 logger.info("number of trips found: " + trips.size());
                 List<Trip> newTrips = objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
 
+                AtomicReference<Double> totalDistance = new AtomicReference<>((double) 0);
                 newTrips.forEach(trip->{
                     logger.info("checking for match..");
                     if(!trip.getStartTime().isAfter(endedBooking.getStartTime()) ||
@@ -115,19 +117,21 @@ public class MonitorEndedBookingsFake {
                         logger.info("trip doesnt match");
                         return;
                     }
-                    String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
-                    AmazonSNSClient snsClient = getAmazonSNSClient();
-                    double totalDistance = endedBooking.getTrips().stream().mapToDouble(Trip::getTotalDistanceMeter).sum();
-                    String message = "Thank you for completing your trip. You traveled " + totalDistance + " meters";
-                    Map<String, MessageAttributeValue> smsAttributes =
-                            new HashMap<String, MessageAttributeValue>();
-                    //<set SMS attributes>
-                    logger.info("sending happy sms");
-                    logger.info("match found, trip: " + trip);
-                    sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
+                    totalDistance.updateAndGet(v -> v + trip.getTotalDistanceMeter());
                     endedBooking.getTrips().add(trip);
                     logger.info("appending trip to booking");
                 });
+
+                String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
+                AmazonSNSClient snsClient = getAmazonSNSClient();
+
+                //Strin
+                String message = "Thank you for completing your trip. You traveled " + Math.ceil(totalDistance.get()) + " meters";
+                Map<String, MessageAttributeValue> smsAttributes =
+                        new HashMap<String, MessageAttributeValue>();
+                //<set SMS attributes>
+                logger.info("sending happy sms");
+                sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
 
                 try{
                 endedBooking.update(endedBooking);
