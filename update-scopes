@@ -1,0 +1,68 @@
+#!/bin/bash
+
+# Updates scopes on api gateway to include "email, openid and aws.cognito.signin.user.admin" .
+# Sam template does not contain support for this function at the moment but they seem to be working on it https://github.com/awslabs/serverless-application-model/issues/652
+# Needs aws to be installed and configured and jq to be installed.
+# ApiGateway needs to be named MyApi in Sam-template.
+# Can output jq error null on some endpoints that do not contain methods. This is no problem.
+
+STACK_NAME=$1
+REST_API_ID=$(aws cloudformation describe-stack-events --stack-name ${STACK_NAME} \
+| jq -r '.[] | .[] | select((.LogicalResourceId == "MyApi" and .ResourceStatus == "CREATE_COMPLETE")) | .PhysicalResourceId')
+
+EP_IDS=$(aws apigateway get-resources --rest-api-id $REST_API_ID | jq -r '.[] | .[] | .id')
+RESOURCE_ARRAY=($EP_IDS)
+FILE_NAME=fileforupdategateway
+STAGE_NAME=dev
+
+
+
+for i in "${RESOURCE_ARRAY[@]}"
+do
+	RESOURCE_ID=$i
+	HTTP_METHODS=$(aws apigateway get-resources --rest-api-id $REST_API_ID | jq -r --arg RESOURCEID "$RESOURCE_ID" '.[] | .[] | select((.id == $RESOURCEID)) | .resourceMethods | keys[] ')	
+	HTTP_METHOD_ARRAY=($HTTP_METHODS)
+	
+	for i in "${HTTP_METHOD_ARRAY[@]}"
+	do
+		HTTP_METHOD=$i
+		jq -n --arg REST_API_ID "$REST_API_ID" --arg RESOURCE_ID "$RESOURCE_ID" --arg HTTP_METHOD "$HTTP_METHOD" '
+		{
+			"restApiId": $REST_API_ID,
+			"resourceId": $RESOURCE_ID,
+			"httpMethod": $HTTP_METHOD,
+			"patchOperations": [
+			    {
+				"op": "add",
+				"path": "/authorizationScopes",
+				"value": "email"
+
+			    },
+			{
+				"op": "add",
+				"path": "/authorizationScopes",
+				"value": "openid"
+
+			    },
+			{
+				"op": "add",
+				"path": "/authorizationScopes",
+				"value": "aws.cognito.signin.user.admin"
+
+			    }
+			    
+			]
+		    }' > "${FILE_NAME}.json"
+
+		aws apigateway update-method --cli-input-json "file://${FILE_NAME}.json"	
+	done
+		
+done
+
+
+rm ${FILE_NAME}.json
+
+aws apigateway create-deployment --rest-api-id $REST_API_ID --stage-name $STAGE_NAME
+
+
+exit 0
