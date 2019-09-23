@@ -211,8 +211,7 @@ Resources:
             Action:
               - cognito-idp:AdminGetUser
               - cognito-idp:ListUsers
-            Resource:
-              Ref: !GetAtt "UserPool.Arn"
+            Resource: !GetAtt "UserPool.Arn"
         #secret-arn
         #secret-name
       Events:
