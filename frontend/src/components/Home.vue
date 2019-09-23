@@ -21,6 +21,9 @@
         </header>
       <div class="bookings">
         <div class="current-bookings">
+          <div>{{jwtToken}}</div>
+
+          UserInfoApi.getUserInfo()
           <h2>Current Bookings</h2>
         </div>
 
@@ -35,11 +38,13 @@
 </template>
 <script>
   import UserInfoStore from '../app/user-info-store';
+  import UserInfoApi from '../app/user-info-api';
   export default {
     name: 'Home',
     data: function() {
       return{
-        userInfo: UserInfoStore.state.cognitoInfo
+        userInfo: UserInfoStore.state.cognitoInfo,
+        jwtToken: UserInfoApi.getUserInfo().jwtToken
       }
     }
   }
