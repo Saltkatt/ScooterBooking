@@ -267,7 +267,6 @@ public class Booking {
     }
 
 
-
     //return all bookings that has ended (now-6) to (now-5) minutes ago and that is not in a cancelled state
     public List<Booking> bookingsByEndTime(){
         //start-value to check for bookings ending from 6 to 5 minutes back from now

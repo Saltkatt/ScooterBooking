@@ -61,7 +61,9 @@ public class MonitorStartedBookings {
         AmazonSNS snsClient = getAmazonSNSClient();
         Map<String, MessageAttributeValue> smsAttributes =
                 new HashMap<>();
+
         //<set SMS attributes>
         sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
+
     }
 }
