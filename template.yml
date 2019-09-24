@@ -14,6 +14,21 @@ Parameters:
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
+  SmsExternalId:
+    Type: String
+    Default: xxx
+  SmsArn:
+    Type: String
+    Default: xxx
+  SourceArnEmail:
+    Type: String
+    Default: xxx
+  CallbackUrl:
+    Type: String
+    Default: xxx
+  LogoutUrl:
+    Type: String
+    Default: xxx
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
@@ -37,14 +52,24 @@ Resources:
       AutoVerifiedAttributes:
         - email
         - phone_number
+      EmailConfiguration:
+        SourceArn: !Ref SourceArnEmail
       Schema:
-        - PhoneNumber:
-            AttributeDataType: String
-            Name: phone_number
-            Required: true
+        - AttributeDataType: String
+          Name: phone_number
+          Required: true
+        - AttributeDataType: String
+          Name: email
+          Required: true
+        - AttributeDataType: String
+          Name: given_name
+          Required: true
+        - AttributeDataType: String
+          Name: family_name
+          Required: true
       SmsConfiguration:
-        ExternalId: 12b923f4-53f9-46f2-9efd-94f085995dfe
-        SnsCallerArn: !GetAtt "CognitoSMSRole.Arn"
+        ExternalId: !Ref SmsExternalId
+        SnsCallerArn: !Ref SmsArn
       Policies:
         PasswordPolicy:
           MinimumLength: 6
@@ -59,38 +84,30 @@ Resources:
     Properties:
       UserPoolId: !Ref UserPool
       GenerateSecret: false
-      ExplicitAuthFlows:
-        - USER_PASSWORD_AUTH
-  CognitoSMSRole:
-    Type: AWS::IAM::Role
+      AllowedOAuthFlows:
+        - implicit
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthScopes:
+        - email
+        - openid
+        - aws.cognito.signin.user.admin
+      CallbackURLs:
+        - !Ref CallbackUrl
+      ClientName: vuejs-frontend-client
+      SupportedIdentityProviders:
+        - COGNITO
+      DefaultRedirectURI: !Ref CallbackUrl
+      LogoutURLs:
+        - !Ref LogoutUrl
+
+  UserPoolAdminGroup:
+    DependsOn: UserPool
+    Type: AWS::Cognito::UserPoolGroup
     Properties:
-      AssumeRolePolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Principal:
-              Service:
-                - "cognito-idp.amazonaws.com"
-            Action:
-              - "sts:AssumeRole"
-            Condition:
-              StringEquals:
-                "sts:ExternalId": '12b923f4-53f9-46f2-9efd-94f085995dfe'
-      Path: "/"
-  CognitoSMSPolicy:
-    Type: "AWS::IAM::Policy"
-    Properties:
-      PolicyName: "CognitoSMSPolicy"
-      PolicyDocument:
-        Version: "2012-10-17"
-        Statement:
-          - Effect: "Allow"
-            Action:
-              - "sns:publish"
-            Resource:
-              - "*"
-      Roles:
-        - Ref: CognitoSMSRole
+      Description: admin-group
+      GroupName: admin
+      Precedence: 1
+      UserPoolId: !Ref UserPool
   MyApi:
     DependsOn: UserPool
     Type: AWS::Serverless::Api
