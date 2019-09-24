@@ -171,7 +171,6 @@ public class Booking {
 
     public List<Booking> validateBooking(Booking booking, int maxDuration, int buffer) throws IOException{
 
-
         String start = booking.getStartTime().minusSeconds(buffer).toString();
         String end = booking.getEndTime().plusSeconds(buffer).toString();
         String endPlusMaxDur = booking.getEndTime().plusSeconds(maxDuration).toString();
@@ -181,15 +180,17 @@ public class Booking {
         values.put(":start", new AttributeValue().withS(start));
         values.put(":endPlusMaxDur", new AttributeValue().withS(endPlusMaxDur));
         values.put(":end", new AttributeValue().withS(end));
-        values.put(":validState", new AttributeValue().withS(BookingStatus.VALID.toString()));
+        values.put(":invalidState", new AttributeValue().withS(BookingStatus.CANCELLED.toString()));
+        values.put(":invalidState2", new AttributeValue().withS(BookingStatus.COMPLETED.toString()));
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
 
         queryExp.withKeyConditionExpression("scooterId = :id and endTime between :start and :endPlusMaxDur")
                 .withExpressionAttributeValues(values)
                 .withConsistentRead(true)
-                .withFilterExpression("startTime < :end AND bookingStatus = :validState");//Todo: if bookingState is active, this will not work. fix! add bookingState to range key, for more effective querying?
-
+                //.withFilterExpression("startTime < :end AND bookingStatus = :validState")//Todo: if bookingState is active, this will not work. fix! add bookingState to range key, for more effective querying?
+                .withFilterExpression("startTime < :end")
+                .withFilterExpression("bookingStatus <> :invalidState AND bookingStatus <> :invalidState2");
         return mapper.query(Booking.class, queryExp);
     }
 
@@ -232,6 +233,7 @@ public class Booking {
     }
 
     public List<Booking> bookingsByEndTime()throws IOException, Exception{//TODO: make a more generic timespan query method?
+        //Todo: use main index for this? date unnecessary, only on old pj but can derive it from enddate to avoid midnight conflicts
 
         LocalDate today = LocalDate.parse(Instant.now().toString().split("T")[0]);
         Instant now = Instant.now();
