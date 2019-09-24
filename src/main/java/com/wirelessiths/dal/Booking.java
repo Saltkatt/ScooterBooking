@@ -243,7 +243,6 @@ public class Booking {
     }
 
 
-
     //get bookings by startTime that has passed from now minus deadline
     public List<Booking> bookingsByStartTime(int deadlineSeconds){
         Instant startCheck = Instant.now().minusSeconds(deadlineSeconds);

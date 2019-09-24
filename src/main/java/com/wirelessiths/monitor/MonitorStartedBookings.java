@@ -21,12 +21,20 @@ import static com.wirelessiths.service.SNSService.sendSMSMessage;
 
 public class MonitorStartedBookings {
 
+<<<<<<< HEAD
     private final Logger logger = LogManager.getLogger(this.getClass());
     private Dotenv dotenv = Dotenv.load();
+=======
+    //once a min, get all valid bookings with endTime between 6 and 5 mins ago
+    //once a min, get all valid bookings with startTime between 16 and 15 mins ago
+
+    public void lambdaHandler(){
+>>>>>>> clean up MonitorEndedBookingsTemp, change validateBooking() to also check for active bookings
 
     public void lambdaHandler(){
 
         try{
+<<<<<<< HEAD
             Settings settings = Settings.getSettings();
             int deadlineSeconds = settings.getNotCheckedOut();
 
@@ -49,6 +57,10 @@ public class MonitorStartedBookings {
 
         }catch(IOException e) {
             logger.info("error when saving booking: {}", e.getMessage());
+=======
+
+           // endedBookings = booking.bookingsByStartTime();
+>>>>>>> clean up MonitorEndedBookingsTemp, change validateBooking() to also check for active bookings
 
         }catch(Exception e) {
             logger.info(e.getMessage());
