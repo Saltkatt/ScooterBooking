@@ -131,8 +131,6 @@ public class TripSerializationTest {
             System.out.println(e.getMessage());
             fail();
         }
-
-
     }
 
 
