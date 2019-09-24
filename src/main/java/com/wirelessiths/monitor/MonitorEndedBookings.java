@@ -64,6 +64,7 @@ public class MonitorEndedBookings {
                 List<Trip> trips = getTrips(accessToken, vehicleId, pjUrl);
                 if(trips == null || trips.isEmpty()){
                     continue;
+
                 }
 //                ArrayNode trips = (ArrayNode) mapper.readTree(response)
 //                        .path("trip_overview_list");
@@ -78,6 +79,7 @@ public class MonitorEndedBookings {
                 logger.info("appending trip to booking");
                 endedBooking.save(endedBooking);
                 logger.info("saving updated booking");
+
             }
         }catch(IOException e) {
             logger.info(e.getMessage());
@@ -122,6 +124,7 @@ public class MonitorEndedBookings {
         if (accessToken == null) {
            logger.info("no token");
            throw new NullPointerException("access-token not found");
+
         }
 
         String fullUrl = url + "/vehicles/" + vehicleId + "/trips";
@@ -136,6 +139,7 @@ public class MonitorEndedBookings {
         ArrayNode trips = (ArrayNode) mapper.readTree(response.body().string())
                 .path("trip_overview_list");
         return mapper.convertValue(trips, new TypeReference<List<Trip>>() {});
+
     }
 
 
