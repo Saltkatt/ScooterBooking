@@ -96,30 +96,6 @@ public class MonitorEndedBookings {
         } catch(Exception e){
             logger.info(e.getMessage());
         }
-
-//        endedBookings.forEach((endedBooking)->{
-//
-//            String vehicleId = endedBooking.getScooterId();
-//            try{
-//                String response = getTrips(accessToken, vehicleId, pjUrl);
-//                ArrayNode trips = (ArrayNode) mapper.readTree(response)
-//                        .path("trip_overview_list");
-//                List<Trip> newTrips = mapper.convertValue(trips, new TypeReference<List<Trip>>(){});
-//                if(trips.size() == 0){
-//                    logger.info("No trips for booking:" + endedBooking);
-//                    return;
-//                }
-//                logger.info("number of trips found: " + trips.size());
-//                endedBooking.getTrips().addAll(newTrips);
-//                endedBooking.save(endedBooking);
-//                logger.info("saving updated booking");
-//
-//            }catch(IOException e) {
-//                logger.info(e.getMessage());
-//            }catch(Exception e){
-//                System.out.println(e.getMessage());
-//            }
-//        });
     }
 
 
@@ -168,8 +144,8 @@ public class MonitorEndedBookings {
         return objectmapper.readValue(response.body().string(), new TypeReference<Map<String, String>>() {});
     }
 
-
     private String getSecret(String region, String secretName) {
+
 
         // Create a Secrets Manager client
         AWSSecretsManager client  = AWSSecretsManagerClientBuilder.standard()
