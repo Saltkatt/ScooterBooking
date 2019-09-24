@@ -50,8 +50,6 @@ public class MonitorEndedBookingsTemp {
     //save trips to bookings
 
 
-
-
     public void doStuff(){
 
         //check if ended uncancelled bookings
@@ -78,14 +76,8 @@ public class MonitorEndedBookingsTemp {
 
         endedBookings.forEach((endedBooking)->{
 
-//            if(endedBooking.getBookingStatus().equals(BookingStatus.CANCELLED)){//do this check on dao method instead?
-//                return;
-//            }
-            //endedBooking.setBookingStatus(BookingStatus.COMPLETED);
-            //logger.info("setting bookingStatus to 'COMPLETED': " + endedBooking);
-
             String url = String.format("%s/%s%s", baseUrl, endedBooking.getScooterId(), tripEndpoint);
-            logger.info("booking ended: " + endedBooking);
+            logger.info("booking: " + endedBooking);
             String queryUrl = url + "?startDate=" + endedBooking.getBookingDate();
 
             try{
@@ -95,7 +87,6 @@ public class MonitorEndedBookingsTemp {
 
                 if(trips.size() == 0){
                     logger.info("No trips for booking:" + endedBooking);
-                    //endedBooking.save(endedBooking);
                     String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
                     AmazonSNSClient snsClient = getAmazonSNSClient();
                     String message = "No trip registered for your booking, if you didnt use the scooter, please cancel the booking next time";
@@ -106,32 +97,33 @@ public class MonitorEndedBookingsTemp {
                     sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
                     return;
                 }
+
                 logger.info("number of trips found: " + trips.size());
                 List<Trip> newTrips = objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
 
                 AtomicReference<Double> totalDistance = new AtomicReference<>((double) 0);
                 newTrips.forEach(trip->{
+
                     logger.info("checking for match..");
                     if(!trip.getStartTime().isAfter(endedBooking.getStartTime()) ||
                         !trip.getEndTime().isBefore(endedBooking.getEndTime().plusSeconds(60 * 5))) {
-                        logger.info("trip doesnt match");
                         return;
                     }
                     totalDistance.updateAndGet(v -> v + trip.getTotalDistanceMeter());
                     endedBooking.getTrips().add(trip);
-                    logger.info("appending trip to booking");
+                    logger.info("appending matching trip to booking");
                 });
+                if(trips.size() != 0){
+                    String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
+                    AmazonSNSClient snsClient = getAmazonSNSClient();
 
-                String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
-                AmazonSNSClient snsClient = getAmazonSNSClient();
-
-                //Strin
-                String message = "Thank you for completing your trip. You traveled " + Math.ceil(totalDistance.get()) + " meters";
-                Map<String, MessageAttributeValue> smsAttributes =
-                        new HashMap<String, MessageAttributeValue>();
-                //<set SMS attributes>
-                logger.info("sending happy sms");
-                sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
+                    String message = "Thank you for completing your trip. You traveled " + Math.ceil(totalDistance.get()) + " meters";
+                    Map<String, MessageAttributeValue> smsAttributes =
+                            new HashMap<String, MessageAttributeValue>();
+                    //<set SMS attributes>
+                    logger.info("sending happy sms");
+                    sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
+                }
 
                 try{
                 endedBooking.update(endedBooking);
