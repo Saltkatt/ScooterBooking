@@ -271,10 +271,14 @@ Resources:
     Properties:
       CodeUri: target/bookings-api-dev.jar
 <<<<<<< HEAD
+<<<<<<< HEAD
       Handler: com.wirelessiths.monitor.MonitorEndedBookingsTemp::lambdaHandler
 =======
       Handler: com.wirelessiths.monitor.MonitorEndedBookingsTemp::doStuff
 >>>>>>> fix looping bug in MonitorEndedBookingsTemp, change name from MonitorEndedBookingsFake to ..BookingsTemp
+=======
+      Handler: com.wirelessiths.monitor.MonitorEndedBookingsTemp::lambdaHandler
+>>>>>>> clean up MonitorEndedBookingsTemp, change validateBooking() to also check for active bookings
       Runtime: java8
       Policies:
         - DynamoDBCrudPolicy:

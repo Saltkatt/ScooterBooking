@@ -202,6 +202,7 @@ public class Booking {
                 //.withFilterExpression("startTime < :end AND bookingStatus = :validState")//Todo: add bookingState to range key, for more effective querying?
                 .withFilterExpression("startTime < :end AND bookingStatus <> :invalidState AND bookingStatus <> :invalidState2");
 
+
         return mapper.query(Booking.class, queryExp);
     }
 
@@ -242,6 +243,7 @@ public class Booking {
         }
         return booking;
     }
+
 
 
 
