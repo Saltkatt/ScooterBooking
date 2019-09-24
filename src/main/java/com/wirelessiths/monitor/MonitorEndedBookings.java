@@ -64,6 +64,7 @@ public class MonitorEndedBookings {
         String accessToken = auth.get("access_token");
 
         endedBookings.forEach((endedBooking)->{
+
             String vehicleId = endedBooking.getScooterId();
             try{
                 String response = getTrips(accessToken, vehicleId, pjUrl);
@@ -78,18 +79,6 @@ public class MonitorEndedBookings {
                 endedBooking.getTrips().addAll(newTrips);
                 endedBooking.save(endedBooking);
                 logger.info("saving updated booking");
-
-//                newTrips.forEach(trip->{
-//                    logger.info("checking for match..");
-//                    if(!trip.getStartTime().isAfter(endedBooking.getStartTime()) ||
-//                            !trip.getEndTime().isBefore(endedBooking.getEndTime().plusSeconds(60 * 5))) {
-//                        logger.info("trip doesnt match");
-//                        return;
-//                    }
-//                    endedBooking.getTrips().add(trip);
-//                    logger.info("appending trip to booking: " + endedBooking);
-//                });
-
 
             }catch(IOException e) {
                 logger.info(e.getMessage());
@@ -115,26 +104,21 @@ public class MonitorEndedBookings {
 
     private String getTrips(String accessToken, String vehicleId, String url) throws IOException {
 
-        //String vehicleId = dotenv.get("SCOOTER_ID");
-
-        //Map<String, String> auth = getAuth();
         if (accessToken == null) {
-            System.out.println("no token");
+           logger.info("no token");
             return null;
         }
 
-        //String url = dotenv.get("REAL_URL");
         String fullUrl = url + "/vehicles/" + vehicleId + "/trips";
         //Todo: add query params for startDate and endDate
-        //System.out.println(url);
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(fullUrl)
                 .addHeader("Content-type", "application/json")
                 .addHeader("Authorization", accessToken)
                 .build();
-        Response response = null;
-        response = client.newCall(request).execute();
+        //Response response = null;
+        Response response = client.newCall(request).execute();
         //return mapper.readValue(response.body().string(), new TypeReference<Map<String, String>>() {});
         return response.body().string();
     }
@@ -169,9 +153,6 @@ public class MonitorEndedBookings {
 
 
     private static String getSecret(String region, String secretName) {
-
-        //String secretName = "client_secret";
-        //String region = "us-east-1";
 
         // Create a Secrets Manager client
         AWSSecretsManager client  = AWSSecretsManagerClientBuilder.standard()

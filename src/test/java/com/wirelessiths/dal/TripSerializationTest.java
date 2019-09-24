@@ -136,10 +136,6 @@ public class TripSerializationTest {
 
     }
 
-    @Test
-    public void deserializeTripTest(){
-
-    }
 
     public static void createClient(){
         System.out.println("creating client..");
