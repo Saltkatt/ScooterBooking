@@ -5,12 +5,6 @@ Description: >
 
   Sample SAM Template for sam-app
 Parameters:
-  UserPoolId:
-    Type: String
-    Default: xxx
-  UserPoolArn:
-    Type: String
-    Default: xxx
   TableName:
     Type: String
     Default: xxx
@@ -20,12 +14,21 @@ Parameters:
   CodeUri:
     Type: String
     Default: target/bookings-api-dev.jar
-  CognitoUserPoolName:
+  SmsExternalId:
     Type: String
-    Default: MyUserPool
-  CognitoUserPoolClientName:
+    Default: xxx
+  SmsArn:
     Type: String
-    Default: MyUserPoolClient
+    Default: xxx
+  SourceArnEmail:
+    Type: String
+    Default: xxx
+  CallbackUrl:
+    Type: String
+    Default: xxx
+  LogoutUrl:
+    Type: String
+    Default: xxx
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
@@ -34,11 +37,79 @@ Globals:
     Environment: # More info about Env Vars: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#environment-object
       Variables:
         BOOKINGS_TABLE_NAME: !Ref TableName
-        USER_POOL_ID: !Ref UserPoolId
+        USER_POOL_ID: !Ref UserPool
         BUCKET_NAME: !Ref BucketName
 
 Resources:
+  UserPool:
+    Type: AWS::Cognito::UserPool
+    Properties:
+      AdminCreateUserConfig:
+        AllowAdminCreateUserOnly: false
+      AliasAttributes:
+        - preferred_username
+      UserPoolName: sam-users-09-24
+      AutoVerifiedAttributes:
+        - email
+        - phone_number
+      EmailConfiguration:
+        SourceArn: !Ref SourceArnEmail
+      Schema:
+        - AttributeDataType: String
+          Name: phone_number
+          Required: true
+        - AttributeDataType: String
+          Name: email
+          Required: true
+        - AttributeDataType: String
+          Name: given_name
+          Required: true
+        - AttributeDataType: String
+          Name: family_name
+          Required: true
+      SmsConfiguration:
+        ExternalId: !Ref SmsExternalId
+        SnsCallerArn: !Ref SmsArn
+      Policies:
+        PasswordPolicy:
+          MinimumLength: 6
+          RequireLowercase: true
+          RequireNumbers: false
+          RequireSymbols: false
+          RequireUppercase: true
+
+  UserPoolTokenClient:
+    DependsOn: UserPool
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref UserPool
+      GenerateSecret: false
+      AllowedOAuthFlows:
+        - implicit
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthScopes:
+        - email
+        - openid
+        - aws.cognito.signin.user.admin
+      CallbackURLs:
+        - !Ref CallbackUrl
+      ClientName: vuejs-frontend-client
+      SupportedIdentityProviders:
+        - COGNITO
+      DefaultRedirectURI: !Ref CallbackUrl
+      LogoutURLs:
+        - !Ref LogoutUrl
+
+  UserPoolAdminGroup:
+    DependsOn: UserPool
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      Description: admin-group
+      GroupName: admin
+      Precedence: 1
+      UserPoolId: !Ref UserPool
   MyApi:
+    DependsOn: UserPool
     Type: AWS::Serverless::Api
     Properties:
       StageName: dev
@@ -51,7 +122,7 @@ Resources:
         # InvokeRole: NONE # CALLER_CREDENTIALS by default unless overridden
         Authorizers:
           MyCognitoAuth:
-            UserPoolArn: !Ref UserPoolArn
+            UserPoolArn: !GetAtt "UserPool.Arn"
             # Can also accept an array
             Identity: # OPTIONAL
               Header: Authorization # OPTIONAL; Default: 'Authorization'
@@ -197,8 +268,7 @@ Resources:
             Action:
               - cognito-idp:AdminGetUser
               - cognito-idp:ListUsers
-            Resource:
-              Ref: UserPoolArn
+            Resource: !GetAtt "UserPool.Arn"
         #secret-arn
         #secret-name
       Events:
@@ -305,4 +375,3 @@ Outputs:
   SetBookingStateFunction:
     Description: "SetBookingState Lambda Function ARN"
     Value: !GetAtt SetBookingStateFunction.Arn
-
