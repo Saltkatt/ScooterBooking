@@ -31,11 +31,20 @@ Resources:
     Properties:
       AdminCreateUserConfig:
         AllowAdminCreateUserOnly: false
-      UserPoolName: sam-users
-      UsernameAttributes:
-        - email
+      AliasAttributes:
+        - preferred_username
+      UserPoolName: sam-users-09-24
       AutoVerifiedAttributes:
         - email
+        - phone_number
+      Schema:
+        - PhoneNumber:
+            AttributeDataType: String
+            Name: phone_number
+            Required: true
+      SmsConfiguration:
+        ExternalId: 12b923f4-53f9-46f2-9efd-94f085995dfe
+        SnsCallerArn: !GetAtt "CognitoSMSRole.Arn"
       Policies:
         PasswordPolicy:
           MinimumLength: 6
@@ -43,6 +52,7 @@ Resources:
           RequireNumbers: false
           RequireSymbols: false
           RequireUppercase: true
+
   UserPoolTokenClient:
     DependsOn: UserPool
     Type: AWS::Cognito::UserPoolClient
@@ -51,6 +61,36 @@ Resources:
       GenerateSecret: false
       ExplicitAuthFlows:
         - USER_PASSWORD_AUTH
+  CognitoSMSRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Principal:
+              Service:
+                - "cognito-idp.amazonaws.com"
+            Action:
+              - "sts:AssumeRole"
+            Condition:
+              StringEquals:
+                "sts:ExternalId": '12b923f4-53f9-46f2-9efd-94f085995dfe'
+      Path: "/"
+  CognitoSMSPolicy:
+    Type: "AWS::IAM::Policy"
+    Properties:
+      PolicyName: "CognitoSMSPolicy"
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: "Allow"
+            Action:
+              - "sns:publish"
+            Resource:
+              - "*"
+      Roles:
+        - Ref: CognitoSMSRole
   MyApi:
     DependsOn: UserPool
     Type: AWS::Serverless::Api

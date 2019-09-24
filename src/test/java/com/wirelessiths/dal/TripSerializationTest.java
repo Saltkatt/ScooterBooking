@@ -28,6 +28,7 @@ import java.util.List;
 import static junit.framework.TestCase.fail;
 
 public class TripSerializationTest {
+    /**
 
     private static AmazonDynamoDB client;
     private static DynamoDBMapperConfig mapperConfig;
@@ -291,4 +292,5 @@ public class TripSerializationTest {
 
 
     }
+    **/
 }
