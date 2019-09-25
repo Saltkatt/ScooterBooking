@@ -7,7 +7,7 @@ Description: >
 Parameters:
   TableName:
     Type: String
-    Default: carl-bookings-09-17-3
+    Default: dev-bookings-09-23
   BucketName:
     Type: String
     Default: xxx
