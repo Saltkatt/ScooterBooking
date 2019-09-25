@@ -29,6 +29,9 @@ Parameters:
   LogoutUrl:
     Type: String
     Default: xxx
+  UserPoolName:
+    Type: String
+    Default: dev-0925
 # More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
 Globals:
   Function:
@@ -48,7 +51,7 @@ Resources:
         AllowAdminCreateUserOnly: false
       AliasAttributes:
         - preferred_username
-      UserPoolName: sam-users-09-24
+      UserPoolName: !Ref UserPoolName
       AutoVerifiedAttributes:
         - email
         - phone_number
@@ -93,6 +96,7 @@ Resources:
         - aws.cognito.signin.user.admin
       CallbackURLs:
         - !Ref CallbackUrl
+        - https://localhost
       ClientName: vuejs-frontend-client
       SupportedIdentityProviders:
         - COGNITO

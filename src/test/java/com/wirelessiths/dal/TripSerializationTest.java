@@ -16,6 +16,10 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.wirelessiths.dal.trip.Trip;
 import com.wirelessiths.service.HTTPGetService;
 import io.github.cdimascio.dotenv.Dotenv;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import org.apache.http.HttpRequest;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,11 +28,12 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static junit.framework.TestCase.fail;
 
 public class TripSerializationTest {
-    /**
+
 
     private static AmazonDynamoDB client;
     private static DynamoDBMapperConfig mapperConfig;
@@ -38,9 +43,9 @@ public class TripSerializationTest {
 
     private static Dotenv dotenv = Dotenv.load();
     private static String baseUrl = dotenv.get("BASE_URL");
-    private static String tripEndpoint = dotenv.get("TRIP_ENDPOINT");
-    private static String authHeader = dotenv.get("AUTH");
-    private static String vehicleId = dotenv.get("SCOOTER_ID");
+    private static String tripEndpoint =  dotenv.get("TRIP_ENDPOINT");
+    private static String authHeader =  dotenv.get("AUTH");
+    private static String vehicleId =  dotenv.get("SCOOTER_ID");
     private static ObjectMapper objectMapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
@@ -52,7 +57,7 @@ public class TripSerializationTest {
     public static void create(){
       createClient();
       createTable();
-      getTrips();
+      //getTrips();
     }
 
     @AfterClass
@@ -77,12 +82,26 @@ public class TripSerializationTest {
         String url = String.format("%s/%s%s", baseUrl, vehicleId, tripEndpoint);
         String queryUrl = url + "?startDate=" + vehicleId;
 
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .writeTimeout(10, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .build();
+
+
+        Request request = new Request.Builder().addHeader("Authorization",authHeader).url(queryUrl).build();
+
+
         try{
-            String result = getRequest.run(queryUrl, authHeader);
+            Response response = httpClient.newCall(request).execute();
+            String result = response.body().string();
+          //  System.out.println(result);
+           // String result = getRequest.run(queryUrl, authHeader);
             ArrayNode trips = (ArrayNode) objectMapper.readTree(result)
                     .path("trip_overview_list");
 
-            return objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
+            List<Trip> trips2 = objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
+            trips2.forEach(System.out::println);
+            return trips2;
 
         }catch(Exception e){
             System.out.println(e.getMessage());
@@ -111,6 +130,7 @@ public class TripSerializationTest {
         booking3.setBookingStatus(BookingStatus.VALID);
 
         List<Trip> newTrips = getTrips();
+
         assert(newTrips != null && !newTrips.isEmpty());
 
         try{
@@ -292,5 +312,5 @@ public class TripSerializationTest {
 
 
     }
-    **/
+
 }
