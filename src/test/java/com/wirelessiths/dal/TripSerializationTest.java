@@ -17,11 +17,13 @@ import okhttp3.Response;
 import org.apache.http.HttpRequest;
 
 
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -29,7 +31,6 @@ import static junit.framework.TestCase.fail;
 
 public class TripSerializationTest {
 
-    /**
 
 
     private static AmazonDynamoDB client;
@@ -38,9 +39,9 @@ public class TripSerializationTest {
 
     private static Dotenv dotenv = Dotenv.load();
     private static String baseUrl = dotenv.get("BASE_URL");
-    private static String tripEndpoint =  dotenv.get("TRIP_ENDPOINT");
-    private static String authHeader =  dotenv.get("AUTH");
-    private static String vehicleId =  dotenv.get("SCOOTER_ID");
+    private static String tripEndpoint = dotenv.get("TRIP_ENDPOINT");
+    private static String authHeader = dotenv.get("AUTH");
+    private static String vehicleId = dotenv.get("SCOOTER_ID");
     private static ObjectMapper objectMapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
@@ -53,6 +54,7 @@ public class TripSerializationTest {
     public static void create(){
       LocalDbHandler.createClient();
       LocalDbHandler.createTable(tableName, client);
+
     }
 
     @AfterClass
@@ -68,30 +70,32 @@ public class TripSerializationTest {
         String url = String.format("%s/%s%s", baseUrl, vehicleId, tripEndpoint);
         String queryUrl = url + "?startDate=" + vehicleId;
 
-        OkHttpClient httpClient = new OkHttpClient.Builder()
-                .writeTimeout(10, TimeUnit.SECONDS)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .build();
-
-
-        Request request = new Request.Builder().addHeader("Authorization",authHeader).url(queryUrl).build();
-
-
         try{
-            String result = getRequest.run(queryUrl, authHeader);
-            ArrayNode trips = (ArrayNode) objectMapper.readTree(result)
+            OkHttpClient httpClient = new OkHttpClient.Builder()
+                    .writeTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
+                    .build();
 
 
+
+
+            Request request = new Request
+                    .Builder()
+                    .addHeader("Authorization", authHeader)
+                    .url(queryUrl).build();
+
+
+            Response response = httpClient.newCall(request).execute();
+
+            ArrayNode trips = (ArrayNode) objectMapper.readTree(response.body().string())
                     .path("trip_overview_list");
 
-            List<Trip> trips2 = objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
-            trips2.forEach(System.out::println);
-            return trips2;
+            return objectMapper.convertValue(trips, new TypeReference<List<Trip>>() {});
 
-        } catch (Exception e) {
+        }catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Test
@@ -115,8 +119,8 @@ public class TripSerializationTest {
 
         List<Trip> newTrips = getTrips();
 
-        assert (newTrips != null && !newTrips.isEmpty());
 
+        assert (newTrips != null && !newTrips.isEmpty());
 
         try {
             booking3.getTrips().add(newTrips.get(0));
@@ -139,6 +143,5 @@ public class TripSerializationTest {
         }
 
     }
-     //*
 }
 
