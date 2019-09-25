@@ -35,9 +35,9 @@ public class Booking {
 
     private Instant startTime;
     private Instant endTime;
-    private LocalDate bookingDate;
-//    private LocalDate startDate;
-//    private LocalDate endDate;
+    //private LocalDate bookingDate;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private BookingStatus bookingStatus;
 
     private List<Trip> trips = new ArrayList<>();
@@ -88,36 +88,44 @@ public class Booking {
 
     //@JsonFormat(pattern = "yyyy-MM-dd T HH:mm:ss", timezone = "UTC")
     @DynamoDBRangeKey(attributeName = "endTime")
-    @DynamoDBAttribute(attributeName = "endTime")
+    //@DynamoDBAttribute(attributeName = "endTime")
     @DynamoDBIndexRangeKey(attributeName = "endTime", globalSecondaryIndexName = "endTimeIndex")
     @DynamoDBTypeConverted( converter = InstantConverter.class )
     public Instant getEndTime() {
         return endTime;
     }
     public void setEndTime(Instant endTime) {
+        this.endDate = LocalDate.parse(endTime.toString().split("T")[0]);
         this.endTime = endTime;
     }
 
+    @DynamoDBIndexHashKey(attributeName = "endDate", globalSecondaryIndexName = "endTimeIndex")
+    @DynamoDBTypeConverted( converter = LocalDateConverter.class )
+    public LocalDate getEndDate() {
+        return endDate;
+    }
 
+    public void setEndDate(LocalDate endDate) {
+        this.endDate = endDate;
+    }
 
-
-    @DynamoDBIndexRangeKey(attributeName = "startTime", globalSecondaryIndexName = "bookingIndex")
+    @DynamoDBIndexRangeKey(attributeName = "startTime", globalSecondaryIndexName = "bookingIndex", globalSecondaryIndexNames = "startTimeIndex")
     @DynamoDBTypeConverted( converter = InstantConverter.class )
     public Instant getStartTime() {
         return startTime;
     }
     public void setStartTime(Instant startTime) {
-        this.bookingDate = LocalDate.parse(startTime.toString().split("T")[0]);
+        this.startDate = LocalDate.parse(startTime.toString().split("T")[0]);
         this.startTime = startTime;
     }
 
-    @DynamoDBIndexHashKey(attributeName = "bookingDate", globalSecondaryIndexName = "endTimeIndex")
+    @DynamoDBIndexHashKey(attributeName = "startDate", globalSecondaryIndexName = "startTimeIndex")
     @DynamoDBTypeConverted( converter = LocalDateConverter.class )
-    public LocalDate getBookingDate() {
-        return bookingDate;
+    public LocalDate getStartDate() {
+        return startDate;
     }
-    public void setBookingDate(LocalDate bookingDate) {
-        this.bookingDate = bookingDate;
+    public void setStartDate(LocalDate startDate) {
+        this.startDate = startDate;
     }
 
     @DynamoDBIndexHashKey(attributeName = "bookingId", globalSecondaryIndexName = "bookingIndex")
@@ -165,7 +173,8 @@ public class Booking {
                 ", userId='" + userId + '\'' +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
-                ", bookingDate=" + bookingDate +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
                 ", bookingStatus=" + bookingStatus +
                 ", trips=" + trips +
                 '}';
@@ -235,20 +244,22 @@ public class Booking {
 
     public List<Booking> bookingsByStartTime(int deadline){
 
-//        Instant startCheck = Instant.now().minusSeconds(60 * 20);
-//        LocalDate date = LocalDate.parse(startCheck.toString().split("T")[0]);
-//
-//        Map<String, AttributeValue> values = new HashMap<>();
-//        values.put(":today", new AttributeValue().withS(date.toString()));
-//        values.put(":end1", new AttributeValue().withS(startCheck.minusSeconds(60).toString()));
-//        values.put(":end2", new AttributeValue().withS(startCheck.toString()));
-//        values.put(":invalidState", new AttributeValue().withS(BookingStatus.CANCELLED.toString()));
+        Instant startCheck = Instant.now().minusSeconds(60 * 20);
+        LocalDate date = LocalDate.parse(startCheck.toString().split("T")[0]);
 
+        Map<String, AttributeValue> values = new HashMap<>();
+        values.put(":today", new AttributeValue().withS(date.toString()));
+        values.put(":start1", new AttributeValue().withS(startCheck.minusSeconds(60).toString()));
+        values.put(":start2", new AttributeValue().withS(startCheck.toString()));
+        values.put(":validState", new AttributeValue().withS(BookingStatus.VALID.toString()));
 
-
-
-
-        return null;
+        DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
+        queryExp.withKeyConditionExpression("startDate = :today and startTime between :start1 and :start2")
+                .withFilterExpression("bookingStatus <> :validState")
+                .withIndexName("startTimeIndex")
+                .withExpressionAttributeValues(values)
+                .withConsistentRead(false);
+        return mapper.query(Booking.class, queryExp);
     }
 
     //return all bookings that has ended (now-6) to (now-5) minutes ago and that is not in a cancelled state
@@ -278,7 +289,7 @@ public class Booking {
 
         //query for all bookings that has ended (now -6) to (now-5) minutes ago and is not cancelled
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
-        queryExp.withKeyConditionExpression("bookingDate = :today and endTime between :end1 and :end2")
+        queryExp.withKeyConditionExpression("endDate = :today and endTime between :end1 and :end2")
                 .withFilterExpression("bookingStatus <> :invalidState")
                 .withIndexName("endTimeIndex")
                 .withExpressionAttributeValues(values)

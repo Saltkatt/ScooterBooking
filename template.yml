@@ -286,15 +286,17 @@ Resources:
       AttributeDefinitions:
         - AttributeName: scooterId
           AttributeType: S
+        - AttributeName: startTime
+            AttributeType: S
         - AttributeName: endTime
           AttributeType: S
         - AttributeName: bookingId
           AttributeType: S
         - AttributeName: userId
           AttributeType: S
-        - AttributeName: bookingDate
-          AttributeType: S
-        - AttributeName: startTime
+        - AttributeName: startDate
+            AttributeType: S
+        - AttributeName: endDate
           AttributeType: S
       KeySchema:
         - AttributeName: scooterId
@@ -329,7 +331,7 @@ Resources:
             WriteCapacityUnits: 1
         - IndexName: endTimeIndex
           KeySchema:
-            - AttributeName: bookingDate
+            - AttributeName: endDate
               KeyType: HASH
             - AttributeName: endTime
               KeyType: RANGE
@@ -338,6 +340,17 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
+        - IndexName: startTimeIndex
+            KeySchema:
+                - AttributeName: startDate
+                  KeyType: HASH
+                    - AttributeName: startTime
+                      KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
 #      LocalSecondatyIndexes:
 #        - IndexName: endTimeIndex
 #          KeySchema:
