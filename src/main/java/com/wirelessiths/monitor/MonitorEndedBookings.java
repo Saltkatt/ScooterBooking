@@ -54,7 +54,7 @@ public class MonitorEndedBookings {
         String pjUrl = dotenv.get("PJ_URL");
 
         List<Booking> endedBookings = getEndedBookings();
-        if(endedBookings == null || endedBookings.isEmpty()){
+        if(endedBookings.isEmpty()){
             logger.info("No ended bookings");
             return;
         }

@@ -36,9 +36,11 @@ public class Booking {
     private Instant startTime;
     private Instant endTime;
     private LocalDate bookingDate;
+//    private LocalDate startDate;
+//    private LocalDate endDate;
     private BookingStatus bookingStatus;
 
-    private ArrayList<Trip> trips = new ArrayList<>();
+    private List<Trip> trips = new ArrayList<>();
 
 
     private static DynamoDBAdapter db_adapter;
@@ -146,12 +148,12 @@ public class Booking {
     }
 
     @DynamoDBAttribute(attributeName = "trips")
-    public ArrayList<Trip> getTrips() {
+    public List<Trip> getTrips() {
         return trips;
     }
 
     //@JsonSetter("trip_overview_list")
-    public void setTrips(ArrayList<Trip> trips) {
+    public void setTrips(List<Trip> trips) {
         this.trips = trips;
     }
 
@@ -222,7 +224,7 @@ public class Booking {
         queryExp.setIndexName("bookingIndex");
 
         PaginatedQueryList<Booking> result = this.mapper.query(Booking.class, queryExp);
-        if (result.size() > 0) {
+        if (!result.isEmpty()) {
             booking = result.get(0);
             logger.info("Booking - get(): booking - " + booking.toString());
         } else {
@@ -231,25 +233,52 @@ public class Booking {
         return booking;
     }
 
-    public List<Booking> bookingsByEndTime()throws IOException, Exception{//TODO: make a more generic timespan query method?
-        //Todo: use main index for this? date unnecessary, only on old pj but can derive it from enddate to avoid midnight conflicts
+    public List<Booking> bookingsByStartTime(int deadline){
 
-        LocalDate today = LocalDate.parse(Instant.now().toString().split("T")[0]);
-        Instant now = Instant.now();
-        System.out.println("today from dao: " + today);
-        System.out.println("now from dao: " + now);
-        System.out.println("checking from: " + now.minusSeconds(60 * 6));
-        System.out.println("to: " + now.minusSeconds(60 * 5));
+//        Instant startCheck = Instant.now().minusSeconds(60 * 20);
+//        LocalDate date = LocalDate.parse(startCheck.toString().split("T")[0]);
+//
+//        Map<String, AttributeValue> values = new HashMap<>();
+//        values.put(":today", new AttributeValue().withS(date.toString()));
+//        values.put(":end1", new AttributeValue().withS(startCheck.minusSeconds(60).toString()));
+//        values.put(":end2", new AttributeValue().withS(startCheck.toString()));
+//        values.put(":invalidState", new AttributeValue().withS(BookingStatus.CANCELLED.toString()));
+
+
+
+
+
+        return null;
+    }
+
+    //return all bookings that has ended (now-6) to (now-5) minutes ago and that is not in a cancelled state
+    public List<Booking> bookingsByEndTime(){
+        //start-value to check for bookings ending from 6 to 5 minutes back from now
+        Instant startCheck = Instant.now().minusSeconds(60 * 5);
+        //we need a startcheck date to use with the gsi endTimeIndex hash key
+        LocalDate date = LocalDate.parse(startCheck.toString().split("T")[0]);
+        //LocalDate today = LocalDate.parse(Instant.now().minusSeconds(60 * 5).toString().split("T")[0]);
+        //Instant now = Instant.now();
+//        System.out.println("today from dao: " + today);
+//        System.out.println("now from dao: " + now);
+//        System.out.println("checking from: " + now.minusSeconds(60 * 6));
+//        System.out.println("to: " + now.minusSeconds(60 * 5));
 
         Map<String, AttributeValue> values = new HashMap<>();
-        values.put(":today", new AttributeValue().withS(today.toString()));
-        values.put(":end1", new AttributeValue().withS(now.minusSeconds(60 * 6).toString()));
-        values.put(":end2", new AttributeValue().withS(now.minusSeconds(60 * 5).toString()));
+        values.put(":today", new AttributeValue().withS(date.toString()));
+        values.put(":end1", new AttributeValue().withS(startCheck.minusSeconds(60).toString()));
+        values.put(":end2", new AttributeValue().withS(startCheck.toString()));
         values.put(":invalidState", new AttributeValue().withS(BookingStatus.CANCELLED.toString()));
 
+//        Map<String, AttributeValue> values = new HashMap<>();
+//        values.put(":today", new AttributeValue().withS(today.toString()));
+//        values.put(":end1", new AttributeValue().withS(now.minusSeconds(60 * 6).toString()));
+//        values.put(":end2", new AttributeValue().withS(now.minusSeconds(60 * 5).toString()));
+//        values.put(":invalidState", new AttributeValue().withS(BookingStatus.CANCELLED.toString()));
+
+        //query for all bookings that has ended (now -6) to (now-5) minutes ago and is not cancelled
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
         queryExp.withKeyConditionExpression("bookingDate = :today and endTime between :end1 and :end2")
-                //.withFilterExpression("bookingStatus = :validState1 or bookingStatus = :validState2")
                 .withFilterExpression("bookingStatus <> :invalidState")
                 .withIndexName("endTimeIndex")
                 .withExpressionAttributeValues(values)
