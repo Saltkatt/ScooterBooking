@@ -47,6 +47,7 @@ public class MonitorEndedBookings {
 
         Booking booking = new Booking();
         List<Booking> endedBookings = booking.bookingsByEndTime();
+
         if(endedBookings.isEmpty()){
             logger.info("No ended bookings");
             return;
