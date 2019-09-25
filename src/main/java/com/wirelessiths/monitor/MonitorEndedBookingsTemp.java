@@ -40,11 +40,10 @@ public class MonitorEndedBookingsTemp {
 
     public void lambdaHandler() {
 
-        Booking booking = new Booking();
-        List<Booking> endedBookings = null;
-
         try {
-            endedBookings = booking.bookingsByEndTime();
+
+            Booking booking = new Booking();
+            List<Booking>endedBookings = booking.bookingsByEndTime();
 
             if (endedBookings.isEmpty()) {
                 logger.info("No ended bookings");
@@ -84,7 +83,6 @@ public class MonitorEndedBookingsTemp {
                     logger.info("sending happy sms");
                 }
             }
-
         }catch(Exception e){
             logger.info(e);
         }
@@ -97,7 +95,7 @@ public class MonitorEndedBookingsTemp {
 
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
-                .url(url)
+                .url(queryUrl)
                 .header("Authorization", authHeader)
                 .build();
 
@@ -105,7 +103,7 @@ public class MonitorEndedBookingsTemp {
         ArrayNode trips = (ArrayNode) objectMapper.readTree(response.body().toString())
                 .path("trip_overview_list");
         if(trips.size() == 0){
-            return new ArrayList<Trip>();
+            return new ArrayList<>();
         }
         return objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
     }
@@ -118,7 +116,6 @@ public class MonitorEndedBookingsTemp {
         //<set SMS attributes>
         sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
     }
-
 }
 
 

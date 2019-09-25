@@ -188,9 +188,8 @@ public class Booking {
         queryExp.withKeyConditionExpression("scooterId = :id and endTime between :start and :endPlusMaxDur")
                 .withExpressionAttributeValues(values)
                 .withConsistentRead(true)
-                //.withFilterExpression("startTime < :end AND bookingStatus = :validState")//Todo: if bookingState is active, this will not work. fix! add bookingState to range key, for more effective querying?
-                .withFilterExpression("startTime < :end")
-                .withFilterExpression("bookingStatus <> :invalidState AND bookingStatus <> :invalidState2");
+                //.withFilterExpression("startTime < :end AND bookingStatus = :validState")//Todo: add bookingState to range key, for more effective querying?
+                .withFilterExpression("startTime < :end AND bookingStatus <> :invalidState AND bookingStatus <> :invalidState2");
         return mapper.query(Booking.class, queryExp);
     }
 

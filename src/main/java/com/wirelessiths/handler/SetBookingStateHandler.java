@@ -38,7 +38,6 @@ private final Logger logger = LogManager.getLogger(this.getClass());
         String command;
         Response responseBody;
         String newState = null;
-
         Booking booking = new Booking();
 
         try{
@@ -60,7 +59,6 @@ private final Logger logger = LogManager.getLogger(this.getClass());
                        .build();
            }
 
-           //Instant now = LocalDateTime.now().toInstant(ZoneOffset.ofHours(-2));//temp until we switch  region
            Instant now = Instant.now();
            Instant startTime = booking.getStartTime();
            int deadlineSeconds = 60 * 10;
