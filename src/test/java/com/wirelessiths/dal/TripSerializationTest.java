@@ -23,6 +23,7 @@ import org.junit.Test;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static junit.framework.TestCase.fail;
 
@@ -37,9 +38,9 @@ public class TripSerializationTest {
 
     private static Dotenv dotenv = Dotenv.load();
     private static String baseUrl = dotenv.get("BASE_URL");
-    private static String tripEndpoint = dotenv.get("TRIP_ENDPOINT");
-    private static String authHeader = dotenv.get("AUTH");
-    private static String vehicleId = dotenv.get("SCOOTER_ID");
+    private static String tripEndpoint =  dotenv.get("TRIP_ENDPOINT");
+    private static String authHeader =  dotenv.get("AUTH");
+    private static String vehicleId =  dotenv.get("SCOOTER_ID");
     private static ObjectMapper objectMapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
@@ -48,11 +49,10 @@ public class TripSerializationTest {
 
 
     @BeforeClass
-    public static void create() {
 
-        client = LocalDbHandler.createClient();
-        mapperConfig = LocalDbHandler.createMapperConfig(tableName);
-        LocalDbHandler.createTable(tableName, client);
+    public static void create(){
+      LocalDbHandler.createClient();
+      LocalDbHandler.createTable(tableName, client);
     }
 
     @AfterClass
@@ -81,10 +81,12 @@ public class TripSerializationTest {
             String result = getRequest.run(queryUrl, authHeader);
             ArrayNode trips = (ArrayNode) objectMapper.readTree(result)
 
+
                     .path("trip_overview_list");
 
-            return objectMapper.convertValue(trips, new TypeReference<List<Trip>>() {
-            });
+            List<Trip> trips2 = objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
+            trips2.forEach(System.out::println);
+            return trips2;
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -115,6 +117,7 @@ public class TripSerializationTest {
 
         assert (newTrips != null && !newTrips.isEmpty());
 
+
         try {
             booking3.getTrips().add(newTrips.get(0));
             System.out.println("3,1: " + booking3);
@@ -138,3 +141,4 @@ public class TripSerializationTest {
     }
      //*
 }
+
