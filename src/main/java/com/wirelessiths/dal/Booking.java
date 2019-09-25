@@ -25,7 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 @DynamoDBTable(tableName = "PLACEHOLDER_BOOKINGS_TABLE_NAME")
 public class Booking {
 
-    // get the table name from ..env. var. set in serverless.yml
+    // get the table name from .env. var. set in serverless.yml
     private static final String BOOKINGS_TABLE_NAME = System.getenv("BOOKINGS_TABLE_NAME");
 
     private String type;

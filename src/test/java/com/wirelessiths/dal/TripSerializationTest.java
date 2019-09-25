@@ -13,25 +13,21 @@ import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-<<<<<<< HEAD
-=======
+
 import org.apache.http.HttpRequest;
->>>>>>> BugFix in TripSerializationTest
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.time.Instant;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static junit.framework.TestCase.fail;
 
 public class TripSerializationTest {
-<<<<<<< HEAD
-=======
 
->>>>>>> BugFix in TripSerializationTest
+    /**
 
     private static AmazonDynamoDB client;
     private static DynamoDBMapperConfig mapperConfig;
@@ -39,27 +35,22 @@ public class TripSerializationTest {
 
     private static Dotenv dotenv = Dotenv.load();
     private static String baseUrl = dotenv.get("BASE_URL");
-    private static String tripEndpoint =  dotenv.get("TRIP_ENDPOINT");
-    private static String authHeader =  dotenv.get("AUTH");
-    private static String vehicleId =  dotenv.get("SCOOTER_ID");
+    private static String tripEndpoint = dotenv.get("TRIP_ENDPOINT");
+    private static String authHeader = dotenv.get("AUTH");
+    private static String vehicleId = dotenv.get("SCOOTER_ID");
     private static ObjectMapper objectMapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
 
 
     @BeforeClass
-<<<<<<< HEAD
     public static void create() {
 
         client = LocalDbHandler.createClient();
         mapperConfig = LocalDbHandler.createMapperConfig(tableName);
         LocalDbHandler.createTable(tableName, client);
-=======
-    public static void create(){
-      createClient();
-      createTable();
+
       //getTrips();
->>>>>>> BugFix in TripSerializationTest
     }
 
     @AfterClass
@@ -73,22 +64,6 @@ public class TripSerializationTest {
         String url = String.format("%s/%s%s", baseUrl, vehicleId, tripEndpoint);
         String queryUrl = url + "?startDate=" + vehicleId;
 
-<<<<<<< HEAD
-        try {
-
-            OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder()
-                    .url(queryUrl)
-                    .header("Authorization", authHeader)
-                    .build();
-
-            Response response = client.newCall(request).execute();
-            ArrayNode trips = (ArrayNode) objectMapper.readTree(response.body().string())
-                    .path("trip_overview_list");
-
-            return objectMapper.convertValue(trips, new TypeReference<List<Trip>>() {
-            });
-=======
         OkHttpClient httpClient = new OkHttpClient.Builder()
                 .writeTimeout(10, TimeUnit.SECONDS)
                 .readTimeout(30, TimeUnit.SECONDS)
@@ -99,17 +74,11 @@ public class TripSerializationTest {
 
 
         try{
-            Response response = httpClient.newCall(request).execute();
-            String result = response.body().string();
-          //  System.out.println(result);
-           // String result = getRequest.run(queryUrl, authHeader);
+            String result = getRequest.run(queryUrl, authHeader);
             ArrayNode trips = (ArrayNode) objectMapper.readTree(result)
                     .path("trip_overview_list");
 
-            List<Trip> trips2 = objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
-            trips2.forEach(System.out::println);
-            return trips2;
->>>>>>> BugFix in TripSerializationTest
+            return objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
 
         } catch (Exception e) {
             System.out.println(e.getMessage());
@@ -136,12 +105,10 @@ public class TripSerializationTest {
         booking3.setBookingStatus(BookingStatus.VALID);
 
         List<Trip> newTrips = getTrips();
-<<<<<<< HEAD
-        assert (newTrips != null && !newTrips.isEmpty());
-=======
 
-        assert(newTrips != null && !newTrips.isEmpty());
->>>>>>> BugFix in TripSerializationTest
+        assert (newTrips != null && !newTrips.isEmpty());
+
+
 
         try {
             booking3.getTrips().add(newTrips.get(0));
@@ -163,9 +130,5 @@ public class TripSerializationTest {
             fail();
         }
     }
-<<<<<<< HEAD
+    **/
 }
-=======
-
-}
->>>>>>> BugFix in TripSerializationTest

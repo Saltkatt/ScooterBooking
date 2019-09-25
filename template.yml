@@ -11,7 +11,7 @@ Parameters:
     Type: String
     Default: xxx
   CodeUri:
-    Type: String
+    Type: Stringmvn
     Default: target/bookings-api-dev.jar
   SmsExternalId:
     Type: String
