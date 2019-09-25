@@ -22,6 +22,9 @@ import java.net.URISyntaxException;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ * Creates a S3 bucket if it does not already exist.
+ */
 public class CreateBucket {
 
     public static void createBucket() {
