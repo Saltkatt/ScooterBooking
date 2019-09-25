@@ -26,8 +26,11 @@ import java.util.List;
 import static junit.framework.TestCase.fail;
 
 public class TripSerializationTest {
+<<<<<<< HEAD
 
     /**
+=======
+>>>>>>> fix error in TripSerializationTest, git log
 
     private static AmazonDynamoDB client;
     private static DynamoDBMapperConfig mapperConfig;
@@ -50,7 +53,14 @@ public class TripSerializationTest {
         mapperConfig = LocalDbHandler.createMapperConfig(tableName);
         LocalDbHandler.createTable(tableName, client);
 
+<<<<<<< HEAD
       //getTrips();
+=======
+    @BeforeClass
+    public static void create(){
+      createClient();
+      createTable();
+>>>>>>> fix error in TripSerializationTest, git log
     }
 
     @AfterClass
@@ -133,5 +143,4 @@ public class TripSerializationTest {
 
 
     }
-    **/
 }
