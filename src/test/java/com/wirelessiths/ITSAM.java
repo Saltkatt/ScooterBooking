@@ -13,11 +13,9 @@ import java.net.URL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-public class IntegrationTestSAM {
+public class ITSAM {
 
-    // deploy locally - SAM
-    // test bookings
-    // test CRUD
+
 
     /**
      * HTTP request av api:er ex: http://127.0.0.1:3000/bookings/{id} [DELETE]
@@ -43,7 +41,6 @@ public class IntegrationTestSAM {
 
         connection.setRequestMethod("GET");
         connection.setRequestProperty("Content-Type", "application/" + "json");
-
         int responseCode = connection.getResponseCode();
 
         System.out.println("\nSending 'GET' request to URL : " + url);
@@ -61,7 +58,8 @@ public class IntegrationTestSAM {
         // print result.
         System.out.println(response.toString());
         assertEquals(String.valueOf(responseCode), 200, responseCode);
-        //assertEquals(response.)
+        System.out.println("Test success");
+        // assertEquals(response.)
 
         //return response.toString();
 
@@ -74,6 +72,17 @@ public class IntegrationTestSAM {
 
         connection.setRequestMethod("POST");
         connection.setRequestProperty("Content-Type", "application/" + "json");
+        int responseCode = connection.getResponseCode();
+
+        System.out.println("\nSending 'POST' request to URL : " + url);
+        System.out.println("Response code " + responseCode);
+
+
+
+        // print result.
+        //System.out.println(response.toString());
+        assertEquals(String.valueOf(responseCode), 200, responseCode);
+        System.out.println("Test success");
 
         //need token
         //need body
