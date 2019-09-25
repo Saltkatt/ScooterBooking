@@ -38,7 +38,10 @@ public class Booking {
     //private LocalDate bookingDate;
     private LocalDate startDate;
     private LocalDate endDate;
+<<<<<<< HEAD
 
+=======
+>>>>>>> add new endtimeindex and starttimeindex to db, add coresponding  Booking fields
     private BookingStatus bookingStatus;
 
     private List<Trip> trips = new ArrayList<>();
@@ -110,7 +113,11 @@ public class Booking {
         this.endDate = endDate;
     }
 
+<<<<<<< HEAD
     @DynamoDBIndexRangeKey(attributeName = "startTime", globalSecondaryIndexNames = {"bookingIndex", "startTimeIndex"})
+=======
+    @DynamoDBIndexRangeKey(attributeName = "startTime", globalSecondaryIndexName = "bookingIndex", globalSecondaryIndexNames = "startTimeIndex")
+>>>>>>> add new endtimeindex and starttimeindex to db, add coresponding  Booking fields
     @DynamoDBTypeConverted( converter = InstantConverter.class )
     public Instant getStartTime() {
         return startTime;
@@ -244,12 +251,18 @@ public class Booking {
         return booking;
     }
 
+<<<<<<< HEAD
 
 
 
     //get bookings by startTime that has passed from now minus deadline
     public List<Booking> bookingsByStartTime(int deadlineSeconds){
         Instant startCheck = Instant.now().minusSeconds(deadlineSeconds);
+=======
+    public List<Booking> bookingsByStartTime(int deadline){
+
+        Instant startCheck = Instant.now().minusSeconds(60 * 20);
+>>>>>>> add new endtimeindex and starttimeindex to db, add coresponding  Booking fields
         LocalDate date = LocalDate.parse(startCheck.toString().split("T")[0]);
 
         Map<String, AttributeValue> values = new HashMap<>();
@@ -260,7 +273,11 @@ public class Booking {
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
         queryExp.withKeyConditionExpression("startDate = :today and startTime between :start1 and :start2")
+<<<<<<< HEAD
                 .withFilterExpression("bookingStatus = :validState")
+=======
+                .withFilterExpression("bookingStatus <> :validState")
+>>>>>>> add new endtimeindex and starttimeindex to db, add coresponding  Booking fields
                 .withIndexName("startTimeIndex")
                 .withExpressionAttributeValues(values)
                 .withConsistentRead(false);
@@ -293,7 +310,10 @@ public class Booking {
         //query for all bookings that has ended (now -6) to (now-5) minutes ago and is not cancelled
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
         queryExp.withKeyConditionExpression("endDate = :today and endTime between :end1 and :end2")
+<<<<<<< HEAD
 
+=======
+>>>>>>> add new endtimeindex and starttimeindex to db, add coresponding  Booking fields
                 .withFilterExpression("bookingStatus <> :invalidState")
                 .withIndexName("endTimeIndex")
                 .withExpressionAttributeValues(values)

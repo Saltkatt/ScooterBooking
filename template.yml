@@ -270,15 +270,9 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: target/bookings-api-dev.jar
-<<<<<<< HEAD
-<<<<<<< HEAD
+
       Handler: com.wirelessiths.monitor.MonitorEndedBookingsTemp::lambdaHandler
-=======
-      Handler: com.wirelessiths.monitor.MonitorEndedBookingsTemp::doStuff
->>>>>>> fix looping bug in MonitorEndedBookingsTemp, change name from MonitorEndedBookingsFake to ..BookingsTemp
-=======
-      Handler: com.wirelessiths.monitor.MonitorEndedBookingsTemp::lambdaHandler
->>>>>>> clean up MonitorEndedBookingsTemp, change validateBooking() to also check for active bookings
+
       Runtime: java8
       Policies:
         - DynamoDBCrudPolicy:
@@ -343,6 +337,7 @@ Resources:
           AttributeType: S
         - AttributeName: startTime
           AttributeType: S
+
         - AttributeName: endTime
           AttributeType: S
         - AttributeName: bookingId
@@ -351,6 +346,7 @@ Resources:
           AttributeType: S
         - AttributeName: startDate
           AttributeType: S
+
         - AttributeName: endDate
           AttributeType: S
       KeySchema:
@@ -406,6 +402,7 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
+
 #      LocalSecondatyIndexes:
 #        - IndexName: endTimeIndex
 #          KeySchema:
