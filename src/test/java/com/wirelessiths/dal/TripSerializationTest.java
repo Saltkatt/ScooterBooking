@@ -32,7 +32,6 @@ import static junit.framework.TestCase.fail;
 public class TripSerializationTest {
 
 
-
     private static AmazonDynamoDB client;
     private static DynamoDBMapperConfig mapperConfig;
     private static String tableName = "test-table-serialization";
@@ -54,7 +53,6 @@ public class TripSerializationTest {
     public static void create(){
       LocalDbHandler.createClient();
       LocalDbHandler.createTable(tableName, client);
-
     }
 
     @AfterClass
