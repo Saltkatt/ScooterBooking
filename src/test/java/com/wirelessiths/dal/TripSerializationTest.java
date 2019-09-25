@@ -51,7 +51,6 @@ public class TripSerializationTest {
     public static void create(){
       createClient();
       createTable();
-      getTrips();
     }
 
     @AfterClass
