@@ -18,6 +18,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Deletes the file (admin.txt) in the S3 Bucket.
+ */
 public class DeleteFile {
 
     public static void deleteFileInBucket() {

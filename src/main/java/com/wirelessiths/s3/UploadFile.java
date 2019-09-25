@@ -8,7 +8,9 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-
+/**
+ * Retrieves the settings.txt file in resources, gives it a keyName and uploads it to the S3 Bucket.
+ */
 public class UploadFile {
 
     public static void uploadFileToBucket() throws URISyntaxException {

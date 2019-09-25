@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
 
+/**
+ *Deletes the S3 Bucket.
+ */
 public class DeleteBucket {
 
     public static void deleteBucket() {

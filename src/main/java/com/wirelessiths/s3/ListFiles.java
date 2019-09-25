@@ -22,6 +22,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Lists all files in the S3 Bucket.
+ */
 public class ListFiles {
 
     public static void listFilesInBucket() {

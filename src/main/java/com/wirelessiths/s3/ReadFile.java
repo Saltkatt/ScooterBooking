@@ -12,7 +12,9 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
-
+/**
+ * Reads the file in the S3 Bucket.
+ */
 public class ReadFile {
 
     /**

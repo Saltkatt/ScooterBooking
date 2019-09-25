@@ -5,6 +5,9 @@ import java.util.Map;
 
 import static com.wirelessiths.s3.ReadFile.readFileInBucket;
 
+/**
+ * Configuration settings.
+ */
 public class Settings {
 
     private int buffer;
