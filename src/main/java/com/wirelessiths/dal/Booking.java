@@ -109,6 +109,7 @@ public class Booking {
 
 
     @DynamoDBIndexRangeKey(attributeName = "startTime", globalSecondaryIndexNames = {"bookingIndex", "startTimeIndex"})
+
     @DynamoDBTypeConverted( converter = InstantConverter.class )
     public Instant getStartTime() {
         return startTime;
@@ -290,7 +291,6 @@ public class Booking {
         //query for all bookings that has ended (now -6) to (now-5) minutes ago and is not cancelled
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
         queryExp.withKeyConditionExpression("endDate = :today and endTime between :end1 and :end2")
-
                 .withFilterExpression("bookingStatus <> :invalidState")
                 .withIndexName("endTimeIndex")
                 .withExpressionAttributeValues(values)

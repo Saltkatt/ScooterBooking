@@ -282,13 +282,10 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: target/bookings-api-dev.jar
-<<<<<<< HEAD
 
       Handler: com.wirelessiths.monitor.MonitorEndedBookingsTemp::lambdaHandler
 
-=======
-      Handler: com.wirelessiths.monitor.MonitorEndedBookingsFake::doStuff
->>>>>>> Working dynamodb sam local config
+
       Runtime: java8
       Policies:
         - DynamoDBCrudPolicy:
@@ -308,22 +305,16 @@ Resources:
         #secret-arn
         #secret-name
       Events:
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> able to deploy, add simple warm up check in listbookingfunction
+
         EndedBookingSchedule:
           Type: Schedule
           Properties:
             Schedule: "rate(1 minute)"
 
   MonitorStartedBookingsFunction:
-<<<<<<< HEAD
     Type: AWS::Serverless::Function # More info about function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
-=======
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
->>>>>>> able to deploy, add simple warm up check in listbookingfunction
+
     Properties:
       CodeUri: target/bookings-api-dev.jar
       Handler: com.wirelessiths.monitor.MonitorStartedBookings::lambdaHandler
@@ -347,36 +338,15 @@ Resources:
             Resource: !GetAtt "UserPool.Arn"
         #secret-arn
         #secret-name
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> able to deploy, add simple warm up check in listbookingfunction
+
       Events:
         StartedBookingSchedule:
           Type: Schedule
           Properties:
             Schedule: "rate(1 minute)"
-<<<<<<< HEAD
 
-=======
-          MonitorEnd:
-            Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-            Properties:
-               Path: /bookings/{id}
-               Method: put
-               RestApiId: !Ref MyApi  # Add this line
->>>>>>> Working dynamodb sam local config
-=======
-#      Events:
-#          MonitorEnd:
-#            Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-#            Properties:
-#               Path: /bookings/{id}
-#               Method: put
-#               RestApiId: !Ref MyApi  # Add this line
->>>>>>> testing new setup dynamodb local
-=======
->>>>>>> able to deploy, add simple warm up check in listbookingfunction
+
+
 
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
@@ -385,12 +355,8 @@ Resources:
       AttributeDefinitions:
         - AttributeName: scooterId
           AttributeType: S
-<<<<<<< HEAD
-        - AttributeName: startTime
-          AttributeType: S
 
-=======
->>>>>>> Working dynamodb sam local config
+
         - AttributeName: endTime
           AttributeType: S
         - AttributeName: bookingId
@@ -399,12 +365,9 @@ Resources:
           AttributeType: S
         - AttributeName: bookingDate
           AttributeType: S
-<<<<<<< HEAD
 
         - AttributeName: endDate
-=======
         - AttributeName: startTime
->>>>>>> Working dynamodb sam local config
           AttributeType: S
       KeySchema:
         - AttributeName: scooterId
@@ -448,7 +411,7 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
-<<<<<<< HEAD
+
         - IndexName: startTimeIndex
           KeySchema:
             - AttributeName: startDate
@@ -461,8 +424,7 @@ Resources:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
 
-=======
->>>>>>> Working dynamodb sam local config
+
 #      LocalSecondatyIndexes:
 #        - IndexName: endTimeIndex
 #          KeySchema:
