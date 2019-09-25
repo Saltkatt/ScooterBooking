@@ -28,6 +28,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import static com.wirelessiths.service.SNSService.getAmazonSNSClient;
 import static com.wirelessiths.service.SNSService.sendSMSMessage;
+import static java.lang.Math.ceil;
 
 public class MonitorEndedBookingsTemp {
 
@@ -52,12 +53,12 @@ public class MonitorEndedBookingsTemp {
                 logger.info("No ended bookings");
                 return;
             }
-            logger.info("number of bookings ended: " + endedBookings.size());
+            logger.info("number of bookings ended: {} ", endedBookings.size());
             for (Booking endedBooking : endedBookings) {
 
                 List<Trip> trips = getTrips(endedBooking);
                 if (trips.isEmpty()) {
-                    logger.info("No trips for booking:" + endedBooking);
+                    logger.info("No trips for booking: {}", endedBooking);
                     String message = "No trip registered for your booking, if you didnt use the scooter, please cancel the booking next time";
                     sendMessage(message, endedBooking, dotenv.get("USER_POOL_ID"));
                     logger.info("sending angry sms");
@@ -65,13 +66,13 @@ public class MonitorEndedBookingsTemp {
                     continue;
                 }
 
-                logger.info("number of trips found: " + trips.size());
+                logger.info("number of trips found: {}", trips.size());
                 double distanceTraveled = 0;
 
                 for (Trip trip : trips) {
-                    logger.info("checking for match..");
+
                     if (trip.getStartTime().isAfter(endedBooking.getStartTime()) &&
-                            trip.getEndTime().isBefore(endedBooking.getEndTime().plusSeconds(60 * 5))) {
+                            trip.getEndTime().isBefore(endedBooking.getEndTime().plusSeconds(60 * 5L))) {
 
                         distanceTraveled += trip.getTotalDistanceMeter();
                         endedBooking.getTrips().add(trip);
@@ -80,8 +81,8 @@ public class MonitorEndedBookingsTemp {
                 }
                 endedBooking.update(endedBooking);
                 logger.info("saving updated booking");
-                if(trips.size() != 0){
-                    String message = "Thank you for completing your trip. You traveled " + Math.ceil(distanceTraveled) + " meters";
+                if(trips.isEmpty()){
+                    String message = String.format("Thank you for completing your trip. You traveled %s meters", Math.ceil(distanceTraveled));
                     sendMessage(message, endedBooking, dotenv.get("USER_POOL_ID"));
                     logger.info("sending happy sms");
                 }
