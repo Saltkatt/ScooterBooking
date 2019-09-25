@@ -23,6 +23,7 @@ public class IntegrationTestSAM {
      * HTTP request av api:er ex: http://127.0.0.1:3000/bookings/{id} [DELETE]
      * don't need authorisation from cognito.
      * may need user info sent in anyway.
+     * if running locally do tests.
      */
 
    /* public static void integrationTest() {
@@ -58,14 +59,33 @@ public class IntegrationTestSAM {
         in.close();
 
         // print result.
-        //System.out.println(response.toString());
+        System.out.println(response.toString());
         assertEquals(String.valueOf(responseCode), 200, responseCode);
-   
-
+        //assertEquals(response.)
 
         //return response.toString();
 
     }
+
+    public void createBookingTest() throws IOException{
+        // ListBookingFunction
+        URL url = new URL("http://127.0.0.1:3000/bookings");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/" + "json");
+
+        //need token
+        //need body
+
+
+    }
+
+    public void deleteBookingTest(){
+
+
+    }
+
 
 
 
