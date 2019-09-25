@@ -13,6 +13,10 @@ import java.net.URL;
  */
 public class UploadFile {
 
+    /**
+     * Uploads a file from resources to the S3 Bucket.
+     * @throws URISyntaxException
+     */
     public static void uploadFileToBucket() throws URISyntaxException {
         final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
         String bucketName = System.getenv("BUCKET_NAME");
