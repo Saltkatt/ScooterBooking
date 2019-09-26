@@ -4,6 +4,7 @@ package com.wirelessiths.dal;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 
+import com.wirelessiths.handler.ListBookingHandler;
 import org.junit.*;
 
 import java.io.IOException;
@@ -55,31 +56,31 @@ public class BookingQueryTest {
         b1.setUserId("a");
         b1.setStartTime(Instant.parse("2019-09-03T13:20:00.000Z"));
         b1.setEndTime(Instant.parse("2019-09-03T13:45:00.000Z"));
-        //b1.setStartDate(LocalDate.parse("2019-09-03"));
+        b1.setStartDate(LocalDate.parse("2019-09-03"));
 
         b2.setScooterId("2");
         b2.setUserId("b");
         b2.setStartTime(Instant.parse("2019-09-04T15:10:00.000Z"));
         b2.setEndTime(Instant.parse("2019-09-04T15:35:00.000Z"));
-        //b2.setStartDate(LocalDate.parse("2019-09-04"));
+        b2.setStartDate(LocalDate.parse("2019-09-04"));
 
         b3.setScooterId("1");
         b3.setUserId("c");
         b3.setStartTime(Instant.parse("2019-09-03T15:10:00.000Z"));
         b3.setEndTime(Instant.parse("2019-09-03T15:35:00.000Z"));
-        //b3.setStartDate(LocalDate.parse("2019-09-03"));
+        b3.setStartDate(LocalDate.parse("2019-09-03"));
 
         b4.setScooterId("4");
         b4.setUserId("c");
         b4.setStartTime(Instant.parse("2019-09-03T13:20:00.000Z"));
         b4.setEndTime(Instant.parse("2019-09-03T13:45:00.000Z"));
-        //b4.setStartDate(LocalDate.parse("2019-09-03"));
+        b4.setStartDate(LocalDate.parse("2019-09-03"));
 
         b5.setScooterId("4");
         b5.setUserId("d");
         b5.setStartTime(Instant.parse("2019-09-04T13:20:00.000Z"));
         b5.setEndTime(Instant.parse("2019-09-04T13:45:00.000Z"));
-        //b5.setStartDate(LocalDate.parse("2019-09-04"));
+        b5.setStartDate(LocalDate.parse("2019-09-04"));
 
         try {
             b1.save(b1);
@@ -102,8 +103,11 @@ public class BookingQueryTest {
         System.out.println("getByscooterId query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("scooterId", "4");
         try {
-            list = booking.getByScooterId("4");
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -117,8 +121,11 @@ public class BookingQueryTest {
         System.out.println("getByUserId query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("userId", "c");
         try {
-            list = booking.getByUserId("c");
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -129,11 +136,14 @@ public class BookingQueryTest {
     @Test
     public void getByDate() {
 
-        System.out.println("getByUserId query: ");
+        System.out.println("getBydate query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("startDate", "2019-09-03");
         try {
-            list = booking.getByDate(LocalDate.parse("2019-09-03"));
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -147,11 +157,13 @@ public class BookingQueryTest {
         System.out.println("getByscooterId query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
-        Map<String, String> filter = new HashMap<>();
-        filter.put("userId", "c");
-        filter.put("bookingDate", "2019-09-03");
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("scooterId", "2");
+        queryparams.put("userId", "c");
+        queryparams.put("startDate", "2019-09-03");
         try {
-            list = booking.getByScooterIdWithFilter("2", filter);
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -164,10 +176,12 @@ public class BookingQueryTest {
         System.out.println("getByscooterId filter by startDate query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
-        Map<String, String> filter = new HashMap<>();
-        filter.put("startDate", "2019-09-04");
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("scooterId", "2");
+        queryparams.put("startDate", "2019-09-04");
         try {
-            list = booking.getByScooterIdWithFilter("2", filter);
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -180,10 +194,12 @@ public class BookingQueryTest {
         System.out.println("getByscooterId filter by userId query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
-        Map<String, String> filter = new HashMap<>();
-        filter.put("userId", "c");
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("scooterId", "4");
+        queryparams.put("userId", "c");
         try {
-            list = booking.getByScooterIdWithFilter("4", filter);
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -196,11 +212,14 @@ public class BookingQueryTest {
         System.out.println("getByDate all filters query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
-        Map<String, String> filter = new HashMap<>();
-        filter.put("userId", "c");
-        filter.put("scooterId", "4");
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("startDate", "2019-09-03");
+        queryparams.put("scooterId", "4");
+        queryparams.put("userId", "c");
+
         try {
-            list = booking.getByDateWithFilter(LocalDate.parse("2019-09-03"), filter);
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -215,10 +234,13 @@ public class BookingQueryTest {
         System.out.println("getByDate Filter by user query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
-        Map<String, String> filter = new HashMap<>();
-        filter.put("userId", "c");
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("startDate", "2019-09-03");
+        queryparams.put("userId", "c");
+
         try {
-            list = booking.getByDateWithFilter(LocalDate.parse("2019-09-03"), filter);
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -233,10 +255,12 @@ public class BookingQueryTest {
         System.out.println("getByDate Filter by scooter query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
-        Map<String, String> filter = new HashMap<>();
-        filter.put("scooterId", "2");
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("startDate", "2019-09-04");
+        queryparams.put("scooterId", "2");
         try {
-            list = booking.getByDateWithFilter(LocalDate.parse("2019-09-04"), filter);
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -250,11 +274,14 @@ public class BookingQueryTest {
         System.out.println("getByUserId Filter by user query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
-        Map<String, String> filter = new HashMap<>();
-        filter.put("startDate", "2019-09-03");
-        filter.put("scooterId", "1");
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("startDate", "2019-09-03");
+        queryparams.put("scooterId", "1");
+        queryparams.put("userId", "c");
+
         try {
-            list = booking.getByUserIdWithFilter("c", filter);
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -268,10 +295,12 @@ public class BookingQueryTest {
         System.out.println("getByUserId Filter by scooterId query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
-        Map<String, String> filter = new HashMap<>();
-        filter.put("scooterId", "1");
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("userId", "c");
+        queryparams.put("scooterId", "1");
         try {
-            list = booking.getByUserIdWithFilter("c", filter);
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -285,10 +314,12 @@ public class BookingQueryTest {
         System.out.println("getByUserId Filter by bookingDate query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
-        Map<String, String> filter = new HashMap<>();
-        filter.put("startDate", "2019-09-03");
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("userId", "c");
+        queryparams.put("startDate", "2019-09-03");
         try {
-            list = booking.getByUserIdWithFilter("c", filter);
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
         } catch (IOException e) {
             e.printStackTrace();
         }
