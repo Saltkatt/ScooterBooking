@@ -58,7 +58,7 @@ public class MonitorStartedBookings {
 
     private void sendMessage(String message, Booking booking, String userPoolId){
         String phoneNumber = UserService.getUserPhoneNumber(booking.getUserId(), userPoolId);
-        AmazonSNSClient snsClient = getAmazonSNSClient();
+        AmazonSNS snsClient = getAmazonSNSClient();
         Map<String, MessageAttributeValue> smsAttributes =
                 new HashMap<>();
         //<set SMS attributes>
