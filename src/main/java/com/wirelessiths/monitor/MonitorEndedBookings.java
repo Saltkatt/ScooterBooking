@@ -24,6 +24,7 @@ import java.util.Map;
 
 
 //Todo: add cloudwatch rules to sam template
+
 public class MonitorEndedBookings {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
