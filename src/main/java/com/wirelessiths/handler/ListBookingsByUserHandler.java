@@ -37,7 +37,7 @@ public class ListBookingsByUserHandler implements RequestHandler<Map<String, Obj
             }
 
             Booking booking = new Booking();
-            List<Booking> results = booking.getByUserId(userId);
+            List<Booking> results = booking.bookingsByUserId(userId);
 
 
             // send the response back

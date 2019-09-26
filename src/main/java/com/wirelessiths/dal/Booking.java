@@ -5,7 +5,6 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
-import com.fasterxml.jackson.annotation.JsonSetter;
 import com.wirelessiths.dal.trip.Trip;
 import org.apache.logging.log4j.LogManager;
 
@@ -13,8 +12,6 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.*;
-
-import java.util.concurrent.atomic.AtomicBoolean;
 
 
 /**
@@ -295,28 +292,24 @@ public class Booking {
         return mapper.query(Booking.class, queryExp);
     }
 
-
-    public List<Booking> getByUserId(String userId) throws IOException {
-        // Query with mapper
-        // Create Booking object with user id
-        Booking booking = new Booking();
-        booking.setUserId(userId);
-
-        //Input this and the gsi index name in query expression
-        DynamoDBQueryExpression<Booking> queryExpression =
-                new DynamoDBQueryExpression<>();
-        queryExpression.setHashKeyValues(booking);
-        queryExpression.setIndexName("userIndex");
-        queryExpression.setConsistentRead(false);
-
-        return mapper.query(Booking.class, queryExpression);
+    public List<Booking> bookingsByUserId(String userId) throws IOException {
+       return bookingsByUserId(userId, null);
     }
 
-
-    public List<Booking> getByUserIdWithFilter(String userId, Map<String, String> filter) throws IOException {
+    public List<Booking> bookingsByUserId(String userId, Map<String, String> filter) throws IOException {
 
         Booking booking = new Booking();
         booking.setUserId(userId);
+
+        if(!Optional.ofNullable(filter).isPresent()){
+            DynamoDBQueryExpression<Booking> queryExpression =
+                    new DynamoDBQueryExpression<>();
+            queryExpression.setHashKeyValues(booking);
+            queryExpression.setIndexName("userIndex");
+            queryExpression.setConsistentRead(false);
+
+            return mapper.query(Booking.class, queryExpression);
+        }
         Map<String, AttributeValue> values = new HashMap<>();
         filter.forEach((s1, s2) -> values.put(":"+s1, new AttributeValue().withS(s2)));
         StringBuilder filterExpression = new StringBuilder();
@@ -343,110 +336,111 @@ public class Booking {
     }
 
 
-    public List<Booking> getByScooterId(String scooterId) throws IOException {
-             Map<String, AttributeValue> values = new HashMap<>();
-
-        values.put(":v1", new AttributeValue().withS(scooterId));
-        DynamoDBQueryExpression<Booking> queryExp =
-                new DynamoDBQueryExpression<>();
-        queryExp.withKeyConditionExpression("scooterId = :v1")
-        .withExpressionAttributeValues(values)
-        .withConsistentRead(true);
-
-        return mapper.query(Booking.class, queryExp);
+    public List<Booking> bookingsByScooterId(String scooterId) throws IOException {
+        return bookingsByScooterId(scooterId, null);
     }
 
+    public List<Booking> bookingsByScooterId(String scooterId, Map<String, String> filter) throws IOException {
 
-    public List<Booking> getByScooterIdWithFilter(String scooterId, Map<String, String> filter) throws IOException {
         Map<String, AttributeValue> values = new HashMap<>();
 
+        if(!Optional.ofNullable(filter).isPresent()){
+            values.put(":v1", new AttributeValue().withS(scooterId));
+            DynamoDBQueryExpression<Booking> queryExp =
+                    new DynamoDBQueryExpression<>();
+            queryExp.withKeyConditionExpression("scooterId = :v1")
+                    .withExpressionAttributeValues(values)
+                    .withConsistentRead(true);
 
-        filter.forEach((s1, s2) -> values.put(":"+s1, new AttributeValue().withS(s2)));
-
-        StringBuilder filterExpression = new StringBuilder();
-        Map<String, String> expression = new HashMap<>();
-        values.forEach((v1, v2) -> {
+            return mapper.query(Booking.class, queryExp);
+        }
+        else {
+            filter.forEach((s1, s2) -> values.put(":" + s1, new AttributeValue().withS(s2)));
+            StringBuilder filterExpression = new StringBuilder();
+            Map<String, String> expression = new HashMap<>();
+            values.forEach((v1, v2) -> {
                 // Don't put an "and" the first time
                 if (!filterExpression.toString().isEmpty()) {
                     filterExpression.append(" and ");
                 }
                 //date is a reserved expression by dynamodb uses #d as expressionattributename
-                if(v1.equals(":date")){
+                if (v1.equals(":date")) {
                     filterExpression.append("#d").append(" = ").append(v1);
                     expression.put("#d", "date");
                 } else {
                     filterExpression.append(v1.substring(1)).append(" = ").append(v1);
                 }
-        });
+            });
 
-        values.put(":v1", new AttributeValue().withS(scooterId));
+            values.put(":v1", new AttributeValue().withS(scooterId));
 
-        DynamoDBQueryExpression<Booking> queryExp =
-                new DynamoDBQueryExpression<>();
-        queryExp.withKeyConditionExpression("scooterId = :v1")
-                .withExpressionAttributeValues(values)
-                .withFilterExpression(filterExpression.toString())
-                .withConsistentRead(true);
-        if(!expression.isEmpty()){
-            queryExp.setExpressionAttributeNames(expression);
+            DynamoDBQueryExpression<Booking> queryExp =
+                    new DynamoDBQueryExpression<>();
+            queryExp.withKeyConditionExpression("scooterId = :v1")
+                    .withExpressionAttributeValues(values)
+                    .withFilterExpression(filterExpression.toString())
+                    .withConsistentRead(true);
+            if (!expression.isEmpty()) {
+                queryExp.setExpressionAttributeNames(expression);
+            }
+            return mapper.query(Booking.class, queryExp);
         }
-        return mapper.query(Booking.class, queryExp);
     }
 
-
-    public List<Booking> getByDate(LocalDate date) throws IOException {
-
-        Booking booking = new Booking();
-
-        booking.setStartDate(date);
-
-        DynamoDBQueryExpression<Booking> queryExpression =
-                new DynamoDBQueryExpression<>();
-        queryExpression.setHashKeyValues(booking);
-        queryExpression.setIndexName("startTimeIndex");
-        queryExpression.setConsistentRead(false);
-
-        return mapper.query(Booking.class, queryExpression);
+    public List<Booking> bookingsByDate(LocalDate bookingDate) throws IOException {
+        return bookingsByDate(bookingDate, null);
     }
 
     /**
      *
-     * @param date Used as hashkey for query
+     * @param bookingDate Used as hashkey for query
      * @param filter used for filtering results. If the filter contains the scooterId field the method will query with the scooterId as range key instead of of filtering with it.
      * @return results of matching bookings
      * @throws IOException from dynamodb.
      */
-    public List<Booking> getByDateWithFilter(LocalDate date, Map<String, String> filter) throws IOException {
+    public List<Booking> bookingsByDate(LocalDate bookingDate, Map<String, String> filter) throws IOException {
 
         Booking booking = new Booking();
-        booking.setStartDate(date);
-        Map<String, AttributeValue> values = new HashMap<>();
-        filter.forEach((s1, s2) -> values.put(":"+s1, new AttributeValue().withS(s2)));
-        StringBuilder filterExpression = new StringBuilder();
+        booking.setStartDate(bookingDate);
 
-        values.forEach((v1, v2) -> {
-            if (!filterExpression.toString().isEmpty()){
-                filterExpression.append(" and ");
-            }
+        if(!Optional.ofNullable(filter).isPresent()) {
+            DynamoDBQueryExpression<Booking> queryExpression =
+                    new DynamoDBQueryExpression<>();
+            queryExpression.setHashKeyValues(booking);
+            queryExpression.setIndexName("startTimeIndex");
+            queryExpression.setConsistentRead(false);
+
+            return mapper.query(Booking.class, queryExpression);
+        }
+        else {
+
+            Map<String, AttributeValue> values = new HashMap<>();
+            filter.forEach((s1, s2) -> values.put(":" + s1, new AttributeValue().withS(s2)));
+            StringBuilder filterExpression = new StringBuilder();
+
+            values.forEach((v1, v2) -> {
+                if (!filterExpression.toString().isEmpty()) {
+                    filterExpression.append(" and ");
+                }
                 filterExpression.append(v1.substring(1)).append(" = ").append(v1);
-        });
+            });
 
-
-        logger.info(filterExpression.toString());
-        DynamoDBQueryExpression<Booking> queryExpression =
-                new DynamoDBQueryExpression<>();
+            logger.info(filterExpression.toString());
+            DynamoDBQueryExpression<Booking> queryExpression =
+                    new DynamoDBQueryExpression<>();
 
             queryExpression.withHashKeyValues(booking);
-        queryExpression
-        .setExpressionAttributeValues(values);
-        if(!filterExpression.toString().isEmpty()) {
-            queryExpression.setFilterExpression(filterExpression.toString());
+            queryExpression
+                    .setExpressionAttributeValues(values);
+            if (!filterExpression.toString().isEmpty()) {
+                queryExpression.setFilterExpression(filterExpression.toString());
+            }
+            queryExpression.withIndexName("startTimeIndex")
+                    .withConsistentRead(false);
+
+
+            return mapper.query(Booking.class, queryExpression);
         }
-        queryExpression.withIndexName("startTimeIndex")
-        .withConsistentRead(false);
-
-
-        return mapper.query(Booking.class, queryExpression);
     }
 
 

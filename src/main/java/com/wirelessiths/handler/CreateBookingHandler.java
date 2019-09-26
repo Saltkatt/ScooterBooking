@@ -60,7 +60,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
                         .build();
             }
 
-            if(booking.getByUserId(booking.getUserId()).size() >= maxAllowedBookings) {
+            if(booking.bookingsByUserId(booking.getUserId()).size() >= maxAllowedBookings) {
 
                 message = "User has reached max number of allowed concurrent bookings";
                 return ApiGatewayResponse.builder()
