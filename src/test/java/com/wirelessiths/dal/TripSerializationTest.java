@@ -1,6 +1,5 @@
 package com.wirelessiths.dal;
 
-
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -24,6 +23,7 @@ import org.junit.Test;
 
 import java.time.Instant;
 import java.util.Collections;
+
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -53,12 +53,12 @@ public class TripSerializationTest {
       LocalDbHandler.createClient();
       LocalDbHandler.createTable(tableName, client);
 
+
     }
 
     @AfterClass
     public static void deleteTable() {
         LocalDbHandler.deleteTable(tableName, client);
-
 
     }
 
