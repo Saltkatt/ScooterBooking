@@ -109,7 +109,6 @@ public class Booking {
 
 
     @DynamoDBIndexRangeKey(attributeName = "startTime", globalSecondaryIndexNames = {"bookingIndex", "startTimeIndex"})
-
     @DynamoDBTypeConverted( converter = InstantConverter.class )
     public Instant getStartTime() {
         return startTime;

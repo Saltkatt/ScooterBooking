@@ -23,7 +23,6 @@ public class MonitorStartedBookings {
     private final Logger logger = LogManager.getLogger(this.getClass());
     private Dotenv dotenv = Dotenv.load();
 
-
     public void lambdaHandler(){
 
         try{

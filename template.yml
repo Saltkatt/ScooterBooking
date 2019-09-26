@@ -424,7 +424,6 @@ Resources:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
 
-
 #      LocalSecondatyIndexes:
 #        - IndexName: endTimeIndex
 #          KeySchema:

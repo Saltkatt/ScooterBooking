@@ -66,6 +66,7 @@ public class BookingQueryTest {
         //b1.setStartDate(LocalDate.parse("2019-09-03"));
 
 
+
         b2.setScooterId("2");
         b2.setUserId("b");
         b2.setStartTime(Instant.parse("2019-09-04T15:10:00.000Z"));
@@ -74,6 +75,7 @@ public class BookingQueryTest {
         //b2.setStartDate(LocalDate.parse("2019-09-04"));
 
         //b2.setStartDate(LocalDate.parse("2019-09-04"));
+
 
 
         b3.setScooterId("1");
@@ -91,9 +93,11 @@ public class BookingQueryTest {
         b4.setStartTime(Instant.parse("2019-09-03T13:20:00.000Z"));
         b4.setEndTime(Instant.parse("2019-09-03T13:45:00.000Z"));
 
+
         //b4.setStartDate(LocalDate.parse("2019-09-03"));
 
         //b4.setStartDate(LocalDate.parse("2019-09-03"));
+
 
 
         b5.setScooterId("4");

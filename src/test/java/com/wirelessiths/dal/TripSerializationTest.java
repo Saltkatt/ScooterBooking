@@ -49,10 +49,10 @@ public class TripSerializationTest {
 
 
     @BeforeClass
-
     public static void create(){
       LocalDbHandler.createClient();
       LocalDbHandler.createTable(tableName, client);
+
     }
 
     @AfterClass
@@ -120,6 +120,7 @@ public class TripSerializationTest {
 
 
         assert (newTrips != null && !newTrips.isEmpty());
+
 
         try {
             booking3.getTrips().add(newTrips.get(0));

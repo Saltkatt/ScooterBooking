@@ -28,6 +28,8 @@ public class LocalDbHandler {
 
     public static DynamoDBMapperConfig createMapperConfig(String tableName){
 
+
+
         System.out.println("creating mapperConfig..");
         return DynamoDBMapperConfig.builder()
                 .withTableNameOverride(new DynamoDBMapperConfig.TableNameOverride(tableName))
