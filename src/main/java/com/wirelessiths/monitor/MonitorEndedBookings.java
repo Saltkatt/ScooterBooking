@@ -21,6 +21,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+//Todo: add secret manager to sam template
+//Todo: add cloudwatch rules to sam template
 public class MonitorEndedBookings {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
