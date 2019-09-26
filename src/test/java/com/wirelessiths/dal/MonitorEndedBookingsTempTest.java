@@ -1,5 +1,6 @@
 package com.wirelessiths.dal;
 
+
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import org.junit.AfterClass;
@@ -11,7 +12,7 @@ import java.util.List;
 
 import static junit.framework.TestCase.fail;
 
-public class MonitorEndedBookingsTest {
+public class MonitorEndedBookingsTempTest {
 
     private static AmazonDynamoDB client;
     private static DynamoDBMapperConfig mapperConfig;
