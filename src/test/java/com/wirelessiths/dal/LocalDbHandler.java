@@ -14,20 +14,27 @@ import java.util.List;
 
 public class LocalDbHandler {
 
-    public static AmazonDynamoDB createClient(){
+
+    protected static AmazonDynamoDB createClient(){
+
         System.out.println("creating client..");
         return AmazonDynamoDBClientBuilder.standard()
                 .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://localhost:8000", Regions.US_EAST_1.getName()))
                 .build();
     }
-    public static DynamoDBMapperConfig createMapperConfig(String tableName){
+
+
+    protected static DynamoDBMapperConfig createMapperConfig(String tableName){
+
         System.out.println("creating mapperConfig..");
         return DynamoDBMapperConfig.builder()
                 .withTableNameOverride(new DynamoDBMapperConfig.TableNameOverride(tableName))
                 .build();
     }
 
-    public static void deleteTable(String tableName, AmazonDynamoDB client){
+
+    protected static void deleteTable(String tableName, AmazonDynamoDB client){
+
         Table table = new DynamoDB(client).getTable(tableName);
         try {
             System.out.println("deleting table..");
@@ -44,7 +51,7 @@ public class LocalDbHandler {
 
 
 
-    public static void createTable(String tableName, AmazonDynamoDB client){
+    protected static void createTable(String tableName, AmazonDynamoDB client){
 
         System.out.println("creating table..");
 
@@ -200,7 +207,5 @@ public class LocalDbHandler {
 
         }
         System.out.println("table created.");
-
-
     }
 }
