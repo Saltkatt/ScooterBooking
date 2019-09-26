@@ -1,17 +1,12 @@
 package com.wirelessiths.handler;
 
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
-import com.amazonaws.services.s3.model.Region;
-import com.amazonaws.services.sns.AmazonSNSClient;
-import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
 import com.wirelessiths.exception.UnableToListBookingsException;
 import com.wirelessiths.dal.Booking;
 import com.wirelessiths.service.AuthService;
-import com.wirelessiths.service.SNSService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,8 +14,6 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.*;
 
-import static com.wirelessiths.service.SNSService.getAmazonSNSClient;
-import static com.wirelessiths.service.SNSService.sendSMSMessage;
 
 
 /**
