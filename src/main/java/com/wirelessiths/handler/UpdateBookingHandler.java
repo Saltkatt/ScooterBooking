@@ -153,7 +153,7 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
                     if (n.matches(String.valueOf(DATE_PATTERN))) {
                         try {
                             LocalDateConverter converter = new LocalDateConverter();
-                            booking.setBookingDate(converter.unconvert(n));
+                            booking.setStartDate(converter.unconvert(n));
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
