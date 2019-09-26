@@ -8,8 +8,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.wirelessiths.dal.trip.Trip;
-import com.wirelessiths.service.HTTPGetService;
 import io.github.cdimascio.dotenv.Dotenv;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,8 +26,6 @@ public class TripSerializationTest {
     private static AmazonDynamoDB client;
     private static DynamoDBMapperConfig mapperConfig;
     private static String tableName = "test-table-serialization";
-
-    private static HTTPGetService getRequest = new HTTPGetService();
 
     private static Dotenv dotenv = Dotenv.load();
     private static String baseUrl = dotenv.get("BASE_URL");
@@ -57,8 +57,15 @@ public class TripSerializationTest {
         String queryUrl = url + "?startDate=" + vehicleId;
 
         try {
-            String result = getRequest.run(queryUrl, authHeader);
-            ArrayNode trips = (ArrayNode) objectMapper.readTree(result)
+
+            OkHttpClient client = new OkHttpClient();
+            Request request = new Request.Builder()
+                    .url(queryUrl)
+                    .header("Authorization", authHeader)
+                    .build();
+
+            Response response = client.newCall(request).execute();
+            ArrayNode trips = (ArrayNode) objectMapper.readTree(response.body().string())
                     .path("trip_overview_list");
 
             return objectMapper.convertValue(trips, new TypeReference<List<Trip>>() {
@@ -112,157 +119,3 @@ public class TripSerializationTest {
         }
     }
 }
-
-
-//    public static void createClient(){
-//        System.out.println("creating client..");
-//        client = AmazonDynamoDBClientBuilder.standard()
-//                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://localhost:8000", Regions.US_EAST_1.getName()))
-//                .build();
-//
-//        mapperConfig = DynamoDBMapperConfig.builder()
-//                .withTableNameOverride(new DynamoDBMapperConfig.TableNameOverride(tableName))
-//                .build();
-//        System.out.println("client created.");
-//    }
-//
-//    public static void createTable(String tableName){
-//
-//        System.out.println("creating table..");
-//
-//        //primary key
-//        List<KeySchemaElement> elements = new ArrayList<>();
-//        KeySchemaElement hashKey = new KeySchemaElement()
-//                .withKeyType(KeyType.HASH)
-//                .withAttributeName("scooterId");
-//
-//        KeySchemaElement rangeKey = new KeySchemaElement()
-//                .withKeyType(KeyType.RANGE)
-//                .withAttributeName("endTime");
-//        elements.add(hashKey);
-//        elements.add(rangeKey);
-//
-//
-//        //global secondary indexes
-//        List<GlobalSecondaryIndex> globalSecondaryIndexes = new ArrayList<>();
-//
-//        //userIndex
-//        ArrayList<KeySchemaElement> userIndexKeySchema = new ArrayList<>();
-//        userIndexKeySchema.add(new KeySchemaElement()
-//                .withAttributeName("userId")
-//                .withKeyType(KeyType.HASH));  //Partition key
-//        userIndexKeySchema.add(new KeySchemaElement()
-//                .withAttributeName("startTime")
-//                .withKeyType(KeyType.RANGE));  //Sort key
-//
-//        GlobalSecondaryIndex userIndex = new GlobalSecondaryIndex()
-//                .withIndexName("userIndex")
-//                .withProvisionedThroughput(new ProvisionedThroughput()
-//                        .withReadCapacityUnits((long) 1)
-//                        .withWriteCapacityUnits((long) 1))
-//                .withKeySchema(userIndexKeySchema)
-//                .withProjection(new Projection().withProjectionType(ProjectionType.ALL));
-//
-//        //bookingIndex
-//        ArrayList<KeySchemaElement> bookingIndexKeySchema = new ArrayList<>();
-//        bookingIndexKeySchema.add(new KeySchemaElement()
-//                .withAttributeName("bookingId")
-//                .withKeyType(KeyType.HASH));  //Partition key
-//        bookingIndexKeySchema.add(new KeySchemaElement()
-//                .withAttributeName("startTime")
-//                .withKeyType(KeyType.RANGE));  //Sort key
-//
-//        GlobalSecondaryIndex bookingIndex = new GlobalSecondaryIndex()
-//                .withIndexName("bookingIndex")
-//                .withProvisionedThroughput(new ProvisionedThroughput()
-//                        .withReadCapacityUnits((long) 1)
-//                        .withWriteCapacityUnits((long) 1))
-//                .withKeySchema(bookingIndexKeySchema)
-//                .withProjection(new Projection().withProjectionType(ProjectionType.ALL));
-//
-//        //endTimeIndex
-//        ArrayList<KeySchemaElement> endTimeIndexKeySchema = new ArrayList<>();
-//        endTimeIndexKeySchema.add(new KeySchemaElement()
-//                .withAttributeName("bookingDate")
-//                .withKeyType(KeyType.HASH));  //Partition key
-//        endTimeIndexKeySchema.add(new KeySchemaElement()
-//                .withAttributeName("endTime")
-//                .withKeyType(KeyType.RANGE));  //Sort key
-//
-//        GlobalSecondaryIndex endTimeIndex = new GlobalSecondaryIndex()
-//                .withIndexName("endTimeIndex")
-//                .withProvisionedThroughput(new ProvisionedThroughput()
-//                        .withReadCapacityUnits((long) 1)
-//                        .withWriteCapacityUnits((long) 1))
-//                .withKeySchema(endTimeIndexKeySchema)
-//                .withProjection(new Projection().withProjectionType(ProjectionType.ALL));//Todo: change to only include bookingStatus
-//
-//
-//        globalSecondaryIndexes.add(userIndex);
-//        globalSecondaryIndexes.add(bookingIndex);
-//        globalSecondaryIndexes.add(endTimeIndex);
-//
-//        //local secondary indexes
-////        ArrayList<LocalSecondaryIndex> localSecondaryIndexes = new
-////                ArrayList<>();
-////
-////        ArrayList<KeySchemaElement> endTimeIndexKeySchema = new ArrayList<>();
-////
-////        endTimeIndexKeySchema.add(new KeySchemaElement()
-////                .withAttributeName("date")
-////                .withKeyType(KeyType.HASH));
-////
-////        endTimeIndexKeySchema.add(new KeySchemaElement()
-////                .withAttributeName("endTime")
-////                .withKeyType(KeyType.RANGE));
-////
-////        LocalSecondaryIndex endTimeIndex = new LocalSecondaryIndex()
-////                .withIndexName("endTimeIndex")
-////                .withKeySchema(endTimeIndexKeySchema)
-////                .withProjection(new Projection().withProjectionType(ProjectionType.KEYS_ONLY));
-////
-////        localSecondaryIndexes.add(endTimeIndex);
-//
-//
-//        //all fields used as keys
-//        List<AttributeDefinition> attributeDefinitions = new ArrayList<>();
-//        attributeDefinitions.add(new AttributeDefinition()
-//                .withAttributeName("scooterId")
-//                .withAttributeType(ScalarAttributeType.S));
-//        attributeDefinitions.add(new AttributeDefinition()
-//                .withAttributeName("endTime")
-//                .withAttributeType(ScalarAttributeType.S));
-//        attributeDefinitions.add(new AttributeDefinition()
-//                .withAttributeName("userId")
-//                .withAttributeType(ScalarAttributeType.S));
-//        attributeDefinitions.add(new AttributeDefinition()
-//                .withAttributeName("bookingId")
-//                .withAttributeType(ScalarAttributeType.S));
-//        attributeDefinitions.add(new AttributeDefinition()
-//                .withAttributeName("bookingDate")
-//                .withAttributeType(ScalarAttributeType.S));
-//        attributeDefinitions.add(new AttributeDefinition()
-//                .withAttributeName("startTime")
-//                .withAttributeType(ScalarAttributeType.S));
-//
-//
-//        try{
-//            CreateTableRequest createTableRequest = new CreateTableRequest()
-//                    .withTableName(tableName)
-//                    .withKeySchema(elements)
-//                    .withProvisionedThroughput(new ProvisionedThroughput()
-//                            .withReadCapacityUnits(1L)
-//                            .withWriteCapacityUnits(1L))
-//                    .withGlobalSecondaryIndexes(globalSecondaryIndexes)
-//                    //.withLocalSecondaryIndexes(localSecondaryIndexes)
-//                    .withAttributeDefinitions(attributeDefinitions);
-//            client.createTable(createTableRequest);
-//        }catch(Exception e){
-//            System.out.println("error creating table: " + e.getMessage());
-//
-//        }
-//        System.out.println("table created.");
-//
-//
-//    }
-//}
