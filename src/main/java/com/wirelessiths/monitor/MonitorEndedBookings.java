@@ -22,6 +22,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+
 //Todo: add cloudwatch rules to sam template
 public class MonitorEndedBookings {
 
