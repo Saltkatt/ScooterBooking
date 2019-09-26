@@ -92,6 +92,8 @@ public class MonitorEndedBookingsTemp {
         }
     }
 
+
+
     private List<Trip> getTrips(Booking booking) throws IOException{
 
         String url = String.format("%s/%s%s", baseUrl, booking.getScooterId(), "/trips");
@@ -113,17 +115,6 @@ public class MonitorEndedBookingsTemp {
             return new ArrayList<>();
         }
         return objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
-        //return trips2;
-
-
-//        response = client.newCall(request).execute();
-//
-//        ArrayNode trips = (ArrayNode) objectMapper.readTree(response.body().toString())
-//                .path("trip_overview_list");
-//        if(trips.size() == 0){
-//            return new ArrayList<Trip>();
-//        }
-//        return objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
     }
 
     private void sendMessage(String message, Booking booking, String userPoolId){
