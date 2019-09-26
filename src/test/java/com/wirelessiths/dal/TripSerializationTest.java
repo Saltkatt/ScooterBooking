@@ -1,13 +1,7 @@
 package com.wirelessiths.dal;
 
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.Table;
-import com.amazonaws.services.dynamodbv2.model.*;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -21,8 +15,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.time.Instant;
-import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static junit.framework.TestCase.fail;
@@ -47,9 +39,6 @@ public class TripSerializationTest {
 
     @BeforeClass
     public static void create() {
-//      createClient();
-//      LocalDbHandler.createTable("trip-serialization", client);
-        //createTable();
 
         client = LocalDbHandler.createClient();
         mapperConfig = LocalDbHandler.createMapperConfig(tableName);
@@ -59,17 +48,6 @@ public class TripSerializationTest {
     @AfterClass
     public static void deleteTable() {
         LocalDbHandler.deleteTable(tableName, client);
-//        Table table = new DynamoDB(client).getTable(tableName);
-//        try {
-//            System.out.println("deleting table..");
-//            table.delete();
-//            table.waitForDelete();
-//            System.out.print("table deleted.");
-//
-//        } catch (Exception e) {
-//            System.err.println("Unable to delete table: ");
-//            System.err.println(e.getMessage());
-//        }
     }
 
     public static List<Trip> getTrips() {

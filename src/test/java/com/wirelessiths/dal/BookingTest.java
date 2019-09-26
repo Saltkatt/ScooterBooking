@@ -1,13 +1,7 @@
 package com.wirelessiths.dal;
 
-import com.amazonaws.client.builder.AwsClientBuilder;
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
-import com.amazonaws.services.dynamodbv2.document.DynamoDB;
-import com.amazonaws.services.dynamodbv2.document.Table;
-import com.amazonaws.services.dynamodbv2.model.*;
 import com.wirelessiths.dal.trip.Trip;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -18,7 +12,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -87,7 +80,6 @@ import static org.junit.Assert.*;
         b1.setUserId("ok-cases");
         b1.setStartTime(Instant.parse("2019-09-02T13:20:00.000Z"));
         b1.setEndTime(Instant.parse("2019-09-02T13:45:00.000Z"));
-        //b1.setBookingDate(LocalDate.parse("2019-09-02"));
         b1.setBookingStatus(BookingStatus.VALID);
 
 
@@ -95,7 +87,6 @@ import static org.junit.Assert.*;
         b2.setUserId("ok-cases");
         b2.setStartTime(Instant.parse("2019-09-02T15:10:00.000Z"));
         b2.setEndTime(Instant.parse("2019-09-02T15:35:00.000Z"));
-        //b2.setBookingDate(LocalDate.parse("2019-09-02"));
         b2.setBookingStatus(BookingStatus.VALID);
 
 
@@ -119,7 +110,6 @@ import static org.junit.Assert.*;
         testCase.setStartTime(Instant.parse("2019-09-02T14:00:00.000Z"));
         testCase.setEndTime(Instant.parse("2019-09-02T15:00:00.000Z"));
         testCase.setBookingStatus(BookingStatus.VALID);
-        //testCase.generateValidationKey();
 
 
         try{
@@ -393,18 +383,6 @@ import static org.junit.Assert.*;
     @AfterClass
     public static void deleteTable(){
         LocalDbHandler.deleteTable(tableName, client);
-//        Table table = new DynamoDB(client).getTable(tableName);
-//        try {
-//            System.out.println("deleting table..");
-//            table.delete();
-//            table.waitForDelete();
-//            System.out.print("table deleted.");
-//
-//        }
-//        catch (Exception e) {
-//            System.err.println("Unable to delete table: ");
-//            System.err.println(e.getMessage());
-//        }
     }
 
 
