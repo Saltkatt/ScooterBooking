@@ -1,3 +1,9 @@
+/*
+ * CognitoAuthenticationAuthorizationHandler authenticates a token in Cognito for usage in Lambda.
+ * The methods are created based on CRUD functionality using Json for input.
+ *
+ */
+
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
 import com.amazonaws.services.cognitoidp.model.*;
@@ -6,7 +12,6 @@ import com.amazonaws.services.lambda.runtime.RequestHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
-import org.junit.Assert;
 
 import java.io.*;
 import java.util.HashMap;
@@ -28,19 +33,18 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
                     withMaxResults(20)).getUserPools();
 
 
-    //create
     private String createBooking(String token) throws Exception {
 
         OkHttpClient client = new OkHttpClient();
 
-        //JSON data
+        //JSON input data
         String jsonInputString = "{\n" +
                 "\"scooterId\" : \"Slash\",\n" +
                 "\"startTime\" : \"2019-08-30T15:00:36.739Z\",\n" +
                 "\"endTime\" : \"2019-08-30T16:00:36.739Z\"\n" +
                 "}";
 
-        //post request with Authentication
+        //Post request with Authentication
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonInputString);
         Request request = new Request.Builder()
 
@@ -51,18 +55,19 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
                 .post(body)
                 .build();
 
-
+        //For reading and writing JSON
         ObjectMapper mapper = new ObjectMapper();
-
 
         Response response = client.newCall(request).execute();
         String responseBody = response.body().string();
         if (response.code() == 200) {
             globalContext.getLogger().log("\nCongratulations on booking your Scooter trip. Safe travel!");
         } else {
+            globalContext.getLogger().log("\nThere is a 409 conflict in create booking. ");
             globalContext.getLogger().log(responseBody);
         }
 
+        //Retrieving the data contained inside the node
         JsonNode node = mapper.readTree(responseBody);
         String bookingId = "fakeBookingId";
         if (node.hasNonNull("bookingId")) {
@@ -73,7 +78,6 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
 
     }
 
-    //read
     private String readBooking(String token, String bookingId) throws IOException {
 
         OkHttpClient client = new OkHttpClient();
@@ -88,14 +92,19 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
                 .build();
 
         Response response = client.newCall(request).execute();
+        String responseBody = response.body().string();
 
         if (response.code() == 200) {
             globalContext.getLogger().log("\nYou have succeeded in retrieving your booking information!");
         } else {
             globalContext.getLogger().log("\nThere is a 401 error in read booking.");
+            globalContext.getLogger().log(responseBody);
         }
 
+        //For reading and writing JSON
         ObjectMapper mapper = new ObjectMapper();
+
+        //Retrieving the data contained inside the node
         JsonNode node = mapper.readTree(response.body().string());
         bookingId = "fakeBookingId";
         if (node.hasNonNull("bookingId")) {
@@ -123,15 +132,21 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
                 .build();
 
         Response response = client.newCall(request).execute();
+        String responseBody = response.body().string();
+
         globalContext.getLogger().log("\nfinished update request");
         if (response.code() == 200) {
             globalContext.getLogger().log("\nThe booking with booking id " + bookingId +
                     " has successfully been updated.");
         } else {
             globalContext.getLogger().log("There is a 401 error in update booking.");
+            globalContext.getLogger().log(responseBody);
         }
 
+        //For reading and writing JSON
         ObjectMapper mapper = new ObjectMapper();
+
+        //Retrieving the data contained inside the node
         JsonNode node = mapper.readTree(response.body().string());
         bookingId = "fakeBookingId";
         String newStartTime = node.get("startTime").asText();
@@ -158,6 +173,7 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
                 .build();
 
         Response response = client.newCall(request).execute();
+        String responseBody = response.body().string();
 
         if (response.code() == 204) {
             globalContext.getLogger().log("\nYou have successfully deleted your booking with" +
@@ -165,6 +181,8 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
 
         } else {
             globalContext.getLogger().log("There is a 404 error in delete booking.");
+            globalContext.getLogger().log(responseBody);
+
         }
 
         return response;
@@ -180,7 +198,7 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
             String userName = System.getenv("userName");
             String password = System.getenv("password");
 
-            //Stating aws region
+            //Stating the aws region
             String userPoolId = System.getenv("userPoolId");
 
 
@@ -204,26 +222,27 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
                             withAuthParameters(authParams);
             AdminInitiateAuthResult result = cognito.adminInitiateAuth(authRequest);
             AuthenticationResultType auth = result.getAuthenticationResult();
-            //context.getLogger().log(auth.getAccessToken());
             String token = auth.getAccessToken();
 
-            //Create
+            //String response1 creates new booking
             String response1 = createBooking(token);
-            //Read
+            //String response2 retrieves a booking according to booking id
             String response2 = readBooking(token, response1);
-            //Update
+
             String jsonInputString = "{\"startTime\" : \"2019-09-25T14:40:20.468Z\"}";
+
+            //String response3 updates a booking
             String response3 = updateBooking(token, response2, jsonInputString);
-            //Delete
+            //String response4 deletes the updated booking
             Response response4 = deleteBooking(token, response3);
 
-            //runs the CRUD functionality consecutively
+            //Runs the CRUD functionality consecutively
             String finalResponse = response1 + response2 + response3 + response4;
 
 
             return ApiGatewayResponse.builder()
                     .setStatusCode(200)
-                    .setObjectBody("The Testbot ran smoothly.")
+                    .setObjectBody("The Testbot ran smoothly. ")
                     .build();
 
         } catch (final Exception exception) {
@@ -236,8 +255,6 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
                     .build();
 
         }
-        //test cases for problem solving
-
 
     }
 }
