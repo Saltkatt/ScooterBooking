@@ -9,6 +9,7 @@ import com.wirelessiths.dal.Booking;
 import com.wirelessiths.service.AuthService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -23,6 +24,12 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 
 	private final Logger logger = LogManager.getLogger(this.getClass());
 
+    enum queryEnum {
+     scooterId,
+        userId,
+        startDate
+    }
+
 	/**
 	 * This method connects to the ApiGatewayResponse and request handler to allow the retrieval of all bookings.
 	 * @param input contains all booking information.
@@ -34,17 +41,6 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 		try {
 
 			//logger.info(input.toString());
-
-            Map<String,String> queryStringParameters = null;
-            List<Booking> bookings = null;
-
-            boolean isAdmin = AuthService.isAdmin(input);
-            String tokenUserId = AuthService.getUserId(input);
-
-			if(input.containsKey("queryStringParameters")) {
-                queryStringParameters = (Map<String, String>) input.get("queryStringParameters");
-            }
-
 
             //Query key prioritization at the moment (higher prio means that that key is queried and the others are filtered):
             //1. Date
@@ -59,107 +55,33 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
              * -date & scooterId
              * -date or userId or scooterId by themselves
              * -queryParams is empty
-             * -queryParams contains other items than scooterId, userId and date
+             * -queryParams contains other items than scooterId, userId and date. It then filters out unsearchable parameters and tries the query again.
+             * -If no params are eligible for query, return all bookings.
              */
 
-            if (!Optional.ofNullable(queryStringParameters).isPresent()) {
-                bookings = new Booking().list();
+            Map<String,String> queryStringParameters = null;
+
+            boolean isAdmin = AuthService.isAdmin(input);
+            String tokenUserId = AuthService.getUserId(input);
+
+			if(input.containsKey("queryStringParameters")) {
+                queryStringParameters = (Map<String, String>) input.get("queryStringParameters");
             }
 
-			else if(queryStringParameters.containsKey("scooterId") || queryStringParameters.containsKey("userId") || queryStringParameters.containsKey("date")) {
-
-                if (queryStringParameters.containsKey("scooterId") && queryStringParameters.containsKey("userId") && queryStringParameters.containsKey("date")) {
-
-                    if(!isAuthorized(isAdmin, queryStringParameters.get("userId"), tokenUserId)) {
-                        Response responseBody = new Response("Unauthorized. You can only view your own bookings or you need to have admin privilege", input);
-                        return ApiGatewayResponse.builder()
-                                .setStatusCode(403)
-                                .setObjectBody(responseBody)
-                                .build();
-                    }
-                    String queryKey = "date";
-                    String queryValue = queryStringParameters.get("date");
-                    Map<String, String> filter = new HashMap<>();
-                    //Copies all but the queryKey two the filter
-                    queryStringParameters.forEach((s1,s2)->{
-                        if (!s1.equals(queryKey)){
-                            filter.put(s1,s2);
-                        }
-                    } );
-                    bookings = new Booking().getByDateWithFilter(LocalDate.parse(queryValue), filter);
-                } else if(queryStringParameters.containsKey("userId") && queryStringParameters.containsKey("scooterId")){
-
-                    if(!isAuthorized(isAdmin, queryStringParameters.get("userId"), tokenUserId)) {
-                        Response responseBody = new Response("Unauthorized. You can only view your own bookings or you need to have admin privilege", input);
-                        return ApiGatewayResponse.builder()
-                                .setStatusCode(403)
-                                .setObjectBody(responseBody)
-                                .build();
-                    }
-
-                    String queryKey = "userId";
-                    String queryValue = queryStringParameters.get("userId");
-                    Map<String, String> filter = new HashMap<>();
-                    //Copies all but the queryKey two the filter
-                    queryStringParameters.forEach((s1,s2)->{
-                        if (!s1.equals(queryKey)){
-                            filter.put(s1,s2);
-                        }
-                    } );
-                    bookings = new Booking().getByUserIdWithFilter(queryValue, filter);
-                }
-
-                else if(queryStringParameters.containsKey("date") && queryStringParameters.containsKey("scooterId") || queryStringParameters.containsKey("date") && queryStringParameters.containsKey("userId") ){
-
-                    if(queryStringParameters.containsKey("userId") && !isAuthorized(isAdmin, queryStringParameters.get("userId"), tokenUserId)) {
-                        Response responseBody = new Response("Unauthorized. You can only view your own bookings or you need to have admin privilege", input);
-                        return ApiGatewayResponse.builder()
-                                .setStatusCode(403)
-                                .setObjectBody(responseBody)
-                                .build();
-                    }
-
-
-                    String queryKey = "date";
-                    String queryValue = queryStringParameters.get("date");
-                    Map<String, String> filter = new HashMap<>();
-                    //Copies all but the queryKey two the filter
-                    queryStringParameters.forEach((s1,s2)->{
-                        if (!s1.equals(queryKey)){
-                            filter.put(s1,s2);
-                            logger.info(s1 + " : " + s2);
-                        }
-                    } );
-                    bookings = new Booking().getByDateWithFilter(LocalDate.parse(queryValue), filter);
-                }
-
-                else if(queryStringParameters.size()==1){
-                    if(queryStringParameters.containsKey("date")){
-                        bookings = new Booking().getByDate(LocalDate.parse(queryStringParameters.get("date")));
-                    } else if (queryStringParameters.containsKey("userId")){
-                        if(!isAuthorized(isAdmin, queryStringParameters.get("userId"), tokenUserId)) {
-                            Response responseBody = new Response("Unauthorized. You can only view your own bookings or you need to have admin privilege", input);
-                            return ApiGatewayResponse.builder()
-                                    .setStatusCode(403)
-                                    .setObjectBody(responseBody)
-                                    .build();
-                        }
-                        bookings = new Booking().getByUserId(queryStringParameters.get("userId"));
-                    } else if (queryStringParameters.containsKey("scooterId")) {
-                        bookings = new Booking().getByScooterId(queryStringParameters.get("scooterId"));
-                    }
-                }
-
-
-			}
-
-            else {
-                    Response responseBody = new Response("Inserted query parameters are not supported, you can only use scooterId, userId and date", input);
+            //Check that the user is authorized, can only view their own bookings or need to be admin. If not authorized send back 403.
+            if(Optional.ofNullable(queryStringParameters).isPresent()) {
+                if (queryStringParameters.containsKey(queryEnum.userId.toString()) && !isAuthorized(isAdmin, queryStringParameters.get(queryEnum.userId.toString()), tokenUserId)) {
+                    Response responseBody = new Response("Unauthorized. You can only view your own bookings or you need to have admin privilege", input);
                     return ApiGatewayResponse.builder()
-                            .setStatusCode(404)
+                            .setStatusCode(403)
                             .setObjectBody(responseBody)
                             .build();
                 }
+            }
+
+            Booking booking = new Booking();
+            List<Booking> bookings = retrieveBookings(queryStringParameters, booking);
+
 
 			// send the response back
 			return ApiGatewayResponse.builder()
@@ -211,5 +133,66 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 
 	private boolean isAuthorized(boolean isAdmin, String queryUserId, String tokenUserId){
         return isAdmin || queryUserId.equals(tokenUserId);
+    }
+
+    @Nullable
+    public List<Booking> retrieveBookings(Map<String, String> queryStringParameters, Booking booking) throws IOException {
+
+
+        if (!Optional.ofNullable(queryStringParameters).isPresent()) {
+           return booking.list();
+        } else if (queryStringParameters.containsKey(queryEnum.scooterId.toString()) || queryStringParameters.containsKey(queryEnum.userId.toString()) || queryStringParameters.containsKey(queryEnum.startDate.toString())) {
+
+            Map<String, String> validKeyParams = new HashMap<>();
+            Map<String, String> filter = new HashMap<>();
+
+
+            //Only pass through supported query params
+            queryStringParameters.forEach((k, v) -> {
+                for (queryEnum e : queryEnum.values()) {
+                    if (k.equals(e.toString())) {
+                        validKeyParams.put(k, v);
+                    }
+                }
+            });
+
+            if (validKeyParams.containsKey(queryEnum.startDate.toString())) {
+                if (validKeyParams.size() == 1) {
+                  return booking.bookingsByDate(LocalDate.parse(validKeyParams.get(queryEnum.startDate.toString())));
+                } else {
+                    validKeyParams.forEach((k, v) -> {
+                        if (!k.equals(queryEnum.startDate.toString())) {
+                            filter.put(k, v);
+                        }
+                    });
+                    return booking.bookingsByDate(LocalDate.parse(validKeyParams.get(queryEnum.startDate.toString())), filter);
+                }
+            } else if (validKeyParams.containsKey(queryEnum.userId.toString())) {
+                if (validKeyParams.size() == 1) {
+                    return booking.bookingsByUserId(validKeyParams.get(queryEnum.userId.toString()));
+                } else {
+                    validKeyParams.forEach((k, v) -> {
+                        if (!k.equals(queryEnum.userId.toString())) {
+                            filter.put(k, v);
+                        }
+                    });
+                    return booking.bookingsByUserId(validKeyParams.get(queryEnum.userId.toString()), filter);
+                }
+
+            } else if (validKeyParams.containsKey(queryEnum.scooterId.toString())) {
+                if (validKeyParams.size() == 1) {
+                    return booking.bookingsByScooterId(validKeyParams.get(queryEnum.scooterId.toString()));
+                } else {
+                    validKeyParams.forEach((k, v) -> {
+                        if (!k.equals(queryEnum.scooterId.toString())) {
+                            filter.put(k, v);
+                        }
+                    });
+                    return booking.bookingsByScooterId(validKeyParams.get(queryEnum.scooterId.toString()), filter);
+                }
+            }
+        }
+
+        return booking.list();
     }
 }
