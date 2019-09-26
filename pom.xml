@@ -25,7 +25,6 @@
       <artifactId>aws-java-sdk-s3</artifactId>
       <version>1.11.638</version>
     </dependency>
-
     <dependency>
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-lambda-java-core</artifactId>
@@ -66,24 +65,11 @@
       <artifactId>jackson-annotations</artifactId>
       <version>2.10.0.pr3</version>
     </dependency>
-    <!-- https://mvnrepository.com/artifact/com.amazonaws/DynamoDBLocal -->
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>2.0.2-beta</version>
-<!--      <scope>test</scope>-->
-    </dependency>
-
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <version>4.13-beta-3</version>
       <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>com.thoughtworks.xstream</groupId>
-      <artifactId>xstream</artifactId>
-      <version>1.4.11.1</version>
     </dependency>
     <dependency>
       <groupId>com.amazonaws</groupId>
@@ -121,7 +107,6 @@
       <artifactId>aws-secretsmanager-caching-java</artifactId>
       <version>1.0.0</version>
     </dependency>
-
     <dependency>
       <groupId>io.github.cdimascio</groupId>
       <artifactId>java-dotenv</artifactId>
@@ -129,7 +114,6 @@
     </dependency>
 
   </dependencies>
-
 
   <build>
     <plugins>
