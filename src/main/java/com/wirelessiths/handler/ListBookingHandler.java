@@ -43,17 +43,17 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 			//logger.info(input.toString());
 
             //Query key prioritization at the moment (higher prio means that that key is queried and the others are filtered):
-            //1. Date
+            //1. startDate
             //2. UserId (all queries with userId require admin or that your token uuid matches the one in the query
             //3. ScooterId
 
             /*
              * Handles the following cases:
-             * -userId & scooterId & date
+             * -userId & scooterId & startDate
              * -userId & scooterId
-             * -userId & date
-             * -date & scooterId
-             * -date or userId or scooterId by themselves
+             * -userId & startDate
+             * -startDate & scooterId
+             * -startDate or userId or scooterId by themselves
              * -queryParams is empty
              * -queryParams contains other items than scooterId, userId and date. It then filters out unsearchable parameters and tries the query again.
              * -If no params are eligible for query, return all bookings.
@@ -135,6 +135,19 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
         return isAdmin || queryUserId.equals(tokenUserId);
     }
 
+    /**
+     *
+     * @param queryStringParameters that is sent in from the request. Null-proof
+     * @param booking booking object that is sent in to gain access to db methods. also sends this in to enable local db mock in tests
+     * @return the list of matching bookings
+     * @throws IOException from dynamo db.
+     * Only passes through supported query params that are set in the queryEnum enum.
+     * If no supported query keys exists it returns all bookings, otherwise query in the following order:
+     * 1: startDate
+     * 2: userID
+     * 3: scooterId
+     * if only one supported parameter keys queries dynamo db without filter otherwise queries with filter.
+     */
     @Nullable
     public List<Booking> retrieveBookings(Map<String, String> queryStringParameters, Booking booking) throws IOException {
 
