@@ -292,6 +292,7 @@ Resources:
         #secret-arn
         #secret-name
       Events:
+<<<<<<< HEAD
         EndedBookingSchedule:
           Type: Schedule
           Properties:
@@ -299,6 +300,16 @@ Resources:
 
   MonitorStartedBookingsFunction:
     Type: AWS::Serverless::Function # More info about function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+=======
+#        MonitorEnd:
+#          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+#          Properties:
+#            Path: /bookings/{id}
+#            Method: put
+#            RestApiId: !Ref MyApi  # Add this line
+  MonitorStartedBookingsFunction:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+>>>>>>> new indexes and Monitor start and end working
     Properties:
       CodeUri: target/bookings-api-dev.jar
       Handler: com.wirelessiths.monitor.MonitorStartedBookings::lambdaHandler
@@ -319,6 +330,7 @@ Resources:
             Action:
               - cognito-idp:AdminGetUser
               - cognito-idp:ListUsers
+<<<<<<< HEAD
             Resource: !GetAtt "UserPool.Arn"
         #secret-arn
         #secret-name
@@ -327,6 +339,19 @@ Resources:
           Type: Schedule
           Properties:
             Schedule: "rate(1 minute)"
+=======
+            Resource:
+              Ref: UserPoolArn
+        #secret-arn
+        #secret-name
+      Events:
+#        MonitorEnd:
+#          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+#          Properties:
+#            Path: /bookings/{id}
+#            Method: put
+#            RestApiId: !Ref MyApi  # Add this line
+>>>>>>> new indexes and Monitor start and end working
 
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
@@ -337,7 +362,10 @@ Resources:
           AttributeType: S
         - AttributeName: startTime
           AttributeType: S
+<<<<<<< HEAD
 
+=======
+>>>>>>> new indexes and Monitor start and end working
         - AttributeName: endTime
           AttributeType: S
         - AttributeName: bookingId
@@ -346,7 +374,10 @@ Resources:
           AttributeType: S
         - AttributeName: startDate
           AttributeType: S
+<<<<<<< HEAD
 
+=======
+>>>>>>> new indexes and Monitor start and end working
         - AttributeName: endDate
           AttributeType: S
       KeySchema:
@@ -402,7 +433,10 @@ Resources:
           ProvisionedThroughput:
             ReadCapacityUnits: 1
             WriteCapacityUnits: 1
+<<<<<<< HEAD
 
+=======
+>>>>>>> new indexes and Monitor start and end working
 #      LocalSecondatyIndexes:
 #        - IndexName: endTimeIndex
 #          KeySchema:

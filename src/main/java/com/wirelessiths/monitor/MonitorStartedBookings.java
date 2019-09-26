@@ -1,6 +1,6 @@
 package com.wirelessiths.monitor;
 
-<<<<<<< HEAD
+
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.wirelessiths.dal.Booking;
@@ -55,6 +55,7 @@ public class MonitorStartedBookings {
         }
     }
 
+
     private void sendMessage(String message, Booking booking, String userPoolId){
         String phoneNumber = UserService.getUserPhoneNumber(booking.getUserId(), userPoolId);
         AmazonSNSClient snsClient = getAmazonSNSClient();
@@ -62,35 +63,5 @@ public class MonitorStartedBookings {
                 new HashMap<>();
         //<set SMS attributes>
         sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
-=======
-import com.wirelessiths.dal.Booking;
-
-import java.util.List;
-
-public class MonitorStartedBookings {
-
-    //once a min, get all valid bookings with endTime between 6 and 5 mins ago
-    //once a min, get all valid bookings with startTime between 16 and 15 mins ago
-
-    public void lambdaHandler(){
-
-        Booking booking = new Booking();
-
-        //List<Booking> startedBookings = booking.bookingsByStartTime(deadline);
-//
-//        try{
-//
-//           // endedBookings = booking.bookingsByStartTime();
-//
-//        }catch(Exception e) {
-//            //logger.info(e.getMessage());
-//        }
-//
-//        if(endedBookings == null || endedBookings.isEmpty()){
-//            //logger.info("No ended bookings");
-//            return;
-//        }
-
->>>>>>> fix looping bug in MonitorEndedBookingsTemp, change name from MonitorEndedBookingsFake to ..BookingsTemp
     }
 }
