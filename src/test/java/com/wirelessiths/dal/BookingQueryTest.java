@@ -5,6 +5,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 
 import com.amazonaws.services.dynamodbv2.model.AmazonDynamoDBException;
+
 import com.wirelessiths.handler.ListBookingHandler;
 import org.junit.*;
 
@@ -12,6 +13,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -61,20 +63,12 @@ public class BookingQueryTest {
         b1.setStartTime(Instant.parse("2019-09-03T13:20:00.000Z"));
         b1.setEndTime(Instant.parse("2019-09-03T13:45:00.000Z"));
 
-        //b1.setStartDate(LocalDate.parse("2019-09-03"));
-
-        //b1.setStartDate(LocalDate.parse("2019-09-03"));
-
 
 
         b2.setScooterId("2");
         b2.setUserId("b");
         b2.setStartTime(Instant.parse("2019-09-04T15:10:00.000Z"));
         b2.setEndTime(Instant.parse("2019-09-04T15:35:00.000Z"));
-
-        //b2.setStartDate(LocalDate.parse("2019-09-04"));
-
-        //b2.setStartDate(LocalDate.parse("2019-09-04"));
 
 
 
@@ -84,11 +78,6 @@ public class BookingQueryTest {
         b3.setStartTime(Instant.parse("2019-09-03T15:10:00.000Z"));
         b3.setEndTime(Instant.parse("2019-09-03T15:35:00.000Z"));
 
-        //b3.setStartDate(LocalDate.parse("2019-09-03"));
-
-        //b3.setStartDate(LocalDate.parse("2019-09-03"));
-
-
 
         b4.setScooterId("4");
         b4.setUserId("c");
@@ -96,23 +85,11 @@ public class BookingQueryTest {
         b4.setEndTime(Instant.parse("2019-09-03T13:45:00.000Z"));
 
 
-        //b4.setStartDate(LocalDate.parse("2019-09-03"));
-
-        //b4.setStartDate(LocalDate.parse("2019-09-03"));
-
-
-
 
         b5.setScooterId("4");
         b5.setUserId("d");
         b5.setStartTime(Instant.parse("2019-09-04T13:20:00.000Z"));
         b5.setEndTime(Instant.parse("2019-09-04T13:45:00.000Z"));
-
-        //b5.setStartDate(LocalDate.parse("2019-09-04"));
-
-        //b5.setStartDate(LocalDate.parse("2019-09-04"));
-
-
 
 
         try {
@@ -168,6 +145,7 @@ public class BookingQueryTest {
     public void StartDate() {
 
         System.out.println("StartDate query: ");
+
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
         ListBookingHandler listBookingHandler = new ListBookingHandler();
@@ -387,6 +365,7 @@ public class BookingQueryTest {
         queryparams.put("Rebookable", "true");
         queryparams.put("cool", "no");
         queryparams.put("userId", "c");
+
         try {
             list = listBookingHandler.retrieveBookings(queryparams, booking);
         } catch (IOException e) {
@@ -477,11 +456,4 @@ public class BookingQueryTest {
         }
         assertEquals(1, list.size());
     }
-
-
-
-
-
-
-
 }

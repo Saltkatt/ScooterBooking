@@ -173,6 +173,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 
             Map<String, String> validKeyParams = new HashMap<>();
             Map<String, String> filter = new HashMap<>();
+
             //Only pass through supported query params
             queryStringParameters.forEach((k, v) -> {
                 for (queryEnum e : queryEnum.values()) {
@@ -185,6 +186,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
             if (validKeyParams.isEmpty()){
                 return booking.list();
             }
+
             if (validKeyParams.containsKey(queryEnum.startDate.toString())) {
                 if (validKeyParams.size() == 1) {
                   return booking.bookingsByDate(LocalDate.parse(validKeyParams.get(queryEnum.startDate.toString())));
@@ -199,6 +201,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
             } else if (validKeyParams.containsKey(queryEnum.userId.toString())) {
                 if (validKeyParams.size() == 1) {
                     return booking.bookingsByUserId(validKeyParams.get(queryEnum.userId.toString()));
+
                 } else {
                     validKeyParams.forEach((k, v) -> {
                         if (!k.equals(queryEnum.userId.toString())) {
@@ -210,6 +213,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
             } else if (validKeyParams.containsKey(queryEnum.scooterId.toString())) {
                 if (validKeyParams.size() == 1) {
                     return booking.bookingsByScooterId(validKeyParams.get(queryEnum.scooterId.toString()));
+
                 } else {
                     validKeyParams.forEach((k, v) -> {
                         if (!k.equals(queryEnum.scooterId.toString())) {
@@ -219,6 +223,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
                     return booking.bookingsByScooterId(validKeyParams.get(queryEnum.scooterId.toString()), filter);
                 }
             }
+
         return booking.list();
     }
 }
