@@ -31,7 +31,6 @@ Parameters:
   UserPoolId:
     Type: String
     Default: xxx
-
   UserPoolName:
     Type: String
     Default: dev-0925
