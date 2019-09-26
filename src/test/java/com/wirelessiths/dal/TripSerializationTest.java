@@ -49,9 +49,9 @@ public class TripSerializationTest {
 
 
     @BeforeClass
-    public static void create(){
-      LocalDbHandler.createClient();
-      LocalDbHandler.createTable(tableName, client);
+    public static void create() {
+        LocalDbHandler.createClient();
+        LocalDbHandler.createTable(tableName, client);
 
 
     }
@@ -88,9 +88,10 @@ public class TripSerializationTest {
             ArrayNode trips = (ArrayNode) objectMapper.readTree(response.body().string())
                     .path("trip_overview_list");
 
-            return objectMapper.convertValue(trips, new TypeReference<List<Trip>>() {});
+            return objectMapper.convertValue(trips, new TypeReference<List<Trip>>() {
+            });
 
-        }catch (Exception e) {
+        } catch (Exception e) {
             System.out.println(e.getMessage());
         }
         return Collections.emptyList();
@@ -144,4 +145,3 @@ public class TripSerializationTest {
 
     }
 }
-
