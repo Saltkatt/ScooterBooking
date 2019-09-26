@@ -150,13 +150,7 @@ import static org.junit.Assert.*;
         b1.setBookingId("100");
         b1.setStartTime(Instant.parse("2019-09-02T13:30:00.000Z"));
         b1.setEndTime(Instant.parse("2019-09-02T15:45:00.000Z"));
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-        b1.setBookingDate(LocalDate.parse("2019-09-02"));
->>>>>>> fix error in TripSerializationTest, git log
-=======
->>>>>>> new indexes and Monitor start and end working
+
         b1.setBookingStatus(BookingStatus.ACTIVE);
 
         b2.setScooterId("2");
@@ -178,13 +172,7 @@ import static org.junit.Assert.*;
         b4.setUserId("between");
         b4.setStartTime(Instant.parse("2019-09-02T14:10:00.000Z"));
         b4.setEndTime(Instant.parse("2019-09-02T14:40:00.000Z"));
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-        b4.setBookingDate(LocalDate.parse("2019-09-02"));
->>>>>>> fix error in TripSerializationTest, git log
-=======
->>>>>>> new indexes and Monitor start and end working
+
         b4.setBookingStatus(BookingStatus.ACTIVE);
 
 
@@ -192,13 +180,7 @@ import static org.junit.Assert.*;
         b5.setUserId("ok-cases");
         b5.setStartTime(Instant.parse("2019-09-02T13:20:00.000Z"));
         b5.setEndTime(Instant.parse("2019-09-02T13:45:00.000Z"));
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-        b5.setBookingDate(LocalDate.parse("2019-09-02"));
->>>>>>> fix error in TripSerializationTest, git log
-=======
->>>>>>> new indexes and Monitor start and end working
+
         b5.setBookingStatus(BookingStatus.CANCELLED);
 
 
@@ -405,30 +387,5 @@ import static org.junit.Assert.*;
             fail();
         }
     }
-<<<<<<< HEAD
-=======
 
-
-    @AfterClass
-    public static void deleteTable(){
-        LocalDbHandler.deleteTable(tableName, client);
-//        Table table = new DynamoDB(client).getTable(tableName);
-//        try {
-//            System.out.println("deleting table..");
-//            table.delete();
-//            table.waitForDelete();
-//            System.out.print("table deleted.");
-//
-//        }
-//        catch (Exception e) {
-//            System.err.println("Unable to delete table: ");
-//            System.err.println(e.getMessage());
-//        }
-    }
-
-
-
-
-
->>>>>>> new indexes and Monitor start and end working
 }

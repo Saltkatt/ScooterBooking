@@ -1,6 +1,9 @@
 package com.wirelessiths.dal;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> clean up unit-tests
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -65,9 +68,6 @@ public class TripSerializationTest {
 =======
     @BeforeClass
     public static void create() {
-//      createClient();
-//      LocalDbHandler.createTable("trip-serialization", client);
-        //createTable();
 
         client = LocalDbHandler.createClient();
         mapperConfig = LocalDbHandler.createMapperConfig(tableName);
@@ -78,6 +78,7 @@ public class TripSerializationTest {
     @AfterClass
     public static void deleteTable() {
         LocalDbHandler.deleteTable(tableName, client);
+<<<<<<< HEAD
 <<<<<<< HEAD
 =======
 //        Table table = new DynamoDB(client).getTable(tableName);
@@ -92,6 +93,8 @@ public class TripSerializationTest {
 //            System.err.println(e.getMessage());
 //        }
 >>>>>>> new indexes and Monitor start and end working
+=======
+>>>>>>> clean up unit-tests
     }
 
     public static List<Trip> getTrips() {
