@@ -1,6 +1,7 @@
 package com.wirelessiths.monitor;
 
 import com.amazonaws.services.sns.AmazonSNS;
+
 import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.wirelessiths.dal.Booking;
 import com.wirelessiths.dal.BookingStatus;
