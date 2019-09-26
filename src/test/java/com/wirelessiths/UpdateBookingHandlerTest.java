@@ -53,7 +53,7 @@ public class UpdateBookingHandlerTest {
         InstantConverter instantConverter = new InstantConverter();
 
         booking.setUserId("123abc");
-        booking.setBookingDate(converter.unconvert("2019-08-25"));
+        booking.setStartDate(converter.unconvert("2019-08-25"));
         booking.setStartTime(instantConverter.unconvert("2019-08-30T15:00:36.739Z"));
         booking.setEndTime(instantConverter.unconvert("2019-08-30T16:00:36.739Z"));
         booking.setUserId("abcdgwhwer23");

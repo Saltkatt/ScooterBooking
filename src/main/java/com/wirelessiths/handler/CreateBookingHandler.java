@@ -70,7 +70,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
                         .build();
             }
 
-            if(booking.validateBooking(booking, maxDuration, buffer).size() > 0){//returns list of infringing bookings
+            if(!booking.validateBooking(booking, maxDuration, buffer).isEmpty()){//returns list of infringing bookings
 
                 message =  "Scooter with id: " + booking.getScooterId() + " is not available for the selected timespan";
                 return ApiGatewayResponse.builder()
@@ -88,7 +88,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
                     .build();
 
         } catch (JsonProcessingException ex) {
-            logger.error("Error in JSON processing" + ex.getMessage());
+            logger.error(String.format("Error in JSON processing: %s ", ex.getMessage()));
 
             Response responseBody = new Response("Error in JSON processing: " + ex.getMessage(), input);
             return ApiGatewayResponse.builder()
@@ -98,7 +98,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
                     .build();
 
         } catch (IOException ex) {
-            logger.error("Error: IOException" + ex.getMessage());
+            logger.error(String.format("Error: IOException: %s", ex.getMessage()));
 
             Response responseBody = new Response("Error in creating booking due to I/O: " + ex.getMessage(), input);
             return ApiGatewayResponse.builder()
@@ -109,7 +109,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
         }catch (Exception ex){
 
-            logger.error("Error unknown Exception" + ex);
+            logger.error(String.format("Error unknown Exception: %s", ex));
 
             Response responseBody = new Response("Error in creating booking due to unknown exception: " + ex.getMessage(), input);
             return ApiGatewayResponse.builder()

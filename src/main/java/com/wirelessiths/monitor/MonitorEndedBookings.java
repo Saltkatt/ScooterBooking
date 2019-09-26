@@ -21,6 +21,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+//Todo: add secret manager to sam template
+//Todo: add cloudwatch rules to sam template
 public class MonitorEndedBookings {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
@@ -53,100 +55,107 @@ public class MonitorEndedBookings {
         String authUrl = dotenv.get("AUTH_URL");
         String pjUrl = dotenv.get("PJ_URL");
 
-        List<Booking> endedBookings = getEndedBookings();
-        if(endedBookings == null || endedBookings.isEmpty()){
+        Booking booking = new Booking();
+        List<Booking> endedBookings = booking.bookingsByEndTime();
+        if(endedBookings.isEmpty()){
             logger.info("No ended bookings");
             return;
         }
-        logger.info("number of bookings ended: " + endedBookings.size());
 
-        Map<String, String> auth = getAuth(audience, actor, clientSecret, authUrl);
-        String accessToken = auth.get("access_token");
+        logger.info("number of bookings ended: {}", endedBookings.size());
+        try{
+            Map<String, String> auth = getAuth(audience, actor, clientSecret, authUrl);
+            String accessToken = auth.get("access_token");
 
-        endedBookings.forEach((endedBooking)->{
-            String vehicleId = endedBooking.getScooterId();
-            try{
-                String response = getTrips(accessToken, vehicleId, pjUrl);
-                ArrayNode trips = (ArrayNode) mapper.readTree(response)
-                        .path("trip_overview_list");
-                List<Trip> newTrips = mapper.convertValue(trips, new TypeReference<List<Trip>>(){});
-                if(trips.size() == 0){
-                    logger.info("No trips for booking:" + endedBooking);
-                    return;
+            for(Booking endedBooking : endedBookings){
+
+
+                String vehicleId = endedBooking.getScooterId();
+                List<Trip> trips = getTrips(accessToken, vehicleId, pjUrl);
+                if(trips == null || trips.isEmpty()){
+                    continue;
                 }
-                logger.info("number of trips found: " + trips.size());
-                endedBooking.getTrips().addAll(newTrips);
+//                ArrayNode trips = (ArrayNode) mapper.readTree(response)
+//                        .path("trip_overview_list");
+//                List<Trip> newTrips = mapper.convertValue(trips, new TypeReference<List<Trip>>(){});
+//                if(trips.size() == 0){
+//                    logger.info("No trips for booking: {}", endedBooking);
+//                    continue;
+//                }
+                logger.info("number of trips found: {}", trips.size());
+                trips.forEach(trip-> logger.info("trip: {}", trip));
+                endedBooking.getTrips().addAll(trips);
+                logger.info("appending trip to booking");
                 endedBooking.save(endedBooking);
                 logger.info("saving updated booking");
-
-//                newTrips.forEach(trip->{
-//                    logger.info("checking for match..");
-//                    if(!trip.getStartTime().isAfter(endedBooking.getStartTime()) ||
-//                            !trip.getEndTime().isBefore(endedBooking.getEndTime().plusSeconds(60 * 5))) {
-//                        logger.info("trip doesnt match");
-//                        return;
-//                    }
-//                    endedBooking.getTrips().add(trip);
-//                    logger.info("appending trip to booking: " + endedBooking);
-//                });
-
-
-            }catch(IOException e) {
-                logger.info(e.getMessage());
-            }catch(Exception e){
-                System.out.println(e.getMessage());
             }
-        });
-    }
+        }catch(IOException e) {
+            logger.info(e.getMessage());
 
-    private List<Booking> getEndedBookings(){
-        Booking booking = new Booking();
-        List<Booking> endedBookings = null;
+        }catch(NullPointerException e){
+            logger.info("access-token not found: {}", e.getMessage());
 
-        try{
-            endedBookings = booking.bookingsByEndTime();
+        }catch(ClassCastException e){
 
-        }catch(Exception e) {
+        } catch(Exception e){
             logger.info(e.getMessage());
         }
-        logger.info("number of bookings ended: " + endedBookings.size());
-        return endedBookings;
+
+//        endedBookings.forEach((endedBooking)->{
+//
+//            String vehicleId = endedBooking.getScooterId();
+//            try{
+//                String response = getTrips(accessToken, vehicleId, pjUrl);
+//                ArrayNode trips = (ArrayNode) mapper.readTree(response)
+//                        .path("trip_overview_list");
+//                List<Trip> newTrips = mapper.convertValue(trips, new TypeReference<List<Trip>>(){});
+//                if(trips.size() == 0){
+//                    logger.info("No trips for booking:" + endedBooking);
+//                    return;
+//                }
+//                logger.info("number of trips found: " + trips.size());
+//                endedBooking.getTrips().addAll(newTrips);
+//                endedBooking.save(endedBooking);
+//                logger.info("saving updated booking");
+//
+//            }catch(IOException e) {
+//                logger.info(e.getMessage());
+//            }catch(Exception e){
+//                System.out.println(e.getMessage());
+//            }
+//        });
     }
 
-    private String getTrips(String accessToken, String vehicleId, String url) throws IOException {
 
-        //String vehicleId = dotenv.get("SCOOTER_ID");
+    private List<Trip> getTrips(String accessToken, String vehicleId, String url) throws IOException, NullPointerException {
 
-        //Map<String, String> auth = getAuth();
         if (accessToken == null) {
-            System.out.println("no token");
-            return null;
+           logger.info("no token");
+           throw new NullPointerException("access-token not found");
         }
 
-        //String url = dotenv.get("REAL_URL");
         String fullUrl = url + "/vehicles/" + vehicleId + "/trips";
         //Todo: add query params for startDate and endDate
-        //System.out.println(url);
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(fullUrl)
                 .addHeader("Content-type", "application/json")
                 .addHeader("Authorization", accessToken)
                 .build();
-        Response response = null;
-        response = client.newCall(request).execute();
-        //return mapper.readValue(response.body().string(), new TypeReference<Map<String, String>>() {});
-        return response.body().string();
+        Response response = client.newCall(request).execute();
+        ArrayNode trips = (ArrayNode) mapper.readTree(response.body().string())
+                .path("trip_overview_list");
+        return mapper.convertValue(trips, new TypeReference<List<Trip>>() {});
     }
 
 
-    private Map<String, String> getAuth(String audience, String actor, String clientSecret, String authUrl){
+    private Map<String, String> getAuth(String audience, String actor, String clientSecret, String authUrl) throws IOException{
 
-        ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper objectmapper = new ObjectMapper();
 
         String stringBody = String.format("{\"audience\":\"%s\", \"grant_type\":\"client_credentials\"," +
-                        " \"client_id\":\"%s\",\"client_secret\":\"%s\"}",
-                audience, actor, clientSecret);
+                        " \"client_id\":\"%s\",\"client_secret\":\"%s\"}", audience, actor, clientSecret);
+
         MediaType JSON = MediaType.parse("application/json; charset=utf-8");
         RequestBody body = RequestBody.create(JSON, stringBody);
 
@@ -156,22 +165,13 @@ public class MonitorEndedBookings {
                 .addHeader("Content-type", "application/json")
                 .post(body)
                 .build();
-        Response response = null;
-        try{
-            response = client.newCall(request).execute();
-            return mapper.readValue(response.body().string(), new TypeReference<Map<String, String>>() {});
 
-        }catch(Exception e){
-            logger.info("error: " + e.getMessage());
-        }
-        return null;
+        Response response = client.newCall(request).execute();
+        return objectmapper.readValue(response.body().string(), new TypeReference<Map<String, String>>() {});
     }
 
 
-    private static String getSecret(String region, String secretName) {
-
-        //String secretName = "client_secret";
-        //String region = "us-east-1";
+    private String getSecret(String region, String secretName) {
 
         // Create a Secrets Manager client
         AWSSecretsManager client  = AWSSecretsManagerClientBuilder.standard()
@@ -182,7 +182,9 @@ public class MonitorEndedBookings {
         // See https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
         // We rethrow the exception by default.
 
-        String secret, decodedBinarySecret;
+        String secret;
+        String decodedBinarySecret;
+
         GetSecretValueRequest getSecretValueRequest = new GetSecretValueRequest()
                 .withSecretId(secretName);
         GetSecretValueResult getSecretValueResult = null;
@@ -190,23 +192,23 @@ public class MonitorEndedBookings {
         try {
             getSecretValueResult = client.getSecretValue(getSecretValueRequest);
         } catch (DecryptionFailureException e) {
-            // Secrets Manager can't decrypt the protected secret text using the provided KMS key.
+            logger.info("Secrets Manager can't decrypt the protected secret text using the provided KMS key: {}", e.getMessage());
             // Deal with the exception here, and/or rethrow at your discretion.
             throw e;
         } catch (InternalServiceErrorException e) {
-            // An error occurred on the server side.
+            logger.info("An error occurred on the server side: {}", e.getMessage());
             // Deal with the exception here, and/or rethrow at your discretion.
             throw e;
         } catch (InvalidParameterException e) {
-            // You provided an invalid value for a parameter.
+            logger.info("invalid value for a parameter was provided: {}", e.getMessage());
             // Deal with the exception here, and/or rethrow at your discretion.
             throw e;
         } catch (InvalidRequestException e) {
-            // You provided a parameter value that is not valid for the current state of the resource.
+            logger.info("parameter value provided that is not valid for the current state of the resource: {}", e.getMessage());
             // Deal with the exception here, and/or rethrow at your discretion.
             throw e;
         } catch (ResourceNotFoundException e) {
-            // We can't find the resource that you asked for.
+            logger.info("We can't find the resource that you asked for: {}", e.getMessage());
             // Deal with the exception here, and/or rethrow at your discretion.
             throw e;
         }
