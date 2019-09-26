@@ -29,6 +29,9 @@ Parameters:
   LogoutUrl:
     Type: String
     Default: xxx
+  UserPoolId:
+    Type: String
+    Default: xxx
   UserPoolName:
     Type: String
     Default: dev-0925
