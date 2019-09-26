@@ -139,15 +139,11 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
     @Nullable
     public List<Booking> retrieveBookings(Map<String, String> queryStringParameters, Booking booking) throws IOException {
 
-
         if (!Optional.ofNullable(queryStringParameters).isPresent()) {
            return booking.list();
-        } else if (queryStringParameters.containsKey(queryEnum.scooterId.toString()) || queryStringParameters.containsKey(queryEnum.userId.toString()) || queryStringParameters.containsKey(queryEnum.startDate.toString())) {
-
+        }
             Map<String, String> validKeyParams = new HashMap<>();
             Map<String, String> filter = new HashMap<>();
-
-
             //Only pass through supported query params
             queryStringParameters.forEach((k, v) -> {
                 for (queryEnum e : queryEnum.values()) {
@@ -156,7 +152,10 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
                     }
                 }
             });
-
+            //if no valid keys are found return all
+            if (validKeyParams.isEmpty()){
+                return booking.list();
+            }
             if (validKeyParams.containsKey(queryEnum.startDate.toString())) {
                 if (validKeyParams.size() == 1) {
                   return booking.bookingsByDate(LocalDate.parse(validKeyParams.get(queryEnum.startDate.toString())));
@@ -179,7 +178,6 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
                     });
                     return booking.bookingsByUserId(validKeyParams.get(queryEnum.userId.toString()), filter);
                 }
-
             } else if (validKeyParams.containsKey(queryEnum.scooterId.toString())) {
                 if (validKeyParams.size() == 1) {
                     return booking.bookingsByScooterId(validKeyParams.get(queryEnum.scooterId.toString()));
@@ -192,8 +190,6 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
                     return booking.bookingsByScooterId(validKeyParams.get(queryEnum.scooterId.toString()), filter);
                 }
             }
-        }
-
         return booking.list();
     }
 }
