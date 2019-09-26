@@ -247,11 +247,8 @@ public class Booking {
 
 
 
-
-
     //get bookings by startTime that has passed from now minus deadline
     public List<Booking> bookingsByStartTime(int deadlineSeconds){
-        //get check from now minus deadline
         Instant startCheck = Instant.now().minusSeconds(deadlineSeconds);
         LocalDate date = LocalDate.parse(startCheck.toString().split("T")[0]);
 
@@ -274,7 +271,6 @@ public class Booking {
 
 
 
-
     //return all bookings that has ended (now-6) to (now-5) minutes ago and that is not in a cancelled state
     public List<Booking> bookingsByEndTime(){
         //start-value to check for bookings ending from 6 to 5 minutes back from now
@@ -289,13 +285,6 @@ public class Booking {
         values.put(":end2", new AttributeValue().withS(startCheck.toString()));
         values.put(":invalidState", new AttributeValue().withS(BookingStatus.CANCELLED.toString()));
 
-//        Map<String, AttributeValue> values = new HashMap<>();
-//        values.put(":today", new AttributeValue().withS(today.toString()));
-//        values.put(":end1", new AttributeValue().withS(now.minusSeconds(60 * 6).toString()));
-//        values.put(":end2", new AttributeValue().withS(now.minusSeconds(60 * 5).toString()));
-//        values.put(":invalidState", new AttributeValue().withS(BookingStatus.CANCELLED.toString()));
-
-        //query for all bookings that has ended (now -6) to (now-5) minutes ago and is not cancelled
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
         queryExp.withKeyConditionExpression("endDate = :today and endTime between :end1 and :end2")
 

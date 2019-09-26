@@ -56,50 +56,70 @@ public class BookingQueryTest {
         b1.setStartTime(Instant.parse("2019-09-03T13:20:00.000Z"));
         b1.setEndTime(Instant.parse("2019-09-03T13:45:00.000Z"));
 <<<<<<< HEAD
+<<<<<<< HEAD
         //b1.setStartDate(LocalDate.parse("2019-09-03"));
 =======
         b1.setStartDate(LocalDate.parse("2019-09-03"));
 >>>>>>> new indexes and Monitor start and end working
+=======
+        //b1.setStartDate(LocalDate.parse("2019-09-03"));
+>>>>>>> add working query tests, clean up tests, clean up MonitorEndedBooking part1
 
         b2.setScooterId("2");
         b2.setUserId("b");
         b2.setStartTime(Instant.parse("2019-09-04T15:10:00.000Z"));
         b2.setEndTime(Instant.parse("2019-09-04T15:35:00.000Z"));
 <<<<<<< HEAD
+<<<<<<< HEAD
         //b2.setStartDate(LocalDate.parse("2019-09-04"));
 =======
         b2.setStartDate(LocalDate.parse("2019-09-04"));
 >>>>>>> new indexes and Monitor start and end working
+=======
+        //b2.setStartDate(LocalDate.parse("2019-09-04"));
+>>>>>>> add working query tests, clean up tests, clean up MonitorEndedBooking part1
 
         b3.setScooterId("1");
         b3.setUserId("c");
         b3.setStartTime(Instant.parse("2019-09-03T15:10:00.000Z"));
         b3.setEndTime(Instant.parse("2019-09-03T15:35:00.000Z"));
 <<<<<<< HEAD
+<<<<<<< HEAD
         //b3.setStartDate(LocalDate.parse("2019-09-03"));
 =======
         b3.setStartDate(LocalDate.parse("2019-09-03"));
 >>>>>>> new indexes and Monitor start and end working
+=======
+        //b3.setStartDate(LocalDate.parse("2019-09-03"));
+>>>>>>> add working query tests, clean up tests, clean up MonitorEndedBooking part1
 
         b4.setScooterId("4");
         b4.setUserId("c");
         b4.setStartTime(Instant.parse("2019-09-03T13:20:00.000Z"));
         b4.setEndTime(Instant.parse("2019-09-03T13:45:00.000Z"));
 <<<<<<< HEAD
+<<<<<<< HEAD
         //b4.setStartDate(LocalDate.parse("2019-09-03"));
 =======
         b4.setStartDate(LocalDate.parse("2019-09-03"));
 >>>>>>> new indexes and Monitor start and end working
+=======
+        //b4.setStartDate(LocalDate.parse("2019-09-03"));
+>>>>>>> add working query tests, clean up tests, clean up MonitorEndedBooking part1
 
         b5.setScooterId("4");
         b5.setUserId("d");
         b5.setStartTime(Instant.parse("2019-09-04T13:20:00.000Z"));
         b5.setEndTime(Instant.parse("2019-09-04T13:45:00.000Z"));
 <<<<<<< HEAD
+<<<<<<< HEAD
         //b5.setStartDate(LocalDate.parse("2019-09-04"));
 =======
         b5.setStartDate(LocalDate.parse("2019-09-04"));
 >>>>>>> new indexes and Monitor start and end working
+=======
+        //b5.setStartDate(LocalDate.parse("2019-09-04"));
+>>>>>>> add working query tests, clean up tests, clean up MonitorEndedBooking part1
 
         try {
             b1.save(b1);

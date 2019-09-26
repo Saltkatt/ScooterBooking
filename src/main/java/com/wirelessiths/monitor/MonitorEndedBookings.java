@@ -54,6 +54,7 @@ public class MonitorEndedBookings {
         }
         logger.info("number of bookings ended: {}", endedBookings.size());
 
+
         try{
             Map<String, String> auth = getAuth(audience, actor, clientSecret, authUrl);
             String accessToken = auth.get("access_token");
