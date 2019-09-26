@@ -1,0 +1,22 @@
+{
+  "restApiId": "924021qxji",
+  "resourceId": "w4801d",
+  "httpMethod": "POST",
+  "patchOperations": [
+    {
+      "op": "add",
+      "path": "/authorizationScopes",
+      "value": "email"
+    },
+    {
+      "op": "add",
+      "path": "/authorizationScopes",
+      "value": "openid"
+    },
+    {
+      "op": "add",
+      "path": "/authorizationScopes",
+      "value": "aws.cognito.signin.user.admin"
+    }
+  ]
+}

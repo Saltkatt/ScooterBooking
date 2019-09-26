@@ -1,5 +1,6 @@
 package com.wirelessiths.service;
 
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.MessageAttributeValue;
@@ -79,7 +80,7 @@ public class SNSService {
      * @param phoneNumber The phoneNumber. If the phone number is empty dont send any message.
      * @param smsAttributes Attributes for the message
      */
-    public static void sendSMSMessage(AmazonSNSClient snsClient, String message,
+    public static void sendSMSMessage(AmazonSNS snsClient, String message,
                                       String phoneNumber, Map<String, MessageAttributeValue> smsAttributes) {
         if (!phoneNumber.isEmpty()) {
             PublishResult result = snsClient.publish(new PublishRequest()
@@ -90,8 +91,8 @@ public class SNSService {
         }
     }
 
-    public static AmazonSNSClient getAmazonSNSClient() {
-        return new AmazonSNSClient();
+    public static AmazonSNS getAmazonSNSClient() {
+        return AmazonSNSClient.builder().withRegion(Regions.US_EAST_1).build();
     }
 
 }
