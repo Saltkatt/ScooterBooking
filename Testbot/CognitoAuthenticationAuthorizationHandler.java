@@ -1,7 +1,7 @@
 /*
  * CognitoAuthenticationAuthorizationHandler authenticates a token in Cognito for usage in Lambda.
  * The methods are created based on CRUD functionality using Json for input.
- *
+ * Used the OkHttp3 library for the HTTP Requests.
  */
 
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
@@ -39,7 +39,7 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
 
         //JSON input data
         String jsonInputString = "{\n" +
-                "\"scooterId\" : \"Slash\",\n" +
+                "\"scooterId\" : \"s9vjES2\",\n" +
                 "\"startTime\" : \"2019-08-30T15:00:36.739Z\",\n" +
                 "\"endTime\" : \"2019-08-30T16:00:36.739Z\"\n" +
                 "}";
