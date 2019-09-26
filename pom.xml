@@ -64,6 +64,7 @@
       <groupId>com.fasterxml.jackson.core</groupId>
       <artifactId>jackson-annotations</artifactId>
       <version>2.10.0.pr3</version>
+
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -72,6 +73,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+
       <groupId>com.amazonaws</groupId>
       <artifactId>aws-java-sdk-dynamodb</artifactId>
       <version>1.11.638</version>

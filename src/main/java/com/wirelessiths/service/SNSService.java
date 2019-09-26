@@ -93,6 +93,7 @@ public class SNSService {
 
     public static AmazonSNS getAmazonSNSClient() {
         return AmazonSNSClient.builder().withRegion(Regions.EU_WEST_1).build();
+
     }
 
 }
