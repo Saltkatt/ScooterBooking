@@ -1,5 +1,6 @@
 package com.wirelessiths.monitor;
 
+import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -113,7 +114,7 @@ public class MonitorEndedBookingsTemp {
 
     private void sendMessage(String message, Booking booking, String userPoolId){
         String phoneNumber = UserService.getUserPhoneNumber(booking.getUserId(), userPoolId);
-        AmazonSNSClient snsClient = getAmazonSNSClient();
+        AmazonSNS snsClient = getAmazonSNSClient();
         Map<String, MessageAttributeValue> smsAttributes =
                 new HashMap<>();
         //<set SMS attributes>
