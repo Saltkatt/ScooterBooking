@@ -166,30 +166,30 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
                             filter.put(k, v);
                         }
                     });
-                    return new Booking().bookingsByDate(LocalDate.parse(validKeyParams.get(queryEnum.startDate.toString())), filter);
+                    return booking.bookingsByDate(LocalDate.parse(validKeyParams.get(queryEnum.startDate.toString())), filter);
                 }
             } else if (validKeyParams.containsKey(queryEnum.userId.toString())) {
                 if (validKeyParams.size() == 1) {
-                    return booking.bookingsByUserId(queryEnum.userId.toString());
+                    return booking.bookingsByUserId(validKeyParams.get(queryEnum.userId.toString()));
                 } else {
                     validKeyParams.forEach((k, v) -> {
                         if (!k.equals(queryEnum.userId.toString())) {
                             filter.put(k, v);
                         }
                     });
-                    return booking.bookingsByUserId(queryEnum.userId.toString(), filter);
+                    return booking.bookingsByUserId(validKeyParams.get(queryEnum.userId.toString()), filter);
                 }
 
             } else if (validKeyParams.containsKey(queryEnum.scooterId.toString())) {
                 if (validKeyParams.size() == 1) {
-                    return booking.bookingsByScooterId(queryEnum.scooterId.toString());
+                    return booking.bookingsByScooterId(validKeyParams.get(queryEnum.scooterId.toString()));
                 } else {
                     validKeyParams.forEach((k, v) -> {
                         if (!k.equals(queryEnum.scooterId.toString())) {
                             filter.put(k, v);
                         }
                     });
-                    return booking.bookingsByScooterId(queryEnum.scooterId.toString(), filter);
+                    return booking.bookingsByScooterId(validKeyParams.get(queryEnum.scooterId.toString()), filter);
                 }
             }
         }
