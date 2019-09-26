@@ -98,9 +98,9 @@ public class BookingQueryTest {
     //Tests for query methods
 
     @Test
-    public void getByScooterIdNoFilter() {
+    public void scooterId() {
 
-        System.out.println("getByscooterId query: ");
+        System.out.println("scooterId query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
         ListBookingHandler listBookingHandler = new ListBookingHandler();
@@ -111,14 +111,13 @@ public class BookingQueryTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        list.forEach(System.out::println);
         assertEquals(2, list.size());
     }
 
     @Test
-    public void getByUserId() {
+    public void userId() {
 
-        System.out.println("getByUserId query: ");
+        System.out.println("userId query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
         ListBookingHandler listBookingHandler = new ListBookingHandler();
@@ -129,14 +128,13 @@ public class BookingQueryTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        list.forEach(System.out::println);
         assertEquals(2, list.size());
     }
 
     @Test
-    public void getByDate() {
+    public void StartDate() {
 
-        System.out.println("getBydate query: ");
+        System.out.println("StartDate query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
         ListBookingHandler listBookingHandler = new ListBookingHandler();
@@ -147,14 +145,13 @@ public class BookingQueryTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        list.forEach(System.out::println);
         assertEquals(3, list.size());
     }
 
 
     @Test
-    public void getByScooterIdAllFilters() {
-        System.out.println("getByscooterId query: ");
+    public void scooterIdUserIdStartDate() {
+        System.out.println("scooterIdUserIdStartDate : ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
         ListBookingHandler listBookingHandler = new ListBookingHandler();
@@ -167,13 +164,12 @@ public class BookingQueryTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        list.forEach(System.out::println);
         assertEquals(0, list.size());
     }
 
     @Test
-    public void getByScooterIdFilterByDate() {
-        System.out.println("getByscooterId filter by startDate query: ");
+    public void scooterIdStartDate() {
+        System.out.println("scooterIdStartDate query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
         ListBookingHandler listBookingHandler = new ListBookingHandler();
@@ -185,13 +181,12 @@ public class BookingQueryTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        list.forEach(System.out::println);
         assertEquals(1, list.size());
     }
 
     @Test
-    public void getByScooterIdFilterByUserId() {
-        System.out.println("getByscooterId filter by userId query: ");
+    public void scooterIdUserId() {
+        System.out.println("scooterIdUserId query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
         ListBookingHandler listBookingHandler = new ListBookingHandler();
@@ -203,13 +198,12 @@ public class BookingQueryTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        list.forEach(System.out::println);
         assertEquals(1, list.size());
     }
 
     @Test
-    public void getByDateAllFilters() {
-        System.out.println("getByDate all filters query: ");
+    public void startDateScooterIdUserId0() {
+        System.out.println("startDateScooterIdUserId0 query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
         ListBookingHandler listBookingHandler = new ListBookingHandler();
@@ -223,15 +217,14 @@ public class BookingQueryTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        list.forEach(System.out::println);
         assertEquals(1, list.size());
     }
 
 
     @Test
-    public void getByDateFilterByUser() {
+    public void startDateUserId() {
 
-        System.out.println("getByDate Filter by user query: ");
+        System.out.println("startDateUserId query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
         ListBookingHandler listBookingHandler = new ListBookingHandler();
@@ -244,15 +237,14 @@ public class BookingQueryTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        list.forEach(System.out::println);
         assertEquals(2, list.size());
 
     }
 
     @Test
-    public void getByDateFilterByScooter() {
+    public void startDateScooterId() {
 
-        System.out.println("getByDate Filter by scooter query: ");
+        System.out.println("startDateScooterId query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
         ListBookingHandler listBookingHandler = new ListBookingHandler();
@@ -264,14 +256,13 @@ public class BookingQueryTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        list.forEach(System.out::println);
         assertEquals(1, list.size());
 
     }
 
     @Test
-    public void getByUserAllFilters() {
-        System.out.println("getByUserId Filter by user query: ");
+    public void startDateScooterIdUserId() {
+        System.out.println("startDateScooterIdUserId query: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
         ListBookingHandler listBookingHandler = new ListBookingHandler();
@@ -285,14 +276,13 @@ public class BookingQueryTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        list.forEach(System.out::println);
         assertEquals(1, list.size());
 
     }
 
     @Test
-    public void getByUserFilterByScooterId() {
-        System.out.println("getByUserId Filter by scooterId query: ");
+    public void userIdScooterId() {
+        System.out.println("userId and ScooterId : ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
         ListBookingHandler listBookingHandler = new ListBookingHandler();
@@ -304,14 +294,13 @@ public class BookingQueryTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        list.forEach(System.out::println);
         assertEquals(1, list.size());
 
     }
 
     @Test
-    public void getByUserFilterByDate() {
-        System.out.println("getByUserId Filter by bookingDate query: ");
+    public void userIdDate() {
+        System.out.println("userid and date: ");
         Booking booking = new Booking(client, mapperConfig);
         List<Booking> list = new ArrayList<>();
         ListBookingHandler listBookingHandler = new ListBookingHandler();
@@ -323,7 +312,71 @@ public class BookingQueryTest {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        list.forEach(System.out::println);
         assertEquals(2, list.size());
+    }
+
+    @Test
+    public void nullQueryParamsgetsAll() {
+        System.out.println("userid and date: ");
+        Booking booking = new Booking(client, mapperConfig);
+        List<Booking> list = new ArrayList<>();
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        try {
+            list = listBookingHandler.retrieveBookings(null, booking);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assertEquals(5, list.size());
+    }
+
+    @Test
+    public void emptyQueryParamsgetsAll() {
+        System.out.println("userid and date: ");
+        Booking booking = new Booking(client, mapperConfig);
+        List<Booking> list = new ArrayList<>();
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        try {
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assertEquals(5, list.size());
+    }
+
+    @Test
+    public void unknownQueryParamIgnored() {
+        System.out.println("userid and date: ");
+        Booking booking = new Booking(client, mapperConfig);
+        List<Booking> list = new ArrayList<>();
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("Rebookable", "true");
+        queryparams.put("cool", "no");
+        queryparams.put("userId", "c");
+        try {
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assertEquals(2, list.size());
+    }
+
+    @Test
+    public void allQueryParamsUnkownGetsAll() {
+        System.out.println("userid and date: ");
+        Booking booking = new Booking(client, mapperConfig);
+        List<Booking> list = new ArrayList<>();
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("Rebookable", "true");
+        queryparams.put("cool", "no");
+        queryparams.put("Flying", "yes");
+        try {
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assertEquals(5, list.size());
     }
 }

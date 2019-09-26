@@ -313,7 +313,6 @@ public class Booking {
             filterExpression.append(v1.substring(1)).append(" = ").append(v1);
         });
 
-
         DynamoDBQueryExpression<Booking> queryExpression =
                 new DynamoDBQueryExpression<>();
         queryExpression
