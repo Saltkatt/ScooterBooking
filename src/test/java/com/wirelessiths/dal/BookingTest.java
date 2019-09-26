@@ -1,5 +1,6 @@
 package com.wirelessiths.dal;
 
+
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.wirelessiths.dal.trip.Trip;

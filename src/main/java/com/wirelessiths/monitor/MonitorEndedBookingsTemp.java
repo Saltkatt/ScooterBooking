@@ -93,7 +93,6 @@ public class MonitorEndedBookingsTemp {
     }
 
 
-
     private List<Trip> getTrips(Booking booking) throws IOException{
 
         String url = String.format("%s/%s%s", baseUrl, booking.getScooterId(), "/trips");

@@ -274,20 +274,12 @@ public class Booking {
         //we need a startcheck date to use with the gsi endTimeIndex hash key
         LocalDate date = LocalDate.parse(startCheck.toString().split("T")[0]);
 
-
         Map<String, AttributeValue> values = new HashMap<>();
         values.put(":today", new AttributeValue().withS(date.toString()));
         values.put(":end1", new AttributeValue().withS(startCheck.minusSeconds(60).toString()));
         values.put(":end2", new AttributeValue().withS(startCheck.toString()));
         values.put(":invalidState", new AttributeValue().withS(BookingStatus.CANCELLED.toString()));
 
-//        Map<String, AttributeValue> values = new HashMap<>();
-//        values.put(":today", new AttributeValue().withS(today.toString()));
-//        values.put(":end1", new AttributeValue().withS(now.minusSeconds(60 * 6).toString()));
-//        values.put(":end2", new AttributeValue().withS(now.minusSeconds(60 * 5).toString()));
-//        values.put(":invalidState", new AttributeValue().withS(BookingStatus.CANCELLED.toString()));
-
-        //query for all bookings that has ended (now -6) to (now-5) minutes ago and is not cancelled
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
         queryExp.withKeyConditionExpression("endDate = :today and endTime between :end1 and :end2")
                 .withFilterExpression("bookingStatus <> :invalidState")

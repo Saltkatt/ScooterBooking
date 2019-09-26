@@ -68,7 +68,6 @@ public class MonitorEndedBookings {
                 List<Trip> trips = getTrips(accessToken, vehicleId, pjUrl);
                 if(trips == null || trips.isEmpty()){
                     continue;
-
                 }
 //                ArrayNode trips = (ArrayNode) mapper.readTree(response)
 //                        .path("trip_overview_list");
@@ -83,7 +82,6 @@ public class MonitorEndedBookings {
                 logger.info("appending trip to booking");
                 endedBooking.save(endedBooking);
                 logger.info("saving updated booking");
-
             }
         }catch(IOException e) {
             logger.info(e.getMessage());
@@ -145,8 +143,6 @@ public class MonitorEndedBookings {
     }
 
     private String getSecret(String region, String secretName) {
-
-
         // Create a Secrets Manager client
         AWSSecretsManager client  = AWSSecretsManagerClientBuilder.standard()
                 .withRegion(region)
