@@ -1,5 +1,6 @@
 package com.wirelessiths.monitor;
 
+import com.amazonaws.services.sns.AmazonSNS;
 import com.amazonaws.services.sns.AmazonSNSClient;
 import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -96,7 +97,7 @@ public class MonitorEndedBookingsFake {
                     logger.info("No trips for booking:" + endedBooking);
                     //endedBooking.save(endedBooking);
                     String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
-                    AmazonSNSClient snsClient = getAmazonSNSClient();
+                    AmazonSNS snsClient = getAmazonSNSClient();
                     String message = "No trip registered for your booking, if you didnt use the scooter, please cancel the booking next time";
                     Map<String, MessageAttributeValue> smsAttributes =
                             new HashMap<String, MessageAttributeValue>();
@@ -116,7 +117,7 @@ public class MonitorEndedBookingsFake {
                         return;
                     }
                     String phoneNumber = UserService.getUserPhoneNumber(endedBooking.getUserId(), System.getenv("USER_POOL_ID"));
-                    AmazonSNSClient snsClient = getAmazonSNSClient();
+                    AmazonSNS snsClient = getAmazonSNSClient();
                     double totalDistance = endedBooking.getTrips().stream().mapToDouble(Trip::getTotalDistanceMeter).sum();
                     String message = "Thank you for completing your trip. You traveled " + totalDistance + " meters";
                     Map<String, MessageAttributeValue> smsAttributes =
