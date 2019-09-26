@@ -242,8 +242,9 @@ public class Booking {
         return booking;
     }
 
+
+    //get bookings by startTime that has passed from now minus deadline
     public List<Booking> bookingsByStartTime(int deadlineSeconds){
-        //get check from now minus deadline
         Instant startCheck = Instant.now().minusSeconds(deadlineSeconds);
         LocalDate date = LocalDate.parse(startCheck.toString().split("T")[0]);
 
@@ -262,18 +263,13 @@ public class Booking {
         return mapper.query(Booking.class, queryExp);
     }
 
+
     //return all bookings that has ended (now-6) to (now-5) minutes ago and that is not in a cancelled state
     public List<Booking> bookingsByEndTime(){
         //start-value to check for bookings ending from 6 to 5 minutes back from now
         Instant startCheck = Instant.now().minusSeconds(60 * 5L);
         //we need a startcheck date to use with the gsi endTimeIndex hash key
         LocalDate date = LocalDate.parse(startCheck.toString().split("T")[0]);
-        //LocalDate today = LocalDate.parse(Instant.now().minusSeconds(60 * 5).toString().split("T")[0]);
-        //Instant now = Instant.now();
-//        System.out.println("today from dao: " + today);
-//        System.out.println("now from dao: " + now);
-//        System.out.println("checking from: " + now.minusSeconds(60 * 6));
-//        System.out.println("to: " + now.minusSeconds(60 * 5));
 
         Map<String, AttributeValue> values = new HashMap<>();
         values.put(":today", new AttributeValue().withS(date.toString()));
@@ -281,13 +277,6 @@ public class Booking {
         values.put(":end2", new AttributeValue().withS(startCheck.toString()));
         values.put(":invalidState", new AttributeValue().withS(BookingStatus.CANCELLED.toString()));
 
-//        Map<String, AttributeValue> values = new HashMap<>();
-//        values.put(":today", new AttributeValue().withS(today.toString()));
-//        values.put(":end1", new AttributeValue().withS(now.minusSeconds(60 * 6).toString()));
-//        values.put(":end2", new AttributeValue().withS(now.minusSeconds(60 * 5).toString()));
-//        values.put(":invalidState", new AttributeValue().withS(BookingStatus.CANCELLED.toString()));
-
-        //query for all bookings that has ended (now -6) to (now-5) minutes ago and is not cancelled
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
         queryExp.withKeyConditionExpression("endDate = :today and endTime between :end1 and :end2")
                 .withFilterExpression("bookingStatus <> :invalidState")
@@ -296,6 +285,7 @@ public class Booking {
                 .withConsistentRead(false);
         return mapper.query(Booking.class, queryExp);
     }
+
 
     public List<Booking> getByUserId(String userId) throws IOException {
         // Query with mapper
@@ -312,6 +302,7 @@ public class Booking {
 
         return mapper.query(Booking.class, queryExpression);
     }
+
 
     public List<Booking> getByUserIdWithFilter(String userId, Map<String, String> filter) throws IOException {
 
@@ -342,6 +333,7 @@ public class Booking {
         return mapper.query(Booking.class, queryExpression);
     }
 
+
     public List<Booking> getByScooterId(String scooterId) throws IOException {
              Map<String, AttributeValue> values = new HashMap<>();
 
@@ -354,6 +346,7 @@ public class Booking {
 
         return mapper.query(Booking.class, queryExp);
     }
+
 
     public List<Booking> getByScooterIdWithFilter(String scooterId, Map<String, String> filter) throws IOException {
         Map<String, AttributeValue> values = new HashMap<>();
@@ -388,10 +381,9 @@ public class Booking {
         if(!expression.isEmpty()){
             queryExp.setExpressionAttributeNames(expression);
         }
-
-
         return mapper.query(Booking.class, queryExp);
     }
+
 
     public List<Booking> getByDate(LocalDate date) throws IOException {
 
@@ -402,7 +394,7 @@ public class Booking {
         DynamoDBQueryExpression<Booking> queryExpression =
                 new DynamoDBQueryExpression<>();
         queryExpression.setHashKeyValues(booking);
-        queryExpression.setIndexName("endTimeIndex");
+        queryExpression.setIndexName("startTimeIndex");
         queryExpression.setConsistentRead(false);
 
         return mapper.query(Booking.class, queryExpression);
@@ -441,7 +433,7 @@ public class Booking {
         if(!filterExpression.toString().isEmpty()) {
             queryExpression.setFilterExpression(filterExpression.toString());
         }
-        queryExpression.withIndexName("endTimeIndex")
+        queryExpression.withIndexName("startTimeIndex")
         .withConsistentRead(false);
 
 

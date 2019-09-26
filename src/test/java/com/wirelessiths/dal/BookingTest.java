@@ -1,5 +1,6 @@
 package com.wirelessiths.dal;
 
+
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.wirelessiths.dal.trip.Trip;
@@ -37,41 +38,46 @@ import static org.junit.Assert.*;
         populateForFailValidationTest();
     }
 
-        public static void startLocalDynamoDB() {
-            String line = "";
-            try {
-                Process p = Runtime.getRuntime().exec("docker ps --filter ancestor=amazon/dynamodb-local");
-                BufferedReader bri = new BufferedReader
-                        (new InputStreamReader(p.getInputStream()));
-                BufferedReader bre = new BufferedReader
-                        (new InputStreamReader(p.getErrorStream()));
-                while ((line = bri.readLine()) != null) {
-                    System.out.println(line);
-                }
-                bri.close();
-                while ((line = bre.readLine()) != null) {
-                    System.out.println(line);
-                }
-                bre.close();
-                p.waitFor();
-                System.out.println("Done.");
-            }
-            catch (Exception err) {
-                err.printStackTrace();
-            }
-            if (!line.contains("amazon/dynamodb-local")) {
-                Runtime rt = Runtime.getRuntime();
-                try {
-                    Process pr = rt.exec("docker run -d -p 8000:8000 amazon/dynamodb-local");
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
 
+    @AfterClass
+    public static void deleteTable(){
+        LocalDbHandler.deleteTable(tableName, client);
+    }
+
+
+    public static void startLocalDynamoDB() {
+        String line = "";
+        try {
+            Process p = Runtime.getRuntime().exec("docker ps --filter ancestor=amazon/dynamodb-local");
+            BufferedReader bri = new BufferedReader
+                    (new InputStreamReader(p.getInputStream()));
+            BufferedReader bre = new BufferedReader
+                    (new InputStreamReader(p.getErrorStream()));
+            while ((line = bri.readLine()) != null) {
+                System.out.println(line);
+            }
+            bri.close();
+            while ((line = bre.readLine()) != null) {
+                System.out.println(line);
+            }
+            bre.close();
+            p.waitFor();
+            System.out.println("Done.");
+        }
+        catch (Exception err) {
+            err.printStackTrace();
+        }
+        if (!line.contains("amazon/dynamodb-local")) {
+            Runtime rt = Runtime.getRuntime();
+            try {
+                Process pr = rt.exec("docker run -d -p 8000:8000 amazon/dynamodb-local");
+            } catch (IOException e) {
+                e.printStackTrace();
             }
         }
+    }
 
-        //@Before
-    public static void populateForOkValidationTest(){
+        public static void populateForOkValidationTest(){
         System.out.println("adding passing test cases to table..");
         Booking b1 = new Booking(client, mapperConfig );
         Booking b2 = new Booking(client, mapperConfig);
@@ -378,15 +384,4 @@ import static org.junit.Assert.*;
             fail();
         }
     }
-
-
-    @AfterClass
-    public static void deleteTable(){
-        LocalDbHandler.deleteTable(tableName, client);
-    }
-
-
-
-
-
 }
