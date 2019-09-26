@@ -109,7 +109,7 @@ public class Booking {
         this.endDate = endDate;
     }
 
-    @DynamoDBIndexRangeKey(attributeName = "startTime", globalSecondaryIndexName = "bookingIndex", globalSecondaryIndexNames = "startTimeIndex")
+    @DynamoDBIndexRangeKey(attributeName = "startTime", globalSecondaryIndexNames = {"bookingIndex", "startTimeIndex"})
     @DynamoDBTypeConverted( converter = InstantConverter.class )
     public Instant getStartTime() {
         return startTime;
@@ -242,9 +242,9 @@ public class Booking {
         return booking;
     }
 
-    public List<Booking> bookingsByStartTime(int deadline){
-
-        Instant startCheck = Instant.now().minusSeconds(60 * 20);
+    public List<Booking> bookingsByStartTime(int deadlineSeconds){
+        //get check from now minus deadline
+        Instant startCheck = Instant.now().minusSeconds(deadlineSeconds);
         LocalDate date = LocalDate.parse(startCheck.toString().split("T")[0]);
 
         Map<String, AttributeValue> values = new HashMap<>();
@@ -255,7 +255,7 @@ public class Booking {
 
         DynamoDBQueryExpression<Booking> queryExp = new DynamoDBQueryExpression<>();
         queryExp.withKeyConditionExpression("startDate = :today and startTime between :start1 and :start2")
-                .withFilterExpression("bookingStatus <> :validState")
+                .withFilterExpression("bookingStatus = :validState")
                 .withIndexName("startTimeIndex")
                 .withExpressionAttributeValues(values)
                 .withConsistentRead(false);
@@ -265,7 +265,7 @@ public class Booking {
     //return all bookings that has ended (now-6) to (now-5) minutes ago and that is not in a cancelled state
     public List<Booking> bookingsByEndTime(){
         //start-value to check for bookings ending from 6 to 5 minutes back from now
-        Instant startCheck = Instant.now().minusSeconds(60 * 5);
+        Instant startCheck = Instant.now().minusSeconds(60 * 5L);
         //we need a startcheck date to use with the gsi endTimeIndex hash key
         LocalDate date = LocalDate.parse(startCheck.toString().split("T")[0]);
         //LocalDate today = LocalDate.parse(Instant.now().minusSeconds(60 * 5).toString().split("T")[0]);
@@ -396,7 +396,8 @@ public class Booking {
     public List<Booking> getByDate(LocalDate date) throws IOException {
 
         Booking booking = new Booking();
-        booking.setBookingDate(date);
+
+        booking.setStartDate(date);
 
         DynamoDBQueryExpression<Booking> queryExpression =
                 new DynamoDBQueryExpression<>();
@@ -417,7 +418,7 @@ public class Booking {
     public List<Booking> getByDateWithFilter(LocalDate date, Map<String, String> filter) throws IOException {
 
         Booking booking = new Booking();
-        booking.setBookingDate(date);
+        booking.setStartDate(date);
         Map<String, AttributeValue> values = new HashMap<>();
         filter.forEach((s1, s2) -> values.put(":"+s1, new AttributeValue().withS(s2)));
         StringBuilder filterExpression = new StringBuilder();
@@ -488,17 +489,21 @@ public class Booking {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Booking booking = (Booking) o;
-        return scooterId.equals(booking.scooterId) &&
-                bookingId.equals(booking.bookingId) &&
-                userId.equals(booking.userId) &&
-                startTime.equals(booking.startTime) &&
-                endTime.equals(booking.endTime) &&
-                bookingDate.equals(booking.bookingDate);
+        return
+                Objects.equals(scooterId, booking.scooterId) &&
+                Objects.equals(bookingId, booking.bookingId) &&
+                Objects.equals(userId, booking.userId) &&
+                Objects.equals(startTime, booking.startTime) &&
+                Objects.equals(endTime, booking.endTime) &&
+                Objects.equals(startDate, booking.startDate) &&
+                Objects.equals(endDate, booking.endDate) &&
+                bookingStatus == booking.bookingStatus &&
+                Objects.equals(trips, booking.trips);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(scooterId, bookingId, userId, startTime, endTime, bookingDate);
+        return Objects.hash(type, scooterId, bookingId, userId, startTime, endTime, startDate, endDate, bookingStatus, trips, client, mapper, dynamoDB, logger, sb);
     }
 }
 //TODO: if booking is not checked out in allotted time, will we want to keep it in the db, delete it or move it to another db? it should cancel to leave timespan available for others to book
