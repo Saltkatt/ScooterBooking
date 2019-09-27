@@ -32,7 +32,6 @@ public class DynamoDBAdapter {
 
                        .build();
         } else {
-            logger.info("running cloud dynamodb");
             //cloud
             this.client = AmazonDynamoDBClientBuilder.standard()
                     .withRegion(Regions.EU_WEST_1)
