@@ -118,7 +118,24 @@ Resources:
       DefaultRedirectURI: !Ref CallbackUrl
       LogoutURLs:
         - !Ref LogoutUrl
-
+      ReadAttributes:
+        - email
+        - email_verified
+        - family_name
+        - given_name
+        - name
+        - phone_number
+        - phone_number_verified
+        - preferred_username
+      WriteAttributes:
+        - email
+        - email_verified
+        - family_name
+        - given_name
+        - name
+        - phone_number
+        - phone_number_verified
+        - preferred_username
   UserPoolAdminGroup:
     DependsOn: UserPool
     Type: AWS::Cognito::UserPoolGroup
