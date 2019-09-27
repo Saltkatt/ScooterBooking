@@ -456,4 +456,5 @@ public class BookingQueryTest {
         }
         assertEquals(1, list.size());
     }
+
 }
