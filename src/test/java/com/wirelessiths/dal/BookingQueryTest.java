@@ -34,6 +34,7 @@ public class BookingQueryTest {
 
         client = LocalDbHandler.createClient();
         mapperConfig = LocalDbHandler.createMapperConfig(tableName);
+        LocalDbHandler.deleteTable(tableName, client);
         LocalDbHandler.createTable(tableName, client);
         populateForQueryTests();
     }

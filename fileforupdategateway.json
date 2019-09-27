@@ -1,7 +1,7 @@
 {
-  "restApiId": "924021qxji",
-  "resourceId": "w4801d",
-  "httpMethod": "POST",
+  "restApiId": "p6tjfophgc",
+  "resourceId": "wtz1n5",
+  "httpMethod": "GET",
   "patchOperations": [
     {
       "op": "add",

@@ -39,22 +39,6 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
-/* To test sam local
-        List<Booking> bookings1 = new ArrayList<>();
-	    try {
-	        Booking booking1 = new Booking();
-	        bookings1 = booking1.list();
-        } catch (Exception e) {
-
-        }
-        if(true) {
-            return ApiGatewayResponse.builder()
-                    .setStatusCode(200)
-                    .setObjectBody(bookings1)
-                    .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
-                    .build();
-        }
- */
 
         try {
 

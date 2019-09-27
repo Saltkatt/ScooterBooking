@@ -91,6 +91,18 @@ Resources:
     Properties:
       UserPoolId: !Ref UserPool
       GenerateSecret: false
+      ReadAttributes:
+        - email
+        - phone_number
+        - given_name
+        - family_name
+        - preferred_username
+      WriteAttributes:
+        - email
+        - phone_number
+        - given_name
+        - family_name
+        - preferred_username
       AllowedOAuthFlows:
         - implicit
       AllowedOAuthFlowsUserPoolClient: true
