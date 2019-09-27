@@ -53,6 +53,7 @@ public class BookingQueryTest {
         Booking b3 = new Booking(client, mapperConfig);
         Booking b4 = new Booking(client, mapperConfig);
         Booking b5 = new Booking(client, mapperConfig);
+        Booking b6 = new Booking(client, mapperConfig);
 
         b1.setScooterId("1");
         b1.setUserId("a");
@@ -83,6 +84,7 @@ public class BookingQueryTest {
         b5.setStartTime(Instant.parse("2019-09-04T13:20:00.000Z"));
         b5.setEndTime(Instant.parse("2019-09-04T13:45:00.000Z"));
         b5.setStartDate(LocalDate.parse("2019-09-04"));
+
 
         try {
             b1.save(b1);
@@ -446,6 +448,10 @@ public class BookingQueryTest {
         }
         assertEquals(1, list.size());
     }
+
+
+
+
 
 
 
