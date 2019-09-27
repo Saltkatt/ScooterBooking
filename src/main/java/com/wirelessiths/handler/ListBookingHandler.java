@@ -39,16 +39,15 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
-        Booking booking1 = new Booking();
+        List<Booking> bookings1 = new ArrayList<>();
+	    try {
+	        Booking booking1 = new Booking();
+	        bookings1 = booking1.list();
+        } catch (Exception e) {
 
-        List<Booking> bookings1 = null;
-        try {
-            bookings1 = booking1.list();
-        } catch (IOException e) {
-            e.printStackTrace();
+
         }
-
-        if (true) {
+        if(true) {
             return ApiGatewayResponse.builder()
                     .setStatusCode(200)
                     .setObjectBody(bookings1)
@@ -56,7 +55,6 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
                     .build();
 
         }
-
 
         try {
 

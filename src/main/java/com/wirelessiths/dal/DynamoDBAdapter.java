@@ -18,13 +18,19 @@ public class DynamoDBAdapter {
     private DynamoDBAdapter() {
         // create the client
         //for cloud client
-      //  this.client = AmazonDynamoDBClientBuilder.standard()
-       //         .withRegion(Regions.EU_WEST_1)
-       //         .build();
-        // For local client
-        this.client =  AmazonDynamoDBClientBuilder.standard()
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://172.18.0.1:8000", Regions.EU_WEST_1.getName()))
-                .build();
+        String test = System.getenv("ENVIRONMENT");
+        if(test.equals("test")){
+            //local
+              this.client =  AmazonDynamoDBClientBuilder.standard()
+                      .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://127.0.0.1:8000", Regions.EU_WEST_1.getName()))
+                       .build();
+        } else {
+            //cloud
+            this.client = AmazonDynamoDBClientBuilder.standard()
+                    .withRegion(Regions.EU_WEST_1)
+                    .build();
+
+        }
 
         this.dynamoDB = new DynamoDB(this.client);
     }

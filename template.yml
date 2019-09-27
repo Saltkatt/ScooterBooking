@@ -45,6 +45,7 @@ Globals:
         BOOKINGS_TABLE_NAME: !Ref TableName
         USER_POOL_ID: !Ref UserPool
         BUCKET_NAME: !Ref BucketName
+        ENVIRONMENT: production
 
 Resources:
   UserPool:
@@ -278,13 +279,13 @@ Resources:
             Resource: !GetAtt "UserPool.Arn"
         #secret-arn
         #secret-name
-      Events:
-          MonitorEnd:
-            Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-            Properties:
-               Path: /bookings/{id}
-               Method: put
-               RestApiId: !Ref MyApi  # Add this line
+#      Events:
+#          MonitorEnd:
+#            Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+#            Properties:
+#               Path: /bookings/{id}
+#               Method: put
+#               RestApiId: !Ref MyApi  # Add this line
 
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
