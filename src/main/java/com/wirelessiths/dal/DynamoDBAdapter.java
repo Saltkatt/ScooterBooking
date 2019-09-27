@@ -36,6 +36,7 @@ public class DynamoDBAdapter {
                     .build();
 
         }
+
         this.dynamoDB = new DynamoDB(this.client);
     }
 

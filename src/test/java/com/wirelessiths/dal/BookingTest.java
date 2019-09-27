@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
 
     @AfterClass
     public static void deleteTable(){
-        LocalDbHandler.deleteTable(tableName, client);
+       // LocalDbHandler.deleteTable(tableName, client);
     }
 
 
