@@ -7,7 +7,7 @@ Description: >
 Parameters:
   TableName:
     Type: String
-    Default: xxx
+    Default: test-table
   BucketName:
     Type: String
     Default: xxx
@@ -106,24 +106,7 @@ Resources:
       DefaultRedirectURI: !Ref CallbackUrl
       LogoutURLs:
         - !Ref LogoutUrl
-      ReadAttributes:
-        - email
-        - email_verified
-        - family_name
-        - given_name
-        - name
-        - phone_number
-        - phone_number_verified
-        - preferred_username
-      WriteAttributes:
-        - email
-        - email_verified
-        - family_name
-        - given_name
-        - name
-        - phone_number
-        - phone_number_verified
-        - preferred_username
+
   UserPoolAdminGroup:
     DependsOn: UserPool
     Type: AWS::Cognito::UserPoolGroup
@@ -141,7 +124,7 @@ Resources:
       Auth:
         ApiKeyRequired: false # OPTIONAL
         DefaultAuthorizer: MyCognitoAuth # OPTIONAL, if you use IAM permissions, specify AWS_IAM.
-          # For AWS_IAM:
+        # For AWS_IAM:
         # DefaultAuthorizer: AWS_IAM
         # InvokeRole: NONE # CALLER_CREDENTIALS by default unless overridden
         Authorizers:
@@ -178,11 +161,11 @@ Resources:
         - DynamoDBReadPolicy:
             TableName: !Ref TableName
         - Statement:
-          - Sid: snsaccess
-            Effect: Allow
-            Action:
-            - sns:*
-            Resource: '*'
+            - Sid: snsaccess
+              Effect: Allow
+              Action:
+                - sns:*
+              Resource: '*'
       Events:
         GetBookings:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -276,7 +259,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: target/bookings-api-dev.jar
-      Handler: com.wirelessiths.monitor.MonitorEndedBookingsTemp::lambdaHandler
+      Handler: com.wirelessiths.monitor.MonitorEndedBookingsFake::doStuff
       Runtime: java8
       Policies:
         - DynamoDBCrudPolicy:
@@ -296,45 +279,12 @@ Resources:
         #secret-arn
         #secret-name
       Events:
-#        MonitorEnd:
-#          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-#          Properties:
-#            Path: /bookings/{id}
-#            Method: put
-#            RestApiId: !Ref MyApi  # Add this line
-  MonitorStartedBookingsFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
-    Properties:
-      CodeUri: target/bookings-api-dev.jar
-      Handler: com.wirelessiths.monitor.MonitorStartedBookings::lambdaHandler
-      Runtime: java8
-      Policies:
-        - S3ReadPolicy:
-            BucketName: !Ref BucketName
-        - DynamoDBCrudPolicy:
-            TableName: !Ref TableName
-        - Statement:
-            - Sid: snsaccess
-              Effect: Allow
-              Action:
-                - sns:*
-              Resource: '*'
-        - Statement:
-            Effect: Allow
-            Action:
-              - cognito-idp:AdminGetUser
-              - cognito-idp:ListUsers
-            Resource:
-              Ref: UserPoolArn
-        #secret-arn
-        #secret-name
-      Events:
-#        MonitorEnd:
-#          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-#          Properties:
-#            Path: /bookings/{id}
-#            Method: put
-#            RestApiId: !Ref MyApi  # Add this line
+          MonitorEnd:
+            Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+            Properties:
+               Path: /bookings/{id}
+               Method: put
+               RestApiId: !Ref MyApi  # Add this line
 
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
@@ -343,17 +293,15 @@ Resources:
       AttributeDefinitions:
         - AttributeName: scooterId
           AttributeType: S
-        - AttributeName: startTime
-          AttributeType: S
         - AttributeName: endTime
           AttributeType: S
         - AttributeName: bookingId
           AttributeType: S
         - AttributeName: userId
           AttributeType: S
-        - AttributeName: startDate
+        - AttributeName: bookingDate
           AttributeType: S
-        - AttributeName: endDate
+        - AttributeName: startTime
           AttributeType: S
       KeySchema:
         - AttributeName: scooterId
@@ -388,20 +336,9 @@ Resources:
             WriteCapacityUnits: 1
         - IndexName: endTimeIndex
           KeySchema:
-            - AttributeName: endDate
+            - AttributeName: bookingDate
               KeyType: HASH
             - AttributeName: endTime
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-        - IndexName: startTimeIndex
-          KeySchema:
-            - AttributeName: startDate
-              KeyType: HASH
-            - AttributeName: startTime
               KeyType: RANGE
           Projection:
             ProjectionType: ALL

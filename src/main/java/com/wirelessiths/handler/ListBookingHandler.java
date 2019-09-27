@@ -38,7 +38,27 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 	 */
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
-		try {
+
+        Booking booking1 = new Booking();
+
+        List<Booking> bookings1 = null;
+        try {
+            bookings1 = booking1.list();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (true) {
+            return ApiGatewayResponse.builder()
+                    .setStatusCode(200)
+                    .setObjectBody(bookings1)
+                    .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
+                    .build();
+
+        }
+
+
+        try {
 
 			//logger.info(input.toString());
 
