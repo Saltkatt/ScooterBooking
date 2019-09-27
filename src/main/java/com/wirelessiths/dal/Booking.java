@@ -23,8 +23,7 @@ import java.util.*;
 public class Booking {
 
     // get the table name from .env. var. set in serverless.yml
-    private static final String BOOKINGS_TABLE_NAME = "test-table";
-    //private static final String BOOKINGS_TABLE_NAME = System.getenv("BOOKINGS_TABLE_NAME");
+    private static final String BOOKINGS_TABLE_NAME = System.getenv("BOOKINGS_TABLE_NAME");
 
     private String type;
     private String scooterId;

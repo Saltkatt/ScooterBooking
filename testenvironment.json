@@ -20,6 +20,7 @@
     "BOOKINGS_TABLE_NAME": "test-table"
   },
   "DeleteBookingFunction": {
+
     "ENVIRONMENT": "test",
     "BOOKINGS_TABLE_NAME": "test-table"
   }
