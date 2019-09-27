@@ -29,8 +29,10 @@ public class DynamoDBAdapter {
               this.client =  AmazonDynamoDBClientBuilder.standard()
                       .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://localhost:8000", Regions.EU_WEST_1.getName()))
 
+
                        .build();
         } else {
+            logger.info("running cloud dynamodb");
             //cloud
             this.client = AmazonDynamoDBClientBuilder.standard()
                     .withRegion(Regions.EU_WEST_1)
