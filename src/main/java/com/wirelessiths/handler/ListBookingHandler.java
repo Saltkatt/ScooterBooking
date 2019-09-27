@@ -45,6 +45,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 
 
 
+
             //Query key prioritization at the moment (higher prio means that that key is queried and the others are filtered):
             //1. startDate
             //2. UserId (all queries with userId require admin or that your token uuid matches the one in the query

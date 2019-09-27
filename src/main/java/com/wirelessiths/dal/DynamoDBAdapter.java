@@ -7,8 +7,12 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapper;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class DynamoDBAdapter {
+
+    private final Logger logger = LogManager.getLogger(this.getClass());
 
     private static DynamoDBAdapter db_adapter = null;
     private final AmazonDynamoDB client;
@@ -16,15 +20,17 @@ public class DynamoDBAdapter {
     private DynamoDB dynamoDB;
 
     private DynamoDBAdapter() {
-        // create the client
-        //for cloud client
-        String test = System.getenv("ENVIRONMENT");
-        if(test.equals("test")){
+
+        String environment = System.getenv("ENVIRONMENT");
+        logger.info(environment);
+        if(environment.equals("test")){
+        logger.info("running localdynamodb");
             //local
               this.client =  AmazonDynamoDBClientBuilder.standard()
-                      .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://127.0.0.1:8000", Regions.EU_WEST_1.getName()))
+                      .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://localhost:8000", Regions.EU_WEST_1.getName()))
                        .build();
         } else {
+            logger.info("running cloud dynamodb");
             //cloud
             this.client = AmazonDynamoDBClientBuilder.standard()
                     .withRegion(Regions.EU_WEST_1)
