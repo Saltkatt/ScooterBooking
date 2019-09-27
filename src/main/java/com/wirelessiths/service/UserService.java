@@ -121,11 +121,11 @@ public class UserService {
 
     /**
      *
-     * @return defaultclient with US_EAST_1 config
+     * @return defaultclient with EU_WEST_1 config
      */
 
     public static AWSCognitoIdentityProvider getAwsCognitoIdentityProvider() {
-        return AWSCognitoIdentityProviderClientBuilder.standard().withRegion(Regions.US_EAST_1).defaultClient();
+        return AWSCognitoIdentityProviderClientBuilder.standard().withRegion(Regions.EU_WEST_1).defaultClient();
     }
 
     /**

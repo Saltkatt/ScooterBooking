@@ -49,7 +49,7 @@ public class SESService {
                     AmazonSimpleEmailServiceClientBuilder.standard()
                             // Replace US_WEST_2 with the AWS Region you're using for
                             // Amazon SES.
-                            .withRegion(Regions.US_EAST_1).build();
+                            .withRegion(Regions.EU_WEST_1).build();
             SendEmailRequest request = new SendEmailRequest()
                     .withDestination(
                             new Destination().withToAddresses(to))

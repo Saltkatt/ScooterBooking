@@ -18,7 +18,7 @@ public class DynamoDBAdapter {
         // create the client
         //for cloud client
         this.client = AmazonDynamoDBClientBuilder.standard()
-                .withRegion(Regions.US_EAST_1)
+                .withRegion(Regions.EU_WEST_1)
                 .build();
         // For local client
         // this.client =  AmazonDynamoDBClientBuilder.standard().withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http:// localhost:8000", "us-east-1")).build();
