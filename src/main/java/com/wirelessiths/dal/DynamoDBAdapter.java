@@ -10,6 +10,9 @@ import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import javax.swing.text.html.Option;
+import java.util.Optional;
+
 public class DynamoDBAdapter {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
@@ -20,17 +23,13 @@ public class DynamoDBAdapter {
     private DynamoDB dynamoDB;
 
     private DynamoDBAdapter() {
-
         String environment = System.getenv("ENVIRONMENT");
-        logger.info(environment);
-        if(environment.equals("test")){
-        logger.info("running localdynamodb");
+        if(Optional.ofNullable(environment).isPresent() && environment.equals("test")){
             //local
               this.client =  AmazonDynamoDBClientBuilder.standard()
                       .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration("http://localhost:8000", Regions.EU_WEST_1.getName()))
                        .build();
         } else {
-            logger.info("running cloud dynamodb");
             //cloud
             this.client = AmazonDynamoDBClientBuilder.standard()
                     .withRegion(Regions.EU_WEST_1)

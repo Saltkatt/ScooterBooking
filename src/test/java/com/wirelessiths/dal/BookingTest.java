@@ -33,6 +33,7 @@ import static org.junit.Assert.*;
 
         client = LocalDbHandler.createClient();
         mapperConfig = LocalDbHandler.createMapperConfig(tableName);
+        LocalDbHandler.deleteTable(tableName, client);
         LocalDbHandler.createTable(tableName, client);
         populateForOkValidationTest();
         populateForFailValidationTest();
@@ -41,7 +42,7 @@ import static org.junit.Assert.*;
 
     @AfterClass
     public static void deleteTable(){
-       // LocalDbHandler.deleteTable(tableName, client);
+        LocalDbHandler.deleteTable(tableName, client);
     }
 
 
