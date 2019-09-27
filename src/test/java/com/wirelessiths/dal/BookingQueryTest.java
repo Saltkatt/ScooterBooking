@@ -4,12 +4,14 @@ package com.wirelessiths.dal;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 
+import com.amazonaws.services.dynamodbv2.model.AmazonDynamoDBException;
 import com.wirelessiths.handler.ListBookingHandler;
 import org.junit.*;
 
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -379,4 +381,72 @@ public class BookingQueryTest {
         }
         assertEquals(5, list.size());
     }
+
+    @Test
+    public void reWritesDateToStartDate() {
+        System.out.println("date rewrite to startdate: ");
+        Booking booking = new Booking(client, mapperConfig);
+        List<Booking> list = new ArrayList<>();
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("date", "2019-09-03");
+        try {
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assertEquals(3, list.size());
+    }
+
+    @Test  (expected = DateTimeParseException.class)
+    public void wronglyFormattedValues() {
+        System.out.println("date rewrite to startdate: ");
+        Booking booking = new Booking(client, mapperConfig);
+        List<Booking> list = new ArrayList<>();
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("startDate", "tja");
+        queryparams.put("scooterId", "1");
+        queryparams.put("userId", "c");
+        try {
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+    @Test  (expected = AmazonDynamoDBException.class)
+    public void ValuesEmptyThrowsDynamoDBException() {
+        System.out.println("date rewrite to startdate: ");
+        Booking booking = new Booking(client, mapperConfig);
+        List<Booking> list = new ArrayList<>();
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("scooterId", "");
+        queryparams.put("userId", "");
+        try {
+            list = listBookingHandler.retrieveBookings(queryparams, booking);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void manualTestForScooterIdQuery() {
+        System.out.println("date rewrite to startdate: ");
+        Booking booking = new Booking(client, mapperConfig);
+        List<Booking> list = new ArrayList<>();
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = new HashMap<>();
+        queryparams.put("startDate", "2019-09-03");
+        queryparams.put("userId", "c");
+        try {
+            list = booking.bookingsByScooterId("1", queryparams);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        assertEquals(1, list.size());
+    }
+
+
+
 }

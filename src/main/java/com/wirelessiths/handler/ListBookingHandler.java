@@ -79,6 +79,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
                 }
             }
 
+
             Booking booking = new Booking();
             List<Booking> bookings = retrieveBookings(queryStringParameters, booking);
 
@@ -131,13 +132,19 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 		}
 	}
 
-	private boolean isAuthorized(boolean isAdmin, String queryUserId, String tokenUserId){
+    private Map<String, String> changeKeyName(Map<String, String> queryStringParameters, String oldValue, String newValue) {
+        String date = queryStringParameters.remove(oldValue);
+        queryStringParameters.put(newValue, date);
+        return queryStringParameters;
+    }
+
+    private boolean isAuthorized(boolean isAdmin, String queryUserId, String tokenUserId){
         return isAdmin || queryUserId.equals(tokenUserId);
     }
 
     /**
      *
-     * @param queryStringParameters that is sent in from the request. Null-proof
+     * @param queryStringParameters that is sent in from the request.
      * @param booking booking object that is sent in to gain access to db methods. also sends this in to enable local db mock in tests
      * @return the list of matching bookings
      * @throws IOException from dynamo db.
@@ -154,6 +161,11 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
         if (!Optional.ofNullable(queryStringParameters).isPresent()) {
            return booking.list();
         }
+
+        if(queryStringParameters.containsKey("date")){
+            changeKeyName(queryStringParameters, "date", queryEnum.startDate.toString());
+        }
+
             Map<String, String> validKeyParams = new HashMap<>();
             Map<String, String> filter = new HashMap<>();
             //Only pass through supported query params
