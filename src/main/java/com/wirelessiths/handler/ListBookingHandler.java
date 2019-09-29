@@ -48,6 +48,11 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
             boolean isAdmin = AuthService.isAdmin(input);
             String tokenUserId = AuthService.getUserId(input);
 
+            if(input.get("warm-up") != null){
+                logger.info("warming up lambda..");
+                return null;
+            }
+            logger.info("not a warm up call");
 			if(input.containsKey("queryStringParameters")) {
                 queryStringParameters = (Map<String, String>) input.get("queryStringParameters");
             }

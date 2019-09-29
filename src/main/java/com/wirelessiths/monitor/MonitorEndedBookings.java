@@ -21,7 +21,6 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
-//Todo: add secret manager to sam template
 //Todo: add cloudwatch rules to sam template
 public class MonitorEndedBookings {
 
@@ -39,16 +38,6 @@ public class MonitorEndedBookings {
         //private final SecretCache cache = new SecretCache();
         //final String secret = cache.getSecretString("");
 
-        //check if ended bookings
-        //if not log and return
-        //else log and check p&j for trips
-        //if no trips log and return
-        //else log and append trip to booking
-
-        //how query for dates??
-
-        //String secret = getSecret();
-
         String clientSecret = getSecret("us-east-1", "client_secret");
         String audience = dotenv.get("AUDIENCE");
         String actor = dotenv.get("ACTOR");
@@ -61,8 +50,8 @@ public class MonitorEndedBookings {
             logger.info("No ended bookings");
             return;
         }
-
         logger.info("number of bookings ended: {}", endedBookings.size());
+
         try{
             Map<String, String> auth = getAuth(audience, actor, clientSecret, authUrl);
             String accessToken = auth.get("access_token");
