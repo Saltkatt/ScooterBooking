@@ -45,6 +45,15 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 
 
 
+<<<<<<< HEAD
+=======
+            if(input.get("warm-up") != null){
+                logger.info("warming up lambda..");
+                return null;
+            }
+
+			//logger.info(input.toString());
+>>>>>>> able to deploy, add simple warm up check in listbookingfunction
 
             //Query key prioritization at the moment (higher prio means that that key is queried and the others are filtered):
             //1. startDate

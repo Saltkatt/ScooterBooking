@@ -310,14 +310,21 @@ Resources:
         #secret-name
       Events:
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> able to deploy, add simple warm up check in listbookingfunction
         EndedBookingSchedule:
           Type: Schedule
           Properties:
             Schedule: "rate(1 minute)"
 
   MonitorStartedBookingsFunction:
+<<<<<<< HEAD
     Type: AWS::Serverless::Function # More info about function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
 
+=======
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+>>>>>>> able to deploy, add simple warm up check in listbookingfunction
     Properties:
       CodeUri: target/bookings-api-dev.jar
       Handler: com.wirelessiths.monitor.MonitorStartedBookings::lambdaHandler
@@ -342,11 +349,15 @@ Resources:
         #secret-arn
         #secret-name
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> able to deploy, add simple warm up check in listbookingfunction
       Events:
         StartedBookingSchedule:
           Type: Schedule
           Properties:
             Schedule: "rate(1 minute)"
+<<<<<<< HEAD
 
 =======
           MonitorEnd:
@@ -365,6 +376,8 @@ Resources:
 #               Method: put
 #               RestApiId: !Ref MyApi  # Add this line
 >>>>>>> testing new setup dynamodb local
+=======
+>>>>>>> able to deploy, add simple warm up check in listbookingfunction
 
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
