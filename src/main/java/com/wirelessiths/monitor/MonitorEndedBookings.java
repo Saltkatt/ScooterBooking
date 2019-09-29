@@ -23,14 +23,12 @@ import java.util.List;
 import java.util.Map;
 
 
-//Todo: add cloudwatch rules to sam template
 
 public class MonitorEndedBookings {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
 
     private static Dotenv dotenv = Dotenv.load();
-    //private String tripEndpoint = dotenv.get("TRIP_ENDPOINT");
 
     private ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

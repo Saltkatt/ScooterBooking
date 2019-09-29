@@ -43,6 +43,13 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
                 logger.info("warming up lambda..");
             }
 
+<<<<<<< HEAD
+=======
+        try {
+            if(input.get("warm-up") != null){
+                logger.info("warming up lambda..");
+            }
+>>>>>>> able to deploy, add simple warm up check in listbookingfunction
 
 
 
