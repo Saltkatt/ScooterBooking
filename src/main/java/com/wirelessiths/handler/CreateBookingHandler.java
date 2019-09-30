@@ -107,6 +107,17 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
                     .setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
                     .build();
 
+        }catch(NullPointerException ex){
+
+            logger.info(ex.getMessage());
+            Response responseBody = new Response("Error in creating booking due to empty or invalid request body: " + ex.getStackTrace());
+            return ApiGatewayResponse.builder()
+                    .setStatusCode(500)
+                    .setObjectBody(responseBody)
+                    .setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
+                    .build();
+
+
         }catch (Exception ex){
 
             logger.error(String.format("Error unknown Exception: %s", ex));

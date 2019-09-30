@@ -1,5 +1,6 @@
 package com.wirelessiths.monitor;
 
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
 import com.amazonaws.services.secretsmanager.model.*;
@@ -38,7 +39,7 @@ public class MonitorEndedBookings {
         //private final SecretCache cache = new SecretCache();
         //final String secret = cache.getSecretString("");
 
-        String clientSecret = getSecret("us-east-1", "client_secret");
+        String clientSecret = getSecret(Regions.EU_WEST_1.toString(), "client_secret");
         String audience = dotenv.get("AUDIENCE");
         String actor = dotenv.get("ACTOR");
         String authUrl = dotenv.get("AUTH_URL");
