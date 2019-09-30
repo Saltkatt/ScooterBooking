@@ -40,10 +40,6 @@ public class MonitorEndedBookings {
         //final String secret = cache.getSecretString("");
 
         String clientSecret = getSecret(Regions.EU_WEST_1.toString(), "client_secret");
-<<<<<<< HEAD
-
-=======
->>>>>>> add monitorlambda rule in template, clean up response for invalid body in createbookinghandler
         String audience = dotenv.get("AUDIENCE");
         String actor = dotenv.get("ACTOR");
         String authUrl = dotenv.get("AUTH_URL");
