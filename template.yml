@@ -433,6 +433,7 @@ Resources:
 #            KeyType: RANGE
 #          Projection:
 #            ProjectionType: KEYS_ONLY
+
 Outputs:
   GetBookingFunction:
     Description: "GetBooking Lambda Function ARN"

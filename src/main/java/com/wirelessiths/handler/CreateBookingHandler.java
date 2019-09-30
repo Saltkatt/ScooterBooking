@@ -109,11 +109,8 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
         }catch(NullPointerException ex){
 
-<<<<<<< HEAD
             logger.info(ex.getMessage());
-=======
-            logger.info("Error: {}", ex.getMessage());
->>>>>>> add monitorlambda rule in template, clean up response for invalid body in createbookinghandler
+
             Response responseBody = new Response("Error in creating booking due to empty or invalid request body: " + ex.getStackTrace());
             return ApiGatewayResponse.builder()
                     .setStatusCode(500)

@@ -32,7 +32,6 @@ public class Booking {
 
     private Instant startTime;
     private Instant endTime;
-    //private LocalDate bookingDate;
     private LocalDate startDate;
     private LocalDate endDate;
 
