@@ -48,14 +48,22 @@ private final Logger logger = LogManager.getLogger(this.getClass());
            incomingBookingId = pathParameters.get("id");
            incomingScooterId = body.get("scooterId").asText();
            command = body.get("command").asText();
-
+           boolean isAdmin = AuthService.isAdmin(input);
            booking = booking.get(incomingBookingId);
+
+            if (!AuthService.isAuthorized(isAdmin, booking.getUserId(), incomingUserId)) {
+                Response responseBodyunAuth = new Response("Unauthorized. You can only view your own bookings or you need to have admin privilege", input);
+                return ApiGatewayResponse.builder()
+                        .setStatusCode(403)
+                        .setObjectBody(responseBodyunAuth)
+                        .build();
+            }
+
            if(booking == null){
                responseBody = new Response("no booking found for bookingId: " + incomingBookingId);
                return ApiGatewayResponse.builder()
                        .setStatusCode(404)
                        .setObjectBody(responseBody)
-                       .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
                        .build();
            }
 

@@ -5,6 +5,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
+
 import com.wirelessiths.dal.trip.Trip;
 import org.apache.logging.log4j.LogManager;
 
@@ -213,6 +214,16 @@ public class Booking {
         List<Booking> results = this.mapper.scan(Booking.class, scanExp);
         for (Booking p : results) {
             logger.info("Booking - list(): " + p.toString());
+        }
+        return results;
+    }
+
+    public List<Booking> listUserIdRedacted() throws IOException {
+        DynamoDBScanExpression scanExp = new DynamoDBScanExpression();
+        scanExp.withProjectionExpression("scooterId, bookingId, startTime, endTime, startDate, endDate, bookingStatus");
+        List<Booking> results = this.mapper.scan(Booking.class, scanExp);
+        for (Booking p : results) {
+            logger.info("Booking - listIdNameReducted(): " + p.toString());
         }
         return results;
     }
@@ -468,6 +479,7 @@ public class Booking {
         }
         return true;
     }
+
 
     @Override
     public boolean equals(Object o) {

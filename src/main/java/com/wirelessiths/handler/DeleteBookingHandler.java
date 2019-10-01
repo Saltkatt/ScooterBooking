@@ -6,6 +6,7 @@ import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
 import com.wirelessiths.exception.CouldNotDeleteBookingException;
 import com.wirelessiths.dal.Booking;
+import com.wirelessiths.service.AuthService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -33,24 +34,35 @@ public class DeleteBookingHandler implements RequestHandler<Map<String, Object>,
 		try {
 			// get the 'pathParameters' from input
 			Map<String,String> pathParameters =  (Map<String,String>)input.get("pathParameters");
-			String userId = pathParameters.get("id");
+			String bookingId = pathParameters.get("id");
+
+			boolean isAdmin = AuthService.isAdmin(input);
+			String tokenUserId = AuthService.getUserId(input);
 
 
+			Booking booking = new Booking().get(bookingId);
+			// get the Booking by id
+
+			if (!AuthService.isAuthorized(isAdmin, booking.getUserId(), tokenUserId)) {
+				Response responseBody = new Response("Unauthorized. You can only delete your own bookings or you need to have admin privilege", input);
+				return ApiGatewayResponse.builder()
+						.setStatusCode(403)
+						.setObjectBody(responseBody)
+						.build();
+			}
 
 			// get the Booking by id
-			Boolean success = new Booking().delete(userId);
+			Boolean success = new Booking().delete(bookingId);
 
 			// send the response back
 			if (success) {
 				return ApiGatewayResponse.builder()
 						.setStatusCode(204)
-						.setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
 						.build();
 			} else {
 				return ApiGatewayResponse.builder()
 						.setStatusCode(404)
-						.setObjectBody("Booking with id: '" + userId + "' not found.")
-						.setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
+						.setObjectBody("Booking with id: '" + bookingId + "' not found.")
 						.build();
 			}
 		} catch (CouldNotDeleteBookingException ex) {

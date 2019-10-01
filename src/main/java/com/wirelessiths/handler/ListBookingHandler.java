@@ -72,7 +72,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 
             //Check that the user is authorized, can only view their own bookings or need to be admin. If not authorized send back 403.
             if(Optional.ofNullable(queryStringParameters).isPresent()) {
-                if (queryStringParameters.containsKey(queryEnum.userId.toString()) && !isAuthorized(isAdmin, queryStringParameters.get(queryEnum.userId.toString()), tokenUserId)) {
+                if (queryStringParameters.containsKey(queryEnum.userId.toString()) && !AuthService.isAuthorized(isAdmin, queryStringParameters.get(queryEnum.userId.toString()), tokenUserId)) {
                     Response responseBody = new Response("Unauthorized. You can only view your own bookings or you need to have admin privilege", input);
                     return ApiGatewayResponse.builder()
                             .setStatusCode(403)
@@ -83,7 +83,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 
 
             Booking booking = new Booking();
-            List<Booking> bookings = retrieveBookings(queryStringParameters, booking);
+            List<Booking> bookings = retrieveBookings(queryStringParameters, booking, isAdmin);
 
 
 			// send the response back
@@ -140,10 +140,6 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
         return queryStringParameters;
     }
 
-    private boolean isAuthorized(boolean isAdmin, String queryUserId, String tokenUserId){
-        return isAdmin || queryUserId.equals(tokenUserId);
-    }
-
     /**
      *
      * @param queryStringParameters that is sent in from the request.
@@ -158,10 +154,15 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
      * if only one supported parameter keys queries dynamo db without filter otherwise queries with filter.
      */
     @Nullable
-    public List<Booking> retrieveBookings(Map<String, String> queryStringParameters, Booking booking) throws IOException {
+    public List<Booking> retrieveBookings(Map<String, String> queryStringParameters, Booking booking, boolean isAdmin) throws IOException {
 
         if (!Optional.ofNullable(queryStringParameters).isPresent()) {
-           return booking.list();
+            if(isAdmin) {
+                return booking.list();
+            }
+            else {
+                return booking.listUserIdRedacted();
+            }
         }
 
         if(queryStringParameters.containsKey("date")){
@@ -216,6 +217,11 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
                     return booking.bookingsByScooterId(validKeyParams.get(queryEnum.scooterId.toString()), filter);
                 }
             }
-        return booking.list();
+        if(isAdmin) {
+            return booking.list();
+        }
+        else {
+            return booking.listUserIdRedacted();
+        }
     }
 }

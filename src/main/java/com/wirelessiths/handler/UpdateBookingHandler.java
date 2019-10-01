@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
 import com.wirelessiths.dal.*;
+import com.wirelessiths.service.AuthService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,8 +32,19 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
             Map<String,String> pathParameters =  (Map<String,String>)input.get("pathParameters");
             String bookingId = pathParameters.get("id");
 
-            // get the Product by id
+            boolean isAdmin = AuthService.isAdmin(input);
+            String tokenUserId = AuthService.getUserId(input);
+
+            // get the Booking by id
             Booking booking = new Booking().get(bookingId);
+
+            if (!AuthService.isAuthorized(isAdmin, booking.getUserId(), tokenUserId)) {
+                Response responseBody = new Response("Unauthorized. You can only update your own bookings or you need to have admin privilege", input);
+                return ApiGatewayResponse.builder()
+                        .setStatusCode(403)
+                        .setObjectBody(responseBody)
+                        .build();
+            }
 
             JsonNode body = new ObjectMapper().readTree((String) input.get("body"));
 

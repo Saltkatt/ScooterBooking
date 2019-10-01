@@ -32,7 +32,6 @@ public class ListBookingsByUserHandler implements RequestHandler<Map<String, Obj
                 return ApiGatewayResponse.builder()
                         .setStatusCode(403)
                         .setObjectBody(responseBody)
-                        .setHeaders(Collections.singletonMap("Powered By", "Wireless scooter"))
                         .build();
             }
 

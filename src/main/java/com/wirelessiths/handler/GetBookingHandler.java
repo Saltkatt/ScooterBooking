@@ -6,12 +6,15 @@ import com.wirelessiths.ApiGatewayResponse;
 import com.wirelessiths.Response;
 import com.wirelessiths.exception.BookingDoesNotExistException;
 import com.wirelessiths.dal.Booking;
+import com.wirelessiths.service.AuthService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
+
 /**
  * This class handles get requests and implements RequestHandler and ApiGatewayResponse.
  */
@@ -34,23 +37,25 @@ public class GetBookingHandler implements RequestHandler<Map<String, Object>, Ap
 			Map<String,String> pathParameters =  (Map<String,String>)input.get("pathParameters");
 			String bookingId = pathParameters.get("id");
 
+			boolean isAdmin = AuthService.isAdmin(input);
+			String tokenUserId = AuthService.getUserId(input);
+
 			// get the Booking by id
 			Booking booking = new Booking().get(bookingId);
 
-			// send the response back
-			if (booking != null) {
+			if (!AuthService.isAuthorized(isAdmin, booking.getUserId(), tokenUserId)) {
+				Response responseBody = new Response("Unauthorized. You can only view your own bookings or you need to have admin privilege", input);
 				return ApiGatewayResponse.builder()
-						.setStatusCode(200)
-						.setObjectBody(booking)
-						.setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
-						.build();
-			} else {
-				return ApiGatewayResponse.builder()
-						.setStatusCode(404)
-						.setObjectBody("Booking with id: '" + bookingId + "' not found.")
-						.setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
+						.setStatusCode(403)
+						.setObjectBody(responseBody)
 						.build();
 			}
+
+			// send the response back
+			return ApiGatewayResponse.builder()
+					.setStatusCode(200)
+					.setObjectBody(booking)
+					.build();
 
 		} catch (BookingDoesNotExistException ex) {
 			logger.error("Error in retrieving Booking as booking  is null: " + ex);

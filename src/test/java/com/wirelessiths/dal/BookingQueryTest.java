@@ -12,10 +12,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -112,7 +109,7 @@ public class BookingQueryTest {
         Map<String, String> queryparams = new HashMap<>();
         queryparams.put("scooterId", "4");
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking ,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -129,7 +126,7 @@ public class BookingQueryTest {
         Map<String, String> queryparams = new HashMap<>();
         queryparams.put("userId", "c");
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -146,7 +143,7 @@ public class BookingQueryTest {
         Map<String, String> queryparams = new HashMap<>();
         queryparams.put("startDate", "2019-09-03");
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -165,7 +162,7 @@ public class BookingQueryTest {
         queryparams.put("userId", "c");
         queryparams.put("startDate", "2019-09-03");
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -182,7 +179,7 @@ public class BookingQueryTest {
         queryparams.put("scooterId", "2");
         queryparams.put("startDate", "2019-09-04");
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -199,7 +196,7 @@ public class BookingQueryTest {
         queryparams.put("scooterId", "4");
         queryparams.put("userId", "c");
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -218,7 +215,7 @@ public class BookingQueryTest {
         queryparams.put("userId", "c");
 
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -238,7 +235,7 @@ public class BookingQueryTest {
         queryparams.put("userId", "c");
 
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -257,7 +254,7 @@ public class BookingQueryTest {
         queryparams.put("startDate", "2019-09-04");
         queryparams.put("scooterId", "2");
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -277,7 +274,7 @@ public class BookingQueryTest {
         queryparams.put("userId", "c");
 
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -295,7 +292,7 @@ public class BookingQueryTest {
         queryparams.put("userId", "c");
         queryparams.put("scooterId", "1");
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -313,7 +310,7 @@ public class BookingQueryTest {
         queryparams.put("userId", "c");
         queryparams.put("startDate", "2019-09-03");
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -327,7 +324,7 @@ public class BookingQueryTest {
         List<Booking> list = new ArrayList<>();
         ListBookingHandler listBookingHandler = new ListBookingHandler();
         try {
-            list = listBookingHandler.retrieveBookings(null, booking);
+            list = listBookingHandler.retrieveBookings(null, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -342,7 +339,7 @@ public class BookingQueryTest {
         ListBookingHandler listBookingHandler = new ListBookingHandler();
         Map<String, String> queryparams = new HashMap<>();
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -360,7 +357,7 @@ public class BookingQueryTest {
         queryparams.put("cool", "no");
         queryparams.put("userId", "c");
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -378,7 +375,7 @@ public class BookingQueryTest {
         queryparams.put("cool", "no");
         queryparams.put("Flying", "yes");
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -394,7 +391,7 @@ public class BookingQueryTest {
         Map<String, String> queryparams = new HashMap<>();
         queryparams.put("date", "2019-09-03");
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -412,7 +409,7 @@ public class BookingQueryTest {
         queryparams.put("scooterId", "1");
         queryparams.put("userId", "c");
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -427,7 +424,7 @@ public class BookingQueryTest {
         queryparams.put("scooterId", "");
         queryparams.put("userId", "");
         try {
-            list = listBookingHandler.retrieveBookings(queryparams, booking);
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -450,6 +447,37 @@ public class BookingQueryTest {
         assertEquals(1, list.size());
     }
 
+    @Test
+    public void testThatUserIdIsRedactedIfNotAdmin() {
+        System.out.println("test that userId is redacted if not admin");
+        Booking booking = new Booking(client, mapperConfig);
+        List<Booking> list = new ArrayList<>();
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = null;
+        try {
+            list = listBookingHandler.retrieveBookings(queryparams, booking,false);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(Optional.ofNullable(list).isPresent() && !list.isEmpty())
+        assertNull(list.get(0).getUserId());
+    }
+
+    @Test
+    public void testThatUserIdIsNotRedactedIfAdmin() {
+        System.out.println("test that userId is not redacted if admin");
+        Booking booking = new Booking(client, mapperConfig);
+        List<Booking> list = new ArrayList<>();
+        ListBookingHandler listBookingHandler = new ListBookingHandler();
+        Map<String, String> queryparams = null;
+        try {
+            list = listBookingHandler.retrieveBookings(queryparams, booking,true);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if(Optional.ofNullable(list).isPresent() && !list.isEmpty())
+            assertNotNull(list.get(0).getUserId());
+    }
 
 
 
