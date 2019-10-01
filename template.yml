@@ -92,12 +92,16 @@ Resources:
       UserPoolId: !Ref UserPool
       GenerateSecret: false
       ReadAttributes:
+        - email_verified
+        - sub
         - email
         - phone_number
         - given_name
         - family_name
         - preferred_username
+        - phone_number_verified
       WriteAttributes:
+        - sub
         - email
         - phone_number
         - given_name
