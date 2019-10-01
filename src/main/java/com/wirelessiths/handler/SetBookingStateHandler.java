@@ -19,6 +19,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.Map;
+import java.util.Optional;
 
 public class SetBookingStateHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 // json request
@@ -34,7 +35,7 @@ private final Logger logger = LogManager.getLogger(this.getClass());
 
         String incomingUserId;
         String incomingBookingId;
-        String incomingScooterId;
+        String incomingScooterId = null;
         String command;
         Response responseBody;
         String newState = null;
@@ -46,7 +47,9 @@ private final Logger logger = LogManager.getLogger(this.getClass());
 
            incomingUserId = AuthService.getUserId(input);
            incomingBookingId = pathParameters.get("id");
-           incomingScooterId = body.get("scooterId").asText();
+           if(body.hasNonNull("scooterId")) {
+               incomingScooterId = body.get("scooterId").asText();
+           }
            command = body.get("command").asText();
            boolean isAdmin = AuthService.isAdmin(input);
            booking = booking.get(incomingBookingId);
@@ -71,12 +74,11 @@ private final Logger logger = LogManager.getLogger(this.getClass());
            Instant startTime = booking.getStartTime();
            int deadlineSeconds = 60 * 10;
 
-           if( !booking.getUserId().equals(incomingUserId) || !booking.getScooterId().equals(incomingScooterId) ) {
-               responseBody = new Response("request userId or scooterId does not match corresponding booking values");
+           if( !booking.getScooterId().equals(Optional.ofNullable(incomingScooterId).orElse("")) ) {
+               responseBody = new Response("request scooterId does not match corresponding booking scooterID values or scooterId is not provided");
                return ApiGatewayResponse.builder()
                        .setStatusCode(400)
                        .setObjectBody(responseBody)
-                       .setHeaders(Collections.singletonMap("X-Powered-By", "AWS Lambda & Serverless"))
                        .build();
            }
 

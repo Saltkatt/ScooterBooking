@@ -26,6 +26,12 @@ Parameters:
   CallbackUrl:
     Type: String
     Default: xxx
+  CallbackHostedUrl:
+    Type: String
+    Default: xxx
+  CallbackHostedLogoutUrl:
+    Type: String
+    Default: xxx
   LogoutUrl:
     Type: String
     Default: xxx
@@ -101,7 +107,6 @@ Resources:
         - preferred_username
         - phone_number_verified
       WriteAttributes:
-        - sub
         - email
         - phone_number
         - given_name
@@ -116,6 +121,7 @@ Resources:
         - aws.cognito.signin.user.admin
       CallbackURLs:
         - !Ref CallbackUrl
+        - !Ref CallbackHostedUrl
         - https://localhost
       ClientName: vuejs-frontend-client
       SupportedIdentityProviders:
@@ -123,7 +129,7 @@ Resources:
       DefaultRedirectURI: !Ref CallbackUrl
       LogoutURLs:
         - !Ref LogoutUrl
-
+        - !Ref CallbackHostedLogoutUrl
   UserPoolAdminGroup:
     DependsOn: UserPool
     Type: AWS::Cognito::UserPoolGroup
