@@ -14,7 +14,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import org.apache.http.HttpRequest;
 
 
 
@@ -51,7 +50,8 @@ public class TripSerializationTest {
 
     @BeforeClass
     public static void create() {
-        LocalDbHandler.createClient();
+        client = LocalDbHandler.createClient();
+        mapperConfig = LocalDbHandler.createMapperConfig(tableName);
         LocalDbHandler.createTable(tableName, client);
 
 

@@ -209,11 +209,12 @@ public class LocalDbHandler {
                     //.withLocalSecondaryIndexes(localSecondaryIndexes)
                     .withAttributeDefinitions(attributeDefinitions);
             client.createTable(createTableRequest);
+            System.out.println("table created.");
         }catch(Exception e){
             System.out.println("error creating table: " + e.getMessage());
 
         }
-        System.out.println("table created.");
+
 
 
 
