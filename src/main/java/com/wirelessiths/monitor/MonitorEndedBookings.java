@@ -27,9 +27,7 @@ import java.util.Map;
 public class MonitorEndedBookings {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
-
     private static Dotenv dotenv = Dotenv.load();
-
     private ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
@@ -115,7 +113,6 @@ public class MonitorEndedBookings {
         ArrayNode trips = (ArrayNode) mapper.readTree(response.body().string())
                 .path("trip_overview_list");
         return mapper.convertValue(trips, new TypeReference<List<Trip>>() {});
-
     }
 
 
@@ -192,7 +189,6 @@ public class MonitorEndedBookings {
             decodedBinarySecret = new String(Base64.getDecoder().decode(getSecretValueResult.getSecretBinary()).array());
             return decodedBinarySecret;
         }
-        // Your code goes here.
     }
 }
 
