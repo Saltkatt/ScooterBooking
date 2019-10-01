@@ -54,7 +54,8 @@ public class MonitorEndedBookingsTemp {
                 List<Trip> trips = getTrips(endedBooking);
                 if (trips.isEmpty()) {
                     logger.info("No trips for booking: {}", endedBooking);
-                    String message = "No trip registered for your booking, if you didnt use the scooter, please cancel the booking next time";
+                    String message = String.format("No trip registered for your booking, if you didnt use the scooter, please cancel the booking next time. ScooterId: %s, StartTime: %s, EndTime: %s",
+                            endedBooking.getScooterId(), endedBooking.getStartTime(), endedBooking.getEndTime());
                     sendMessage(message, endedBooking, dotenv.get("USER_POOL_ID"));
                     logger.info("sending angry sms");
 
@@ -77,7 +78,10 @@ public class MonitorEndedBookingsTemp {
                 endedBooking.update(endedBooking);
                 logger.info("saving updated booking");
                 if(trips.isEmpty()){
-                    String message = String.format("Thank you for completing your trip. You traveled %s meters", Math.ceil(distanceTraveled));
+                    String message = String.format("Thank you for completing your trip. You traveled %s meters. ScooterId: %s, StartTime: %s, EndTime: %s ", Math.ceil(distanceTraveled),
+                            endedBooking.getScooterId(), endedBooking.getStartTime(), endedBooking.getEndTime()) ;
+
+
                     sendMessage(message, endedBooking, dotenv.get("USER_POOL_ID"));
                     logger.info("sending happy sms");
                 }

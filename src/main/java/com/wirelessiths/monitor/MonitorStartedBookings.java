@@ -43,7 +43,8 @@ public class MonitorStartedBookings {
                 logger.info("canceling booking: {}", startedBooking);
                 startedBooking.save(startedBooking);
                 logger.info("saving booking");
-                String message = "Your booking was cancelled due to not being activated within the given timespan";
+                String message = String.format("Your booking was cancelled due to not being activated within the given timespan. ScooterId: %s, StartTime: %s, EndTime: %s",
+                startedBooking.getScooterId(), startedBooking.getStartTime(), startedBooking.getEndTime());
                 sendMessage(message, booking, dotenv.get("USER_POOL_ID"));
             }
 
