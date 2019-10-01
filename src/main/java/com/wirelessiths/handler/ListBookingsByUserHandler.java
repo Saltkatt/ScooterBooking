@@ -19,6 +19,7 @@ public class ListBookingsByUserHandler implements RequestHandler<Map<String, Obj
 
     private final Logger logger = LogManager.getLogger(this.getClass());
 
+    @SuppressWarnings("DuplicatedCode")
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
         try {

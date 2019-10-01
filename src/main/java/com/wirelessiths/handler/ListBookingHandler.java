@@ -36,7 +36,8 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 	 * @param context
 	 * @return
 	 */
-	@Override
+	@SuppressWarnings("DuplicatedCode")
+    @Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 		try {
             if(input.get("warm-up") != null){

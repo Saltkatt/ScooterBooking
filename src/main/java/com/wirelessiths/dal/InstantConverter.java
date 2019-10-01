@@ -3,7 +3,6 @@ package com.wirelessiths.dal;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBTypeConverter;
 
 import java.time.Instant;
-import java.time.LocalTime;
 
 public class InstantConverter implements DynamoDBTypeConverter<String, Instant> {
 

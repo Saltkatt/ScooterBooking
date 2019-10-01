@@ -18,6 +18,7 @@ import java.util.Optional;
 /**
  * This class handles get requests and implements RequestHandler and ApiGatewayResponse.
  */
+@SuppressWarnings("DuplicatedCode")
 public class GetBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private final Logger logger = LogManager.getLogger(this.getClass());
