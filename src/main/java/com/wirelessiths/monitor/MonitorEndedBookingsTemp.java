@@ -75,7 +75,7 @@ public class MonitorEndedBookingsTemp {
                         logger.info("appending matching trip to booking");
                     }
                 }
-                endedBooking.update(endedBooking);
+                endedBooking.save(endedBooking);
                 logger.info("saving updated booking");
                 if(!trips.isEmpty()){
                     String message = String.format("Thank you for completing your trip. You traveled %s meters. ScooterId: %s, StartTime: %s, EndTime: %s ", Math.ceil(distanceTraveled),

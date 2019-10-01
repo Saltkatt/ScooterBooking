@@ -22,6 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Collections;
 
 import java.util.List;
@@ -41,6 +42,7 @@ public class TripSerializationTest {
     private static String tripEndpoint = dotenv.get("TRIP_ENDPOINT");
     private static String authHeader = dotenv.get("AUTH");
     private static String vehicleId = dotenv.get("SCOOTER_ID");
+
     private static ObjectMapper objectMapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
@@ -67,7 +69,7 @@ public class TripSerializationTest {
 
 
         String url = String.format("%s/%s%s", baseUrl, vehicleId, tripEndpoint);
-        String queryUrl = url + "?startDate=" + vehicleId;
+        String queryUrl = url + "?startDate=" + "2019-10-01";
 
         try{
             OkHttpClient httpClient = new OkHttpClient.Builder()
@@ -75,19 +77,20 @@ public class TripSerializationTest {
                     .readTimeout(30, TimeUnit.SECONDS)
                     .build();
 
-
-
-
             Request request = new Request
                     .Builder()
                     .addHeader("Authorization", authHeader)
                     .url(queryUrl).build();
 
-
             Response response = httpClient.newCall(request).execute();
 
             ArrayNode trips = (ArrayNode) objectMapper.readTree(response.body().string())
                     .path("trip_overview_list");
+
+            System.out.println("------------------------------");
+            trips.forEach(t-> System.out.println(t));
+            System.out.println("------------------------------");
+
 
             return objectMapper.convertValue(trips, new TypeReference<List<Trip>>() {
             });
@@ -119,6 +122,7 @@ public class TripSerializationTest {
         booking3.setBookingStatus(BookingStatus.VALID);
 
         List<Trip> newTrips = getTrips();
+        newTrips.forEach(t-> System.out.println("trip: " + t));
 
 
         assert (newTrips != null && !newTrips.isEmpty());
@@ -129,9 +133,14 @@ public class TripSerializationTest {
             System.out.println("3,1: " + booking3);
             booking3.save(booking3);
 
+            System.out.println("booking trips before trips: " + booking.getTrips());
+
             booking3.get(booking3.getBookingId());
             newTrips.forEach(trip -> booking.getTrips().add(trip));
+            System.out.println("booking trips after trips added: " + booking.getTrips());
+
             booking.save(booking);
+            System.out.println("booking trips after booking saved: " + booking.getTrips());
             System.out.println("booking saved: " + booking);
             System.out.println("3,2: " + booking3);
 

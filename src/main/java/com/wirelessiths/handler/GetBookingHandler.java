@@ -26,7 +26,7 @@ public class GetBookingHandler implements RequestHandler<Map<String, Object>, Ap
 
 	/**
 	 * This method connects to the ApiGatewayResponse and request handler to allow the retrieval of individual bookings.
-	 * @param input contains path parameters.json that allow users to retrieve bookings connected to a bookingId.
+	 * @param input contains path parameters-old-v2.json that allow users to retrieve bookings connected to a bookingId.
 	 * @param context
 	 * @return
 	 */

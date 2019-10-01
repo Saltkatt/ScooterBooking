@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonSetter;
 import com.wirelessiths.dal.InstantConverter;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -69,6 +71,11 @@ public class Trip {
 
 
     public Trip() {
+        identifiers = new HashMap<>();
+        tags = new ArrayList<>();
+        positions = new ArrayList<>();
+        userTripInformation = new HashMap<>();
+        customAttributes = new HashMap<>();
     }
 
     public Map<String, String> getIdentifiers() {
