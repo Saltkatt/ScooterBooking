@@ -118,7 +118,7 @@ private final Logger logger = LogManager.getLogger(this.getClass());
                    break;
 
                case "cancel":
-                   //validate if cancel is possible
+                   //only booking in valid state can be canceled
                    if(!booking.getBookingStatus().equals(BookingStatus.VALID)){
 
                        responseBody = new Response("booking is not in a valid state to be canceled");

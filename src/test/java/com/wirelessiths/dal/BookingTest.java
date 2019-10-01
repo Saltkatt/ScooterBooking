@@ -385,4 +385,8 @@ import static org.junit.Assert.*;
             fail();
         }
     }
+<<<<<<< HEAD
+
+=======
+>>>>>>> add working query tests, clean up tests, clean up MonitorEndedBooking part1
 }

@@ -13,16 +13,25 @@ import io.github.cdimascio.dotenv.Dotenv;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+
+import org.apache.http.HttpRequest;
+
+
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.time.Instant;
+import java.util.Collections;
+
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static junit.framework.TestCase.fail;
 
 public class TripSerializationTest {
+
 
     private static AmazonDynamoDB client;
     private static DynamoDBMapperConfig mapperConfig;
@@ -38,17 +47,20 @@ public class TripSerializationTest {
             .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
 
 
+
+
     @BeforeClass
     public static void create() {
-
-        client = LocalDbHandler.createClient();
-        mapperConfig = LocalDbHandler.createMapperConfig(tableName);
+        LocalDbHandler.createClient();
         LocalDbHandler.createTable(tableName, client);
+
+
     }
 
     @AfterClass
     public static void deleteTable() {
         LocalDbHandler.deleteTable(tableName, client);
+
     }
 
     public static List<Trip> getTrips() {
@@ -57,15 +69,23 @@ public class TripSerializationTest {
         String url = String.format("%s/%s%s", baseUrl, vehicleId, tripEndpoint);
         String queryUrl = url + "?startDate=" + vehicleId;
 
-        try {
-
-            OkHttpClient client = new OkHttpClient();
-            Request request = new Request.Builder()
-                    .url(queryUrl)
-                    .header("Authorization", authHeader)
+        try{
+            OkHttpClient httpClient = new OkHttpClient.Builder()
+                    .writeTimeout(10, TimeUnit.SECONDS)
+                    .readTimeout(30, TimeUnit.SECONDS)
                     .build();
 
-            Response response = client.newCall(request).execute();
+
+
+
+            Request request = new Request
+                    .Builder()
+                    .addHeader("Authorization", authHeader)
+                    .url(queryUrl).build();
+
+
+            Response response = httpClient.newCall(request).execute();
+
             ArrayNode trips = (ArrayNode) objectMapper.readTree(response.body().string())
                     .path("trip_overview_list");
 
@@ -75,11 +95,13 @@ public class TripSerializationTest {
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
-        return null;
+        return Collections.emptyList();
     }
 
     @Test
     public void serializeTripTest() {
+
+
         Booking booking = new Booking(client, mapperConfig);
         Booking booking3 = new Booking(client, mapperConfig);
 
@@ -97,7 +119,10 @@ public class TripSerializationTest {
         booking3.setBookingStatus(BookingStatus.VALID);
 
         List<Trip> newTrips = getTrips();
+
+
         assert (newTrips != null && !newTrips.isEmpty());
+
 
         try {
             booking3.getTrips().add(newTrips.get(0));
@@ -118,5 +143,6 @@ public class TripSerializationTest {
             System.out.println(e.getMessage());
             fail();
         }
+
     }
 }

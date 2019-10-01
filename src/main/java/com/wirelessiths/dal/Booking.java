@@ -5,7 +5,7 @@ import com.amazonaws.services.dynamodbv2.datamodeling.*;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 
-
+import com.fasterxml.jackson.annotation.JsonSetter;
 import com.wirelessiths.dal.trip.Trip;
 import org.apache.logging.log4j.LogManager;
 
@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.*;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 /**
@@ -33,9 +35,9 @@ public class Booking {
 
     private Instant startTime;
     private Instant endTime;
-    //private LocalDate bookingDate;
     private LocalDate startDate;
     private LocalDate endDate;
+
     private BookingStatus bookingStatus;
 
     private List<Trip> trips = new ArrayList<>();
@@ -106,6 +108,7 @@ public class Booking {
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
+
 
     @DynamoDBIndexRangeKey(attributeName = "startTime", globalSecondaryIndexNames = {"bookingIndex", "startTimeIndex"})
     @DynamoDBTypeConverted( converter = InstantConverter.class )
@@ -199,6 +202,7 @@ public class Booking {
                 .withConsistentRead(true)
                 //.withFilterExpression("startTime < :end AND bookingStatus = :validState")//Todo: add bookingState to range key, for more effective querying?
                 .withFilterExpression("startTime < :end AND bookingStatus <> :invalidState AND bookingStatus <> :invalidState2");
+
         return mapper.query(Booking.class, queryExp);
     }
 
@@ -479,7 +483,6 @@ public class Booking {
         }
         return true;
     }
-
 
     @Override
     public boolean equals(Object o) {

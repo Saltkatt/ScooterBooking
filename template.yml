@@ -2,7 +2,6 @@ AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Description: >
   sam-app
-
   Sample SAM Template for sam-app
 Parameters:
   TableName:
@@ -282,7 +281,7 @@ Resources:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
       CodeUri: target/bookings-api-dev.jar
-      Handler: com.wirelessiths.monitor.MonitorEndedBookingsFake::doStuff
+      Handler: com.wirelessiths.monitor.MonitorEndedBookingsTemp::lambdaHandler
       Runtime: java8
       Policies:
         - DynamoDBCrudPolicy:
@@ -301,13 +300,45 @@ Resources:
             Resource: !GetAtt "UserPool.Arn"
         #secret-arn
         #secret-name
-#      Events:
-#          MonitorEnd:
-#            Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
-#            Properties:
-#               Path: /bookings/{id}
-#               Method: put
-#               RestApiId: !Ref MyApi  # Add this line
+      Events:
+        EndedBookingSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: "rate(1 minute)"
+
+  MonitorStartedBookingsFunction:
+    Type: AWS::Serverless::Function # More info about function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: target/bookings-api-dev.jar
+      Handler: com.wirelessiths.monitor.MonitorStartedBookings::lambdaHandler
+      Runtime: java8
+      Policies:
+        - S3ReadPolicy:
+            BucketName: !Ref BucketName
+        - DynamoDBCrudPolicy:
+            TableName: !Ref TableName
+        - Statement:
+            - Sid: snsaccess
+              Effect: Allow
+              Action:
+                - sns:*
+              Resource: '*'
+        - Statement:
+            Effect: Allow
+            Action:
+              - cognito-idp:AdminGetUser
+              - cognito-idp:ListUsers
+            Resource: !GetAtt "UserPool.Arn"
+        #secret-arn
+        #secret-name
+      Events:
+        StartedBookingSchedule:
+          Type: Schedule
+          Properties:
+            Schedule: "rate(1 minute)"
+
+
+
 
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
@@ -316,67 +347,72 @@ Resources:
       AttributeDefinitions:
         - AttributeName: scooterId
           AttributeType: S
+        - AttributeName: startTime
+          AttributeType: S
         - AttributeName: endTime
           AttributeType: S
         - AttributeName: bookingId
           AttributeType: S
         - AttributeName: userId
           AttributeType: S
-        - AttributeName: bookingDate
+        - AttributeName: startDate
           AttributeType: S
-        - AttributeName: startTime
+        - AttributeName: endDate
           AttributeType: S
-      KeySchema:
-        - AttributeName: scooterId
-          KeyType: HASH
-        - AttributeName: endTime
-          KeyType: RANGE
-      ProvisionedThroughput:
-        ReadCapacityUnits: 1
-        WriteCapacityUnits: 1
-      GlobalSecondaryIndexes:
-        - IndexName: userIndex
-          KeySchema:
-            - AttributeName: userId
-              KeyType: HASH
-            - AttributeName: startTime
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-        - IndexName: bookingIndex
-          KeySchema:
-            - AttributeName: bookingId
-              KeyType: HASH
-            - AttributeName: startTime
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-        - IndexName: endTimeIndex
-          KeySchema:
-            - AttributeName: bookingDate
-              KeyType: HASH
-            - AttributeName: endTime
-              KeyType: RANGE
-          Projection:
-            ProjectionType: ALL
-          ProvisionedThroughput:
-            ReadCapacityUnits: 1
-            WriteCapacityUnits: 1
-#      LocalSecondatyIndexes:
-#        - IndexName: endTimeIndex
-#          KeySchema:
-#          - AttributeName: date
-#            KeyType: HASH
-#          - AttributeName: endTime
-#            KeyType: RANGE
-#          Projection:
-#            ProjectionType: KEYS_ONLY
+        KeySchema:
+          - AttributeName: scooterId
+            KeyType: HASH
+          - AttributeName: endTime
+            KeyType: RANGE
+        ProvisionedThroughput:
+          ReadCapacityUnits: 1
+          WriteCapacityUnits: 1
+        GlobalSecondaryIndexes:
+          - IndexName: userIndex
+            KeySchema:
+              - AttributeName: userId
+                KeyType: HASH
+              - AttributeName: startTime
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+          - IndexName: bookingIndex
+            KeySchema:
+              - AttributeName: bookingId
+                KeyType: HASH
+              - AttributeName: startTime
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+          - IndexName: endTimeIndex
+            KeySchema:
+              - AttributeName: endDate
+                KeyType: HASH
+              - AttributeName: endTime
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+          - IndexName: startTimeIndex
+            KeySchema:
+              - AttributeName: startDate
+                KeyType: HASH
+              - AttributeName: startTime
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+            ProvisionedThroughput:
+              ReadCapacityUnits: 1
+              WriteCapacityUnits: 1
+
 Outputs:
   GetBookingFunction:
     Description: "GetBooking Lambda Function ARN"

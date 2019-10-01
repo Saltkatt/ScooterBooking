@@ -5,12 +5,22 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 
 import com.amazonaws.services.dynamodbv2.model.AmazonDynamoDBException;
+
+import com.wirelessiths.handler.ListBookingHandler;
+import com.amazonaws.services.dynamodbv2.model.AmazonDynamoDBException;
 import com.wirelessiths.handler.ListBookingHandler;
 import org.junit.*;
 
 import java.io.IOException;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 
@@ -57,31 +67,34 @@ public class BookingQueryTest {
         b1.setUserId("a");
         b1.setStartTime(Instant.parse("2019-09-03T13:20:00.000Z"));
         b1.setEndTime(Instant.parse("2019-09-03T13:45:00.000Z"));
-        b1.setStartDate(LocalDate.parse("2019-09-03"));
+
+
 
         b2.setScooterId("2");
         b2.setUserId("b");
         b2.setStartTime(Instant.parse("2019-09-04T15:10:00.000Z"));
         b2.setEndTime(Instant.parse("2019-09-04T15:35:00.000Z"));
-        b2.setStartDate(LocalDate.parse("2019-09-04"));
+
+
+
 
         b3.setScooterId("1");
         b3.setUserId("c");
         b3.setStartTime(Instant.parse("2019-09-03T15:10:00.000Z"));
         b3.setEndTime(Instant.parse("2019-09-03T15:35:00.000Z"));
-        b3.setStartDate(LocalDate.parse("2019-09-03"));
+
 
         b4.setScooterId("4");
         b4.setUserId("c");
         b4.setStartTime(Instant.parse("2019-09-03T13:20:00.000Z"));
         b4.setEndTime(Instant.parse("2019-09-03T13:45:00.000Z"));
-        b4.setStartDate(LocalDate.parse("2019-09-03"));
+
+
 
         b5.setScooterId("4");
         b5.setUserId("d");
         b5.setStartTime(Instant.parse("2019-09-04T13:20:00.000Z"));
         b5.setEndTime(Instant.parse("2019-09-04T13:45:00.000Z"));
-        b5.setStartDate(LocalDate.parse("2019-09-04"));
 
 
         try {
@@ -460,7 +473,7 @@ public class BookingQueryTest {
             e.printStackTrace();
         }
         if(Optional.ofNullable(list).isPresent() && !list.isEmpty())
-        assertNull(list.get(0).getUserId());
+            assertNull(list.get(0).getUserId());
     }
 
     @Test
@@ -478,10 +491,5 @@ public class BookingQueryTest {
         if(Optional.ofNullable(list).isPresent() && !list.isEmpty())
             assertNotNull(list.get(0).getUserId());
     }
-
-
-
-
-
 
 }

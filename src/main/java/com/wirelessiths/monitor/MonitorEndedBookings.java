@@ -1,5 +1,6 @@
 package com.wirelessiths.monitor;
 
+import com.amazonaws.regions.Regions;
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
 import com.amazonaws.services.secretsmanager.model.*;
@@ -21,15 +22,12 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
-//Todo: add secret manager to sam template
-//Todo: add cloudwatch rules to sam template
+
+
 public class MonitorEndedBookings {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
-
     private static Dotenv dotenv = Dotenv.load();
-    //private String tripEndpoint = dotenv.get("TRIP_ENDPOINT");
-
     private ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
@@ -39,17 +37,7 @@ public class MonitorEndedBookings {
         //private final SecretCache cache = new SecretCache();
         //final String secret = cache.getSecretString("");
 
-        //check if ended bookings
-        //if not log and return
-        //else log and check p&j for trips
-        //if no trips log and return
-        //else log and append trip to booking
-
-        //how query for dates??
-
-        //String secret = getSecret();
-
-        String clientSecret = getSecret("us-east-1", "client_secret");
+        String clientSecret = getSecret(Regions.EU_WEST_1.toString(), "client_secret");
         String audience = dotenv.get("AUDIENCE");
         String actor = dotenv.get("ACTOR");
         String authUrl = dotenv.get("AUTH_URL");
@@ -57,12 +45,14 @@ public class MonitorEndedBookings {
 
         Booking booking = new Booking();
         List<Booking> endedBookings = booking.bookingsByEndTime();
+
         if(endedBookings.isEmpty()){
             logger.info("No ended bookings");
             return;
         }
-
         logger.info("number of bookings ended: {}", endedBookings.size());
+
+
         try{
             Map<String, String> auth = getAuth(audience, actor, clientSecret, authUrl);
             String accessToken = auth.get("access_token");
@@ -100,30 +90,6 @@ public class MonitorEndedBookings {
         } catch(Exception e){
             logger.info(e.getMessage());
         }
-
-//        endedBookings.forEach((endedBooking)->{
-//
-//            String vehicleId = endedBooking.getScooterId();
-//            try{
-//                String response = getTrips(accessToken, vehicleId, pjUrl);
-//                ArrayNode trips = (ArrayNode) mapper.readTree(response)
-//                        .path("trip_overview_list");
-//                List<Trip> newTrips = mapper.convertValue(trips, new TypeReference<List<Trip>>(){});
-//                if(trips.size() == 0){
-//                    logger.info("No trips for booking:" + endedBooking);
-//                    return;
-//                }
-//                logger.info("number of trips found: " + trips.size());
-//                endedBooking.getTrips().addAll(newTrips);
-//                endedBooking.save(endedBooking);
-//                logger.info("saving updated booking");
-//
-//            }catch(IOException e) {
-//                logger.info(e.getMessage());
-//            }catch(Exception e){
-//                System.out.println(e.getMessage());
-//            }
-//        });
     }
 
 
@@ -132,6 +98,7 @@ public class MonitorEndedBookings {
         if (accessToken == null) {
            logger.info("no token");
            throw new NullPointerException("access-token not found");
+
         }
 
         String fullUrl = url + "/vehicles/" + vehicleId + "/trips";
@@ -170,9 +137,7 @@ public class MonitorEndedBookings {
         return objectmapper.readValue(response.body().string(), new TypeReference<Map<String, String>>() {});
     }
 
-
     private String getSecret(String region, String secretName) {
-
         // Create a Secrets Manager client
         AWSSecretsManager client  = AWSSecretsManagerClientBuilder.standard()
                 .withRegion(region)
@@ -224,7 +189,6 @@ public class MonitorEndedBookings {
             decodedBinarySecret = new String(Base64.getDecoder().decode(getSecretValueResult.getSecretBinary()).array());
             return decodedBinarySecret;
         }
-        // Your code goes here.
     }
 }
 

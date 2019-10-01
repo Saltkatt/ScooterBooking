@@ -37,8 +37,11 @@ packaged.yml
 
 #parameters file
 parameters.json
+parameters-old.json
+cf-deploy-old
 
 #user info
 user.json
+file2.txt
 
 cf-deploy

@@ -1,7 +1,7 @@
 package com.wirelessiths.monitor;
 
 import com.amazonaws.services.sns.AmazonSNS;
-import com.amazonaws.services.sns.AmazonSNSClient;
+
 import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -19,10 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.wirelessiths.service.SNSService.getAmazonSNSClient;
 import static com.wirelessiths.service.SNSService.sendSMSMessage;
@@ -107,7 +104,7 @@ public class MonitorEndedBookingsTemp {
                 .path("trip_overview_list");
 
         if(trips.size() == 0){
-            return new ArrayList<>();
+            return Collections.emptyList();
         }
         return objectMapper.convertValue(trips, new TypeReference<List<Trip>>(){});
     }

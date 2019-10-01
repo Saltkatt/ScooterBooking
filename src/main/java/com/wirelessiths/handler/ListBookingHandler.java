@@ -38,11 +38,12 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 	 */
 	@Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
+		try {
+            if(input.get("warm-up") != null){
+                logger.info("warming up lambda..");
+            }
 
 
-        try {
-
-			//logger.info(input.toString());
 
             //Query key prioritization at the moment (higher prio means that that key is queried and the others are filtered):
             //1. startDate
@@ -69,6 +70,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 			if(input.containsKey("queryStringParameters")) {
                 queryStringParameters = (Map<String, String>) input.get("queryStringParameters");
             }
+
 
             //Check that the user is authorized, can only view their own bookings or need to be admin. If not authorized send back 403.
             if(Optional.ofNullable(queryStringParameters).isPresent()) {
