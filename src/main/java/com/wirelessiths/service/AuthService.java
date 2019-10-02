@@ -20,7 +20,7 @@ public class AuthService {
      */
     @SuppressWarnings("unchecked")
     public static String getUserId(Map<String, Object> input) {
-        return Optional.ofNullable(input).map(m -> (Map<String, Map>)m.get(("requestContext"))).map(m -> (Map<String, Map>)m.get("authorizer")).map(m -> (Map<String, String>)m.get("claims")).map(m -> m.get("sub")).orElse("");
+        return Optional.ofNullable(input).map(m -> (Map<String, Map>)m.get(("requestContext"))).map(m -> (Map<String, Map>)m.get("authorizer")).map(m -> (Map<String, String>)m.get("claims")).map(m -> m.get("sub")).orElse("sam-bot");
 
     }
 
