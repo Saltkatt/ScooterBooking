@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.wirelessiths.dal.Booking;
+import com.wirelessiths.dal.BookingStatus;
 import com.wirelessiths.dal.trip.Trip;
 import com.wirelessiths.service.UserService;
 import io.github.cdimascio.dotenv.Dotenv;
@@ -84,6 +85,10 @@ public class MonitorEndedBookingsTemp {
 
                     sendMessage(message, endedBooking, dotenv.get("USER_POOL_ID"));
                     logger.info("sending happy sms");
+                }
+                if(endedBooking.getBookingStatus().equals(BookingStatus.ACTIVE)){
+                    String message = "Your booking end time has passed but you have'nt completed the booking through the app";
+                    sendMessage(message, endedBooking, dotenv.get("USER_POOL_ID"));
                 }
             }
         }catch(Exception e){
