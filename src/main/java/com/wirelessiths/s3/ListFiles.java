@@ -14,7 +14,6 @@ public class ListFiles {
 
     public static void listFilesInBucket() {
         String bucketName = System.getenv("BUCKET_NAME");
-        //String bucketName = "carl-bucket-29";
         final AmazonS3 s3 = defaultClient();
         ObjectListing olist = s3.listObjects(bucketName);
         List<S3ObjectSummary> objects = olist.getObjectSummaries();
