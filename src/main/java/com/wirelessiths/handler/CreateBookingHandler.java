@@ -49,10 +49,17 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
             booking.setEndTime(Instant.parse(body.get("endTime").asText()));
             booking.setBookingStatus(BookingStatus.VALID);
 
-            Settings settings = Settings.getSettings();
-            int maxDuration = settings.getMaxDuration();
-            int buffer = settings.getBuffer();
-            int maxAllowedBookings = settings.getMaxBookings();
+            int maxDuration = 7200;
+            int buffer = 300;
+            int maxAllowedBookings = 3;
+
+            if(!System.getenv("ENVIRONMENT").equals("test")){
+                Settings settings = Settings.getSettings();
+                 maxDuration = settings.getMaxDuration();
+                 buffer = settings.getBuffer();
+                 maxAllowedBookings = settings.getMaxBookings();
+
+            }
             String message;
             double duration = Duration.between(booking.getStartTime(), booking.getEndTime()).getSeconds();
 

@@ -1,26 +1,26 @@
 {
-  "ListBookingFunction": {
-    "ENVIRONMENT": "test",
-    "BOOKINGS_TABLE_NAME": "test-table"
-  },
-  "CreateBookingFunction": {
-    "ENVIRONMENT": "test",
-    "BOOKINGS_TABLE_NAME": "test-table"
-  },
-  "SetBookingStateFunction": {
-    "ENVIRONMENT": "test",
-    "BOOKINGS_TABLE_NAME": "test-table"
-  },
-  "ListBookingsByUserFunction": {
-    "ENVIRONMENT": "test",
-    "BOOKINGS_TABLE_NAME": "test-table"
-  },
-  "GetBookingFunction": {
-    "ENVIRONMENT": "test",
-    "BOOKINGS_TABLE_NAME": "test-table"
-  },
-  "DeleteBookingFunction": {
-    "ENVIRONMENT": "test",
-    "BOOKINGS_TABLE_NAME": "test-table"
-  }
+"ListBookingFunction": {
+"ENVIRONMENT": "test",
+"BOOKINGS_TABLE_NAME": "test-table"
+},
+"CreateBookingFunction": {
+"ENVIRONMENT": "test",
+"BOOKINGS_TABLE_NAME": "test-table"
+},
+"SetBookingStateFunction": {
+"ENVIRONMENT": "test",
+"BOOKINGS_TABLE_NAME": "test-table"
+},
+"ListBookingsByUserFunction": {
+"ENVIRONMENT": "test",
+"BOOKINGS_TABLE_NAME": "test-table"
+},
+"GetBookingFunction": {
+"ENVIRONMENT": "test",
+"BOOKINGS_TABLE_NAME": "test-table"
+},
+"DeleteBookingFunction": {
+"ENVIRONMENT": "test",
+"BOOKINGS_TABLE_NAME": "test-table"
+}
 }
