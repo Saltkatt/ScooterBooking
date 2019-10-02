@@ -57,7 +57,7 @@ public class MonitorEndedBookingsTemp {
                     logger.info("No trips for booking: {}", endedBooking);
                     String message = String.format("No trip registered for your booking, if you didnt use the scooter, please cancel the booking next time. ScooterId: %s, StartTime: %s, EndTime: %s",
                             endedBooking.getScooterId(), endedBooking.getStartTime(), endedBooking.getEndTime());
-                    sendMessage(message, endedBooking, dotenv.get("USER_POOL_ID"));
+                    sendMessage(message, endedBooking, System.getenv("USER_POOL_ID"));
                     logger.info("sending angry sms");
 
                     continue;
@@ -82,20 +82,19 @@ public class MonitorEndedBookingsTemp {
                     String message = String.format("No trip registered for your booking, if you didnt use the scooter, please cancel the booking next time. ScooterId: %s, StartTime: %s, EndTime: %s",
                             endedBooking.getScooterId(), endedBooking.getStartTime(), endedBooking.getEndTime());
 
-                    sendMessage(message, endedBooking, dotenv.get("USER_POOL_ID"));
+                    sendMessage(message, endedBooking, System.getenv("USER_POOL_ID"));
                     logger.info("sending angry sms");
 
                 }else{
                     String message = String.format("Thank you for completing your trip. You traveled %s meters. ScooterId: %s, StartTime: %s, EndTime: %s ", Math.ceil(distanceTraveled),
                             endedBooking.getScooterId(), endedBooking.getStartTime(), endedBooking.getEndTime()) ;
 
-                    sendMessage(message, endedBooking, dotenv.get("USER_POOL_ID"));
+                    sendMessage(message, endedBooking, System.getenv("USER_POOL_ID"));
                     logger.info("sending happy sms");
                 }
-
                 if(endedBooking.getBookingStatus().equals(BookingStatus.ACTIVE)){
                     String message = "Your booking end time has passed but you have'nt completed the booking through the app";
-                    sendMessage(message, endedBooking, dotenv.get("USER_POOL_ID"));
+                    sendMessage(message, endedBooking, System.getenv("USER_POOL_ID"));
                 }
             }
         }catch(Exception e){

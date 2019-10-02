@@ -2,6 +2,8 @@ package com.wirelessiths.handler;
 
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+import com.amazonaws.services.sns.AmazonSNS;
+import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +13,7 @@ import com.wirelessiths.dal.BookingStatus;
 import com.wirelessiths.dal.Booking;
 import com.wirelessiths.s3.Settings;
 import com.wirelessiths.service.AuthService;
+import com.wirelessiths.service.UserService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,7 +22,11 @@ import java.io.IOException;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
+
+import static com.wirelessiths.service.SNSService.getAmazonSNSClient;
+import static com.wirelessiths.service.SNSService.sendSMSMessage;
 
 /**
  * This class handles save requests and implements RequestHandler and ApiGatewayResponse.
@@ -81,6 +88,8 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
             }
             booking.save(booking);
+            String userMessage = String.format("Booking confirmation for startdate: %s and enddate: %s", booking.getStartTime(), booking.getEndTime());
+            sendMessage(userMessage, booking, System.getenv("USER_POOL_ID"));
             return ApiGatewayResponse.builder()
                     .setStatusCode(201)
                     .setObjectBody(booking)
@@ -130,5 +139,13 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
                     .setHeaders(Collections.singletonMap("Booking System", "Wireless Scooter"))
                     .build();
         }
+    }
+    private void sendMessage(String message, Booking booking, String userPoolId){
+        String phoneNumber = UserService.getUserPhoneNumber(booking.getUserId(), userPoolId);
+        AmazonSNS snsClient = getAmazonSNSClient();
+        Map<String, MessageAttributeValue> smsAttributes =
+                new HashMap<>();
+        //<set SMS attributes>
+        sendSMSMessage(snsClient, message, phoneNumber, smsAttributes);
     }
 }

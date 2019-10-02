@@ -154,7 +154,19 @@ Resources:
             # Can also accept an array
             Identity: # OPTIONAL
               Header: Authorization # OPTIONAL; Default: 'Authorization'
-
+#  LambdaRule:
+#    Type: AWS::Events::Rule
+#    Properties:
+#      Description: String
+#      EventPattern: Json
+#      Name: "trigger target lambdas at 1 min intervals"
+#      RoleArn: String
+#      ScheduleExpression: "rate(1 minute)"
+#      State: Enabled
+#      Targets:
+#        - MonitorEndedBookingsFunction
+#        - MonitorEndedBookingsFunctionTemp
+#        - MonitorStartedBookingsFunction
   GetBookingFunction:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
     Properties:
@@ -253,6 +265,18 @@ Resources:
             TableName: !Ref TableName
         - S3ReadPolicy:
             BucketName: !Ref BucketName
+        - Statement:
+            Effect: Allow
+            Action:
+              - cognito-idp:AdminGetUser
+              - cognito-idp:ListUsers
+            Resource: !GetAtt "UserPool.Arn"
+        - Statement:
+            - Sid: snsaccess
+              Effect: Allow
+              Action:
+                - sns:*
+              Resource: '*'
       Events:
         CreateBooking:
           Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
@@ -303,7 +327,6 @@ Resources:
         EndedBookingSchedule:
           Type: Schedule
           Properties:
-            State: "DISABLED"
             Schedule: "rate(1 minute)"
   MonitorEndedBookingsFunctionTemp:
     Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
@@ -332,7 +355,6 @@ Resources:
         EndedBookingSchedule:
           Type: Schedule
           Properties:
-            State: "ENABLED"
             Schedule: "rate(1 minute)"
 
   MonitorStartedBookingsFunction:
@@ -364,7 +386,6 @@ Resources:
         StartedBookingSchedule:
           Type: Schedule
           Properties:
-            State: "ENABLED"
             Schedule: "rate(1 minute)"
   BookingsDynamoDBTable:
     Type: AWS::DynamoDB::Table
