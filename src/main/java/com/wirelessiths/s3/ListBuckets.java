@@ -21,8 +21,10 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Lists all buckets belonging to AWS Account.
+ */
 public class ListBuckets {
-
 
     public static void listBuckets() {
         final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();

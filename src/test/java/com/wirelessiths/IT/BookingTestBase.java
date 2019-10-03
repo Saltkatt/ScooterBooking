@@ -1,4 +1,4 @@
-package com.wirelessiths.dal;
+package com.wirelessiths.IT;
 
 import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Regions;
@@ -12,8 +12,7 @@ import com.amazonaws.services.dynamodbv2.model.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LocalDbHandler {
-
+public class BookingTestBase {
 
 
     protected static AmazonDynamoDB createClient(){
@@ -25,17 +24,13 @@ public class LocalDbHandler {
     }
 
 
-
-    public static DynamoDBMapperConfig createMapperConfig(String tableName){
-
-
+    protected static DynamoDBMapperConfig createMapperConfig(String tableName){
 
         System.out.println("creating mapperConfig..");
         return DynamoDBMapperConfig.builder()
                 .withTableNameOverride(new DynamoDBMapperConfig.TableNameOverride(tableName))
                 .build();
     }
-
 
 
     protected static void deleteTable(String tableName, AmazonDynamoDB client){
@@ -53,8 +48,6 @@ public class LocalDbHandler {
             System.err.println(e.getMessage());
         }
     }
-
-
 
 
 
@@ -151,27 +144,6 @@ public class LocalDbHandler {
         globalSecondaryIndexes.add(endTimeIndex);
         globalSecondaryIndexes.add(startTimeIndex);
 
-        //local secondary indexes
-//        ArrayList<LocalSecondaryIndex> localSecondaryIndexes = new
-//                ArrayList<>();
-//
-//        ArrayList<KeySchemaElement> endTimeIndexKeySchema = new ArrayList<>();
-//
-//        endTimeIndexKeySchema.add(new KeySchemaElement()
-//                .withAttributeName("date")
-//                .withKeyType(KeyType.HASH));
-//
-//        endTimeIndexKeySchema.add(new KeySchemaElement()
-//                .withAttributeName("endTime")
-//                .withKeyType(KeyType.RANGE));
-//
-//        LocalSecondaryIndex endTimeIndex = new LocalSecondaryIndex()
-//                .withIndexName("endTimeIndex")
-//                .withKeySchema(endTimeIndexKeySchema)
-//                .withProjection(new Projection().withProjectionType(ProjectionType.KEYS_ONLY));
-//
-//        localSecondaryIndexes.add(endTimeIndex);
-
 
         //all fields used as keys
         List<AttributeDefinition> attributeDefinitions = new ArrayList<>();
@@ -209,14 +181,10 @@ public class LocalDbHandler {
                     //.withLocalSecondaryIndexes(localSecondaryIndexes)
                     .withAttributeDefinitions(attributeDefinitions);
             client.createTable(createTableRequest);
-            System.out.println("table created.");
         }catch(Exception e){
             System.out.println("error creating table: " + e.getMessage());
 
         }
-
-
-
-
+        System.out.println("table created.");
     }
 }

@@ -8,9 +8,15 @@ import java.io.File;
 import java.net.URISyntaxException;
 import java.net.URL;
 
-
+/**
+ * Retrieves the settings.txt file in resources, gives it a keyName and uploads it to the S3 Bucket.
+ */
 public class UploadFile {
 
+    /**
+     * Uploads a file from resources to the S3 Bucket.
+     * @throws URISyntaxException
+     */
     public static void uploadFileToBucket() throws URISyntaxException {
         final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
         String bucketName = System.getenv("BUCKET_NAME");

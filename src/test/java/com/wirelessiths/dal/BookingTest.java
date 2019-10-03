@@ -1,6 +1,5 @@
 package com.wirelessiths.dal;
 
-
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.wirelessiths.dal.trip.Trip;
@@ -44,7 +43,6 @@ import static org.junit.Assert.*;
     public static void deleteTable(){
         LocalDbHandler.deleteTable(tableName, client);
     }
-
 
     public static void startLocalDynamoDB() {
         String line = "";

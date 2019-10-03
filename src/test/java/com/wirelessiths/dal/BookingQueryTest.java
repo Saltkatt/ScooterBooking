@@ -35,10 +35,6 @@ public class BookingQueryTest {
 
     @BeforeClass
     public static void setUpClientAndTable() {
-        //  BookingTest.startLocalDynamoDB();
-//        createClient();
-//        createTable();
-
         client = LocalDbHandler.createClient();
         mapperConfig = LocalDbHandler.createMapperConfig(tableName);
         LocalDbHandler.deleteTable(tableName, client);

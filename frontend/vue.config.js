@@ -3,7 +3,7 @@ module.exports = {
     s3Deploy: {
       registry: undefined,
       awsProfile: 'default',
-      region: 'us-east-1',
+      region: 'eu-west-1',
       bucket: 'frontend-vuejs-bucket',
       createBucket: true,
       staticHosting: true,

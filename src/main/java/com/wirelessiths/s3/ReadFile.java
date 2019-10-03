@@ -1,7 +1,6 @@
 package com.wirelessiths.s3;
 
 import com.amazonaws.services.s3.AmazonS3;
-import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 
@@ -12,7 +11,11 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.amazonaws.services.s3.AmazonS3ClientBuilder.*;
 
+/**
+ * Reads the file in the S3 Bucket.
+ */
 public class ReadFile {
 
     /**
@@ -24,7 +27,7 @@ public class ReadFile {
         String bucketName = System.getenv("BUCKET_NAME");
         //String bucketName = "carl-bucket-29";
 
-        final AmazonS3 s3 = AmazonS3ClientBuilder.defaultClient();
+        final AmazonS3 s3 = defaultClient();
         S3Object object = s3.getObject(new GetObjectRequest(bucketName, keyName));
         InputStream objectData = object.getObjectContent();
         //process the objectData stream
