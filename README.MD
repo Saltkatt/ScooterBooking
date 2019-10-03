@@ -55,7 +55,7 @@ mvn surefire:test -Dtest=LocalSamTest
 
 ### Deploying
 
-The stack is created through running the script cf-deploy script.
+The stack is created by running the script cf-deploy script.
 
 You need to set the parameters for STACK_NAME and BUCKET_NAME parameters in this script before you deploy:
 
@@ -78,7 +78,7 @@ aws cloudformation deploy \
 
 ```
 
-The bucket need to be created before deploying. mybucketname is the name of your bucket.
+The bucket needs to be created before deploying. mybucketname is the name of your bucket.
 
 ```
 aws s3 mb s3://mybucketname
