@@ -1,13 +1,10 @@
 package com.wirelessiths.monitor;
 
-import com.amazonaws.regions.Regions;
 import com.amazonaws.services.secretsmanager.AWSSecretsManager;
 import com.amazonaws.services.secretsmanager.AWSSecretsManagerClientBuilder;
 import com.amazonaws.services.secretsmanager.model.*;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.*;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.wirelessiths.dal.Booking;
@@ -27,31 +24,27 @@ import java.util.Map;
 public class MonitorEndedBookings {
 
     private final Logger logger = LogManager.getLogger(this.getClass());
+
+    private final String clientSecret = getSecret("eu-west-1", "client_secret");
+    private final String audience = dotenv.get("AUDIENCE");
+    private final String actor = dotenv.get("ACTOR");
+    private final String authUrl = dotenv.get("PJ_AUTH_URL");
+    private final String pjUrl = dotenv.get("PJ_URL");
+
     private static Dotenv dotenv = Dotenv.load();
     private ObjectMapper mapper = new ObjectMapper()
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
             .setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
 
     public void lambdaHandler(){
-        //cashing secret
-        //private final SecretCache cache = new SecretCache();
-        //final String secret = cache.getSecretString("");
-
-        String clientSecret = getSecret(Regions.EU_WEST_1.toString(), "client_secret");
-        String audience = dotenv.get("AUDIENCE");
-        String actor = dotenv.get("ACTOR");
-        String authUrl = dotenv.get("AUTH_URL");
-        String pjUrl = dotenv.get("PJ_URL");
 
         Booking booking = new Booking();
         List<Booking> endedBookings = booking.bookingsByEndTime();
 
         if(endedBookings.isEmpty()){
-            logger.info("No ended bookings");
             return;
         }
         logger.info("number of bookings ended: {}", endedBookings.size());
-
 
         try{
             Map<String, String> auth = getAuth(audience, actor, clientSecret, authUrl);
@@ -59,19 +52,12 @@ public class MonitorEndedBookings {
 
             for(Booking endedBooking : endedBookings){
 
-
                 String vehicleId = endedBooking.getScooterId();
-                List<Trip> trips = getTrips(accessToken, vehicleId, pjUrl);
+                List<Trip> trips = getTrips(accessToken, vehicleId, pjUrl, endedBooking);
                 if(trips == null || trips.isEmpty()){
                     continue;
                 }
-//                ArrayNode trips = (ArrayNode) mapper.readTree(response)
-//                        .path("trip_overview_list");
-//                List<Trip> newTrips = mapper.convertValue(trips, new TypeReference<List<Trip>>(){});
-//                if(trips.size() == 0){
-//                    logger.info("No trips for booking: {}", endedBooking);
-//                    continue;
-//                }
+
                 logger.info("number of trips found: {}", trips.size());
                 trips.forEach(trip-> logger.info("trip: {}", trip));
                 endedBooking.getTrips().addAll(trips);
@@ -79,29 +65,29 @@ public class MonitorEndedBookings {
                 endedBooking.save(endedBooking);
                 logger.info("saving updated booking");
             }
-        }catch(IOException e) {
-            logger.info(e.getMessage());
-
+        }catch(JsonMappingException e) {
+            logger.info("error deserializing trips: {}", e.getMessage());
         }catch(NullPointerException e){
             logger.info("access-token not found: {}", e.getMessage());
 
         }catch(ClassCastException e){
 
-        } catch(Exception e){
+        }catch(IOException e) {
+            logger.info(e.getMessage());
+        } catch (Exception e){
             logger.info(e.getMessage());
         }
     }
 
 
-    private List<Trip> getTrips(String accessToken, String vehicleId, String url) throws IOException, NullPointerException {
+    private List<Trip> getTrips(String accessToken, String vehicleId, String url, Booking endedBooking) throws IOException {
 
         if (accessToken == null) {
            logger.info("no token");
            throw new NullPointerException("access-token not found");
-
         }
-
-        String fullUrl = url + "/vehicles/" + vehicleId + "/trips";
+        String queryParams = String.format("?startDate=%s&endDate=%s", endedBooking.getStartTime(), endedBooking.getEndTime());
+        String fullUrl = url + "/vehicles/" + vehicleId + "/trips" ;
         //Todo: add query params for startDate and endDate
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
@@ -156,7 +142,8 @@ public class MonitorEndedBookings {
 
         try {
             getSecretValueResult = client.getSecretValue(getSecretValueRequest);
-        } catch (DecryptionFailureException e) {
+
+         }catch (DecryptionFailureException e) {
             logger.info("Secrets Manager can't decrypt the protected secret text using the provided KMS key: {}", e.getMessage());
             // Deal with the exception here, and/or rethrow at your discretion.
             throw e;
@@ -182,8 +169,8 @@ public class MonitorEndedBookings {
         // Depending on whether the secret is a string or binary, one of these fields will be populated.
         if (getSecretValueResult.getSecretString() != null) {
             secret = getSecretValueResult.getSecretString();
-            return secret;
 
+            return secret.substring(secret.indexOf(':') + 2, secret.indexOf('}') -1);
         }
         else {
             decodedBinarySecret = new String(Base64.getDecoder().decode(getSecretValueResult.getSecretBinary()).array());

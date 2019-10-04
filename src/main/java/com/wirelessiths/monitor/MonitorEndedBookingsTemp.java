@@ -46,7 +46,7 @@ public class MonitorEndedBookingsTemp {
             List<Booking>endedBookings = booking.bookingsByEndTime();
 
             if (endedBookings.isEmpty()) {
-                logger.info("No ended bookings");
+                //logger.info("No ended bookings");
                 return;
             }
             logger.info("number of bookings ended: {} ", endedBookings.size());

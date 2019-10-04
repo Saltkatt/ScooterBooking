@@ -323,6 +323,16 @@ Resources:
               - cognito-idp:AdminGetUser
               - cognito-idp:ListUsers
             Resource: !GetAtt "UserPool.Arn"
+        - Statement:
+            Effect: Allow
+            Action:
+              - secretsmanager:GetResourcePolicy
+              - secretsmanager:GetSecretValue
+              - secretsmanager:DescribeSecret
+              - secretsmanager:ListSecretVersionIds
+            Resource:
+              - arn:aws:secretsmanager:eu-west-1:017271658974:secret:client_secret-Tdauqr
+
         #secret-arn
         #secret-name
       Events:
