@@ -8,12 +8,10 @@ import com.amazonaws.services.dynamodbv2.datamodeling.DynamoDBMapperConfig;
 import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import com.amazonaws.services.dynamodbv2.document.Table;
 import com.amazonaws.services.dynamodbv2.model.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class BookingTestBase {
-
 
     protected static AmazonDynamoDB createClient(){
 
@@ -23,7 +21,6 @@ public class BookingTestBase {
                 .build();
     }
 
-
     protected static DynamoDBMapperConfig createMapperConfig(String tableName){
 
         System.out.println("creating mapperConfig..");
@@ -31,7 +28,6 @@ public class BookingTestBase {
                 .withTableNameOverride(new DynamoDBMapperConfig.TableNameOverride(tableName))
                 .build();
     }
-
 
     protected static void deleteTable(String tableName, AmazonDynamoDB client){
 
@@ -48,8 +44,6 @@ public class BookingTestBase {
             System.err.println(e.getMessage());
         }
     }
-
-
 
     protected static void createTable(String tableName, AmazonDynamoDB client){
 
