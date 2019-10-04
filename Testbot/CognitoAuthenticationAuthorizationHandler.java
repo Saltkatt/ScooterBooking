@@ -4,22 +4,27 @@
  * Used the OkHttp3 library for the HTTP Requests.
  */
 
+
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProvider;
 import com.amazonaws.services.cognitoidp.AWSCognitoIdentityProviderClientBuilder;
 import com.amazonaws.services.cognitoidp.model.*;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.RequestHandler;
+
+
+import com.amazonaws.services.sns.model.*;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
 public class CognitoAuthenticationAuthorizationHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
+
 
     private Context globalContext;
 
@@ -39,7 +44,7 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
 
         //JSON input data
         String jsonInputString = "{\n" +
-                "\"scooterId\" : \"s9vjES2\",\n" +
+                "\"scooterId\" : \"Zbxsjp9x\",\n" +
                 "\"startTime\" : \"2019-08-30T15:00:36.739Z\",\n" +
                 "\"endTime\" : \"2019-08-30T16:00:36.739Z\"\n" +
                 "}";
@@ -51,7 +56,7 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
                 .addHeader("User-Agent", "insomnia/6.6.2")
                 .addHeader("Content-Type", "application/" + "json")
                 .addHeader("Authorization", "Bearer " + token)
-                .url("https://nkybxxmihd.execute-api.us-east-1.amazonaws.com/dev/bookings")
+                .url("https://api.book.wirelessscooter.com/bookings/")
                 .post(body)
                 .build();
 
@@ -59,12 +64,16 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
         ObjectMapper mapper = new ObjectMapper();
 
         Response response = client.newCall(request).execute();
+
         String responseBody = response.body().string();
-        if (response.code() == 200) {
+        if (response.code() == 201) {
             globalContext.getLogger().log("\nCongratulations on booking your Scooter trip. Safe travel!");
         } else {
-            globalContext.getLogger().log("\nThere is a 409 conflict in create booking. ");
+            globalContext.getLogger().log("\nThe answer is not 201. ");
             globalContext.getLogger().log(responseBody);
+            Map<String, MessageAttributeValue> smsAttributes = new HashMap<>();
+            SNSService.sendSMSMessage(SNSService.getAmazonSNSClient(), responseBody, System.getenv("phoneNumber"), smsAttributes);
+
         }
 
         //Retrieving the data contained inside the node
@@ -82,30 +91,34 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
 
         OkHttpClient client = new OkHttpClient();
 
+
         Request request = new Request.Builder()
 
                 .addHeader("User-Agent", "insomnia/6.6.2")
                 .addHeader("Content-Type", "application/" + "json")
                 .addHeader("Authorization", "Bearer " + token)
-                .url("https://nkybxxmihd.execute-api.us-east-1.amazonaws.com/dev/bookings/" + bookingId)
+                .url("https://api.book.wirelessscooter.com/bookings/" + bookingId)
                 .get()
                 .build();
 
         Response response = client.newCall(request).execute();
         String responseBody = response.body().string();
-
-        if (response.code() == 200) {
+        int responseCode = response.code();
+        if (responseCode == 200) {
             globalContext.getLogger().log("\nYou have succeeded in retrieving your booking information!");
         } else {
-            globalContext.getLogger().log("\nThere is a 401 error in read booking.");
+            globalContext.getLogger().log("\nThe error code in read booking is: " + responseCode);
             globalContext.getLogger().log(responseBody);
+            Map<String, MessageAttributeValue> smsAttributes = new HashMap<>();
+            SNSService.sendSMSMessage(SNSService.getAmazonSNSClient(), responseBody,
+                    System.getenv("phoneNumber"), smsAttributes);
         }
 
         //For reading and writing JSON
         ObjectMapper mapper = new ObjectMapper();
 
         //Retrieving the data contained inside the node
-        JsonNode node = mapper.readTree(response.body().string());
+        JsonNode node = mapper.readTree(responseBody);
         bookingId = "fakeBookingId";
         if (node.hasNonNull("bookingId")) {
             bookingId = node.get("bookingId").asText();
@@ -127,7 +140,7 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
                 .addHeader("User-Agent", "insomnia/6.6.2")
                 .addHeader("Content-Type", "application/" + "json")
                 .addHeader("Authorization", "Bearer " + token)
-                .url("https://nkybxxmihd.execute-api.us-east-1.amazonaws.com/dev/bookings/" + bookingId)
+                .url("https://api.book.wirelessscooter.com/bookings/" + bookingId)
                 .put(body)
                 .build();
 
@@ -141,13 +154,15 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
         } else {
             globalContext.getLogger().log("There is a 401 error in update booking.");
             globalContext.getLogger().log(responseBody);
+            Map<String, MessageAttributeValue> smsAttributes = new HashMap<>();
+            SNSService.sendSMSMessage(SNSService.getAmazonSNSClient(), responseBody, System.getenv("phoneNumber"), smsAttributes);
         }
 
         //For reading and writing JSON
         ObjectMapper mapper = new ObjectMapper();
 
         //Retrieving the data contained inside the node
-        JsonNode node = mapper.readTree(response.body().string());
+        JsonNode node = mapper.readTree(responseBody);
         bookingId = "fakeBookingId";
         String newStartTime = node.get("startTime").asText();
         globalContext.getLogger().log("newStartTime: " + newStartTime);
@@ -159,7 +174,7 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
 
     }
 
-    private Response deleteBooking(String token, String bookingId) throws IOException {
+    private String deleteBooking(String token, String bookingId) throws IOException {
 
         OkHttpClient client = new OkHttpClient();
 
@@ -168,7 +183,7 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
                 .addHeader("User-Agent", "insomnia/6.6.2")
                 .addHeader("Content-Type", "application/" + "json")
                 .addHeader("Authorization", "Bearer " + token)
-                .url("https://nkybxxmihd.execute-api.us-east-1.amazonaws.com/dev/bookings/" + bookingId)
+                .url("https://api.book.wirelessscooter.com/bookings/" + bookingId)
                 .delete()
                 .build();
 
@@ -182,21 +197,25 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
         } else {
             globalContext.getLogger().log("There is a 404 error in delete booking.");
             globalContext.getLogger().log(responseBody);
+            Map<String, MessageAttributeValue> smsAttributes = new HashMap<>();
+            SNSService.sendSMSMessage(SNSService.getAmazonSNSClient(), responseBody, System.getenv("phoneNumber"), smsAttributes);
 
         }
 
-        return response;
+        return responseBody;
 
     }
 
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 
+
         globalContext = context;
 
         try {
             String userName = System.getenv("userName");
             String password = System.getenv("password");
+
 
             //Stating the aws region
             String userPoolId = System.getenv("userPoolId");
@@ -224,6 +243,7 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
             AuthenticationResultType auth = result.getAuthenticationResult();
             String token = auth.getAccessToken();
 
+
             //String response1 creates new booking
             String response1 = createBooking(token);
             //String response2 retrieves a booking according to booking id
@@ -234,10 +254,7 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
             //String response3 updates a booking
             String response3 = updateBooking(token, response2, jsonInputString);
             //String response4 deletes the updated booking
-            Response response4 = deleteBooking(token, response3);
-
-            //Runs the CRUD functionality consecutively
-            String finalResponse = response1 + response2 + response3 + response4;
+            String response4 = deleteBooking(token, response3);
 
 
             return ApiGatewayResponse.builder()
@@ -256,6 +273,10 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
 
         }
 
+
     }
+
+
 }
+
 
