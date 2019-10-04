@@ -45,7 +45,7 @@ public class AuthServiceTest {
         mostOut.put("requestContext", middleOut);
 
         String result = AuthService.getUserId(mostOut);
-        assertEquals("", result);
+        assertEquals("sam-bot", result);
 
     }
 
@@ -58,7 +58,7 @@ public class AuthServiceTest {
         mostOut.put("requestContext", middleOut);
 
         String result = AuthService.getUserId(mostOut);
-        assertEquals("", result);
+        assertEquals("sam-bot", result);
 
     }
 
@@ -76,7 +76,7 @@ public class AuthServiceTest {
         mostOut = null;
 
         String result = AuthService.getUserId(mostOut);
-        assertEquals("", result);
+        assertEquals("sam-bot", result);
     }
 
     @Test
