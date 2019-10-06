@@ -16,7 +16,8 @@ public class SlackUtils {
 
     public static void sendMessage(SlackMessage message) {
         CloseableHttpClient client = HttpClients.createDefault();
-        String slackWebhookUrl = "https://hooks.slack.com/services/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";
+
+        String slackWebhookUrl = System.getenv("slackWebhookUrl");
         HttpPost httpPost = new HttpPost(slackWebhookUrl);
 
         try {
