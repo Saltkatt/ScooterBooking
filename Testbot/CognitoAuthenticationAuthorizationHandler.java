@@ -2,7 +2,7 @@
  * CognitoAuthenticationAuthorizationHandler authenticates a token in Cognito for usage in Lambda.
  * The methods are created based on CRUD functionality using Json for input.
  * Used the OkHttp3 library for the HTTP Requests.
- * The method sendMessage for sending a message passes an instance of SlackMessage.
+ * The method sendMessage passes an instance of SlackMessage.
  */
 
 
