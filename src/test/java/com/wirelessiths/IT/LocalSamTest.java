@@ -24,7 +24,6 @@ import static org.junit.Assert.assertEquals;
 public class LocalSamTest {
 
     private static AmazonDynamoDB client;
-    private static DynamoDBMapperConfig mapperConfig;
     private static String tableName = "test-table";
     static String bookingId;
 
@@ -66,7 +65,7 @@ public class LocalSamTest {
     @BeforeClass
     public static void setUp(){
         client = BookingTestBase.createClient();
-        mapperConfig = BookingTestBase.createMapperConfig(tableName);
+        DynamoDBMapperConfig mapperConfig = BookingTestBase.createMapperConfig(tableName);
         BookingTestBase.createTable(tableName, client);
     }
 

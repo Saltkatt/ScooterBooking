@@ -21,10 +21,7 @@ public class BookingContent {
 
     private static AmazonDynamoDB client;
     private static DynamoDBMapperConfig mapperConfig;
-    private static String tableName = "test-table";
 
-    private static int maxDuration = 7200;
-    private static int buffer = 300;
     private static int maxBookings = 3;
 
 
@@ -32,6 +29,7 @@ public class BookingContent {
     public static void setUpClientAndTable() {
 
         client = BookingTestBase.createClient();
+        String tableName = "test-table";
         mapperConfig = BookingTestBase.createMapperConfig(tableName);
         BookingTestBase.createTable(tableName, client);
         populateForOkValidationTest();
@@ -197,6 +195,8 @@ public class BookingContent {
 
 
         try {
+            int buffer = 300;
+            int maxDuration = 7200;
             List<Booking> bookings = testCase.validateBooking(testCase, maxDuration, buffer);
             System.out.println("pass test bookings:");
             bookings.forEach(System.out::println);

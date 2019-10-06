@@ -22,7 +22,7 @@ public class UpdateBookingHandler implements RequestHandler<Map<String, Object>,
     private final Logger logger = LogManager.getLogger(this.getClass());
 
 
-    @SuppressWarnings("DuplicatedCode")
+    @SuppressWarnings("unchecked")
     @Override
     public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 

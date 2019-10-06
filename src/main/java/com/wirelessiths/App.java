@@ -17,8 +17,6 @@ public class App {
     private final Logger logger = LogManager.getLogger(this.getClass());
 
     public void testLogger()  {
-        logger.info("testing testing");
-        logger.error("jadpgjeap");
     }
 
     public static void main( String[] args ) throws URISyntaxException, IOException {

@@ -43,7 +43,7 @@ private final Logger logger = LogManager.getLogger(this.getClass());
 
         try{
            JsonNode body  = new ObjectMapper().readTree((String) input.get("body"));
-           Map<String, String> pathParameters = (Map)input.get("pathParameters");
+           @SuppressWarnings("unchecked") Map<String, String> pathParameters = (Map)input.get("pathParameters");
 
            incomingUserId = AuthService.getUserId(input);
            incomingBookingId = pathParameters.get("id");

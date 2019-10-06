@@ -113,6 +113,8 @@ Resources:
         - preferred_username
       AllowedOAuthFlows:
         - implicit
+      ExplicitAuthFlows:
+        - ADMIN_NO_SRP_AUTH
       AllowedOAuthFlowsUserPoolClient: true
       AllowedOAuthScopes:
         - email
