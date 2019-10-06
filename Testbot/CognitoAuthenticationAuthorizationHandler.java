@@ -2,6 +2,7 @@
  * CognitoAuthenticationAuthorizationHandler authenticates a token in Cognito for usage in Lambda.
  * The methods are created based on CRUD functionality using Json for input.
  * Used the OkHttp3 library for the HTTP Requests.
+ * The method sendMessage for sending a message passes an instance of SlackMessage.
  */
 
 
@@ -36,6 +37,15 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
     List<UserPoolDescriptionType> userPools =
             cognito.listUserPools(new ListUserPoolsRequest().
                     withMaxResults(20)).getUserPools();
+
+    //Sends the expected Slack message
+
+    private SlackMessage slackMessage = SlackMessage.builder()
+            .channel("Lisa Marie (ITHS)")
+            .username("Lisa Marie (ITHS)")
+            .text("The Lambda recieved an error.")
+            .icon_emoji(":twice:")
+            .build();
 
 
     private String createBooking(String token) throws Exception {
@@ -73,6 +83,8 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
             globalContext.getLogger().log(responseBody);
             Map<String, MessageAttributeValue> smsAttributes = new HashMap<>();
             SNSService.sendSMSMessage(SNSService.getAmazonSNSClient(), responseBody, System.getenv("phoneNumber"), smsAttributes);
+            SlackUtils.sendMessage(slackMessage);
+
 
         }
 
@@ -165,7 +177,7 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
         JsonNode node = mapper.readTree(responseBody);
         bookingId = "fakeBookingId";
         String newStartTime = node.get("startTime").asText();
-        globalContext.getLogger().log("newStartTime: " + newStartTime);
+        globalContext.getLogger().log("\n newStartTime: " + newStartTime);
         if (node.hasNonNull("bookingId")) {
             bookingId = node.get("bookingId").asText();
         }
@@ -199,6 +211,7 @@ public class CognitoAuthenticationAuthorizationHandler implements RequestHandler
             globalContext.getLogger().log(responseBody);
             Map<String, MessageAttributeValue> smsAttributes = new HashMap<>();
             SNSService.sendSMSMessage(SNSService.getAmazonSNSClient(), responseBody, System.getenv("phoneNumber"), smsAttributes);
+
 
         }
 
