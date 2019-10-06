@@ -43,7 +43,6 @@ public class Booking {
     private List<Trip> trips = new ArrayList<>();
 
 
-    private static DynamoDBAdapter db_adapter;
     private final AmazonDynamoDB client;
     private final DynamoDBMapper mapper;
     private final DynamoDB dynamoDB;
@@ -60,11 +59,11 @@ public class Booking {
                 .withTableNameOverride(new DynamoDBMapperConfig.TableNameOverride(BOOKINGS_TABLE_NAME))
                 .build();
         // get the db adapter
-        this.db_adapter = DynamoDBAdapter.getInstance();
-        this.client = this.db_adapter.getDbClient();
-        this.dynamoDB = this.db_adapter.getDynamoDB();
+        DynamoDBAdapter db_adapter = DynamoDBAdapter.getInstance();
+        this.client = db_adapter.getDbClient();
+        this.dynamoDB = db_adapter.getDynamoDB();
         // create the mapper with config
-        this.mapper = this.db_adapter.createDbMapper(mapperConfig);
+        this.mapper = db_adapter.createDbMapper(mapperConfig);
 
         this.logger = new LoggerAdapter(LogManager.getLogger(this.getClass()));
     }

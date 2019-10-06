@@ -17,7 +17,6 @@ import java.util.Map;
 /**
  * This class handles delete requests and implements RequestHandler and ApiGatewayResponse.
  */
-@SuppressWarnings("DuplicatedCode")
 public class DeleteBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private final Logger logger = LogManager.getLogger(this.getClass());

@@ -20,6 +20,7 @@ import java.util.*;
 /**
  *This class allows users or admin to retrieve a list of all existing bookings.
  */
+@SuppressWarnings("ALL")
 public class ListBookingHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 
 	private final Logger logger = LogManager.getLogger(this.getClass());
@@ -36,7 +37,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 	 * @param context
 	 * @return
 	 */
-	@SuppressWarnings("DuplicatedCode")
+	@SuppressWarnings("unchecked")
     @Override
 	public ApiGatewayResponse handleRequest(Map<String, Object> input, Context context) {
 		try {
@@ -69,6 +70,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
             String tokenUserId = AuthService.getUserId(input);
 
 			if(input.containsKey("queryStringParameters")) {
+                //noinspection unchecked
                 queryStringParameters = (Map<String, String>) input.get("queryStringParameters");
             }
 

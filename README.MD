@@ -25,7 +25,7 @@ amazon/dynamodb-local running on port 8000 (docker run -d -p 8000:8000 amazon/dy
 sam 0.19
 aws-cli 1.16.215 (needs to be configured using aws configure)
 jq 1.6
-
+.env file with p&j configuration in resources folder for access to position and journey. If you are involved in the project, please message us on slack for this.
 ```
 
 
@@ -178,7 +178,7 @@ npm install
 npm run serve
 ```
 To start up the local vue server.
-If you have problems using it double check that local server is running on port 8080. 
+If you have problems using it, double check that the local server is running on port 8080. 
 
 
 
