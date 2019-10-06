@@ -14,46 +14,6 @@ import java.util.Map;
 @DynamoDBDocument
 public class Trip {
 
-//    {
-//        "identifiers": {
-//        "vehicle_id": "25C8032BE5CF4071BA65309B83DFA502"
-//    },
-//        "trip_id": "8326876B7C445950C97B4E9EFDF9D554",
-//            "market": "market",
-//            "start_position": {
-//        "latitude": 57.264160324,
-//                "longitude": 13.792256847
-//    },
-//        "end_position": {
-//        "latitude": 57.614259887,
-//                "longitude": 12.037655082
-//    },
-//        "start_time": "2019-08-31T16:09:49Z",
-//            "end_time": "2019-08-31T17:41:52Z",
-//            "total_distance_meter": 148789.0,
-//            "tags": [],
-//        "positions": [],
-//        "section_type": "SINGLE_TRIP",
-//            "custom_attributes": {
-//        "driver_behaviour_turns": "85",
-//                "driver_behaviour_focused": "0",
-//                "driver_behaviour_speed": "0",
-//                "driver_behaviour_score": "265",
-//                "driver_behaviour_smooth": "180"
-//    }
-//    }from old p&j
-//    "start_time": "2019-09-23T08:40:19Z",
-//            "end_time": "2019-09-23T08:43:36Z",
-//            "start_odometer": 292.63,
-//            "end_odometer": 293.275,
-//            "total_distance_meter": 644.9999999999818,
-//            "average_speed_kph": 144.0,
-//            "electrical_distance_meter": 644.9999999999818,
-
-
-//from real p&j
-//customAttributes={driver_behaviour_turns=85, driver_behaviour_focused=0, driver_behaviour_speed=0, driver_behaviour_score=265, driver_behaviour_smooth=180
-
     private Map<String, String> identifiers;
     private String tripId;
     private String market;
@@ -67,8 +27,6 @@ public class Trip {
     private String sectionType;
     private Map<String, String> userTripInformation;
     private Map<String, Double> customAttributes;
-
-
 
     public Trip() {
         identifiers = new HashMap<>();

@@ -43,6 +43,7 @@ public class ListBookingHandler implements RequestHandler<Map<String, Object>, A
 		try {
             if(input.get("warm-up") != null){
                 logger.info("warming up lambda..");
+                return null;
             }
 
 

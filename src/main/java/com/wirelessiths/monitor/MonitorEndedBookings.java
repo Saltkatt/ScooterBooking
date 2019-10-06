@@ -87,8 +87,7 @@ public class MonitorEndedBookings {
            throw new NullPointerException("access-token not found");
         }
         String queryParams = String.format("?startDate=%s&endDate=%s", endedBooking.getStartTime(), endedBooking.getEndTime());
-        String fullUrl = url + "/vehicles/" + vehicleId + "/trips" ;
-        //Todo: add query params for startDate and endDate
+        String fullUrl = url + "/vehicles/" + vehicleId + "/trips" + queryParams ;
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(fullUrl)
@@ -132,7 +131,6 @@ public class MonitorEndedBookings {
         // In this sample we only handle the specific exceptions for the 'GetSecretValue' API.
         // See https://docs.aws.amazon.com/secretsmanager/latest/apireference/API_GetSecretValue.html
         // We rethrow the exception by default.
-
         String secret;
         String decodedBinarySecret;
 
@@ -145,23 +143,18 @@ public class MonitorEndedBookings {
 
          }catch (DecryptionFailureException e) {
             logger.info("Secrets Manager can't decrypt the protected secret text using the provided KMS key: {}", e.getMessage());
-            // Deal with the exception here, and/or rethrow at your discretion.
             throw e;
         } catch (InternalServiceErrorException e) {
             logger.info("An error occurred on the server side: {}", e.getMessage());
-            // Deal with the exception here, and/or rethrow at your discretion.
             throw e;
         } catch (InvalidParameterException e) {
             logger.info("invalid value for a parameter was provided: {}", e.getMessage());
-            // Deal with the exception here, and/or rethrow at your discretion.
             throw e;
         } catch (InvalidRequestException e) {
             logger.info("parameter value provided that is not valid for the current state of the resource: {}", e.getMessage());
-            // Deal with the exception here, and/or rethrow at your discretion.
             throw e;
         } catch (ResourceNotFoundException e) {
             logger.info("We can't find the resource that you asked for: {}", e.getMessage());
-            // Deal with the exception here, and/or rethrow at your discretion.
             throw e;
         }
 
@@ -170,6 +163,7 @@ public class MonitorEndedBookings {
         if (getSecretValueResult.getSecretString() != null) {
             secret = getSecretValueResult.getSecretString();
 
+            //return substring of secret value only
             return secret.substring(secret.indexOf(':') + 2, secret.indexOf('}') -1);
         }
         else {

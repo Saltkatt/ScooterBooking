@@ -24,7 +24,7 @@ import java.util.Optional;
 public class SetBookingStateHandler implements RequestHandler<Map<String, Object>, ApiGatewayResponse> {
 // json request
 //    {
-//        "command": "start",
+//        "command": "activate",
 //        "scooterId" : "1234"
 //    }
 private final Logger logger = LogManager.getLogger(this.getClass());
