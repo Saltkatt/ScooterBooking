@@ -44,4 +44,8 @@ cf-deploy-old
 user.json
 file2.txt
 
-cf-deploy
+#script files:
+fileforupdategateway.json
+
+docker
+pom.xml.versionsBackup

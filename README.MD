@@ -60,6 +60,8 @@ The stack is created by running the script cf-deploy script.
 You need to set the parameters for STACK_NAME and BUCKET_NAME parameters in this script before you deploy:
 
 ```
+#!/bin/bash
+
 STACK_NAME="mystackname"
 TEMPLATE="packaged.yml"
 PARAMETERS_FILE="parameters.json"
