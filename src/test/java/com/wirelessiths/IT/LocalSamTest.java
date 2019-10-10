@@ -6,7 +6,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -17,13 +16,12 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
-import static com.wirelessiths.IT.BookingContent.populateForFailValidationTest;
-import static com.wirelessiths.IT.BookingContent.populateForOkValidationTest;
 import static org.junit.Assert.assertEquals;
 
 public class LocalSamTest {
 
     private static AmazonDynamoDB client;
+    private static DynamoDBMapperConfig mapperConfig;
     private static String tableName = "test-table";
     static String bookingId;
 
@@ -62,45 +60,14 @@ public class LocalSamTest {
             System.out.println("Error: " + responseCode);
         }
     }
-    @BeforeClass
-    public static void setUp(){
-        client = BookingTestBase.createClient();
-        DynamoDBMapperConfig mapperConfig = BookingTestBase.createMapperConfig(tableName);
-        BookingTestBase.createTable(tableName, client);
-    }
-
-    @Before
-    public void runMethods() {
-        try {
-            bookingId = createBookingLocalTest();
-            String jsonInputString = "{\n" +
-                    "\"scooterId\" : \"TestLocalDBTrial1\",\n" +
-                    "\"startTime\" : \"2019-11-10T15:00:36.739Z\",\n" +
-                    "\"endTime\" : \"2019-11-11T16:00:36.739Z\"\n" +
-                    "}";
-            updateBookingLocalTest(bookingId, jsonInputString);
-        } catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-    }
-
-    @AfterClass
-    public static void runDelete() {
-        try {
-            deleteBookingLocalTest(bookingId);
-            BookingTestBase.deleteTable(tableName, client);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Test
-    public void testThatBookingIsUpdated() {
+    public void testThatBookingIsUpdated() throws IOException {
         //Kalla på getBooking lambda
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(600, TimeUnit.SECONDS)
                 .writeTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(300, TimeUnit.SECONDS)
+                .readTimeout(600, TimeUnit.SECONDS)
                 .build();
 
         //RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"));
@@ -112,10 +79,43 @@ public class LocalSamTest {
                 .get()
                 .build();
 
-        String responseBody;
+        //ObjectMapper mapper = new ObjectMapper();
+        Response response = client.newCall(request).execute();
+        String responseBody = response.body().string();
 
-        assertEquals("startTime","2019-10-03T15:00:36.739Z","2019-10-03T15:00:36.739Z");
-        System.out.println("Test Success ");
+        assertEquals("startTime","2019-10-12T15:00:36.739Z","2019-10-12T15:00:36.739Z");
+        //System.out.println("Update Test has past the assertEquals");
+        System.out.println("Response body: " + responseBody);
+        System.out.println("Booking id: " + bookingId );
+
+    }
+
+
+    @BeforeClass
+    public static void runMethods() {
+
+        try {
+            bookingId = createBookingLocalTest();
+            String jsonInputString = "{\n" +
+                    //"\"scooterId\" : \"TestLocalDBTrial1\",\n" +
+                    "\"startTime\" : \"2019-10-12T15:00:36.739Z\",\n" +
+                    //"\"endTime\" : \"2019-11-11T16:00:36.739Z\"\n" +
+                    "}";
+            updateBookingLocalTest(bookingId, jsonInputString);
+            //listBookingLocalTest();
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+
+    @AfterClass
+    public static void runDelete() {
+        try {
+            deleteBookingLocalTest(bookingId);
+            //BookingTestBase.deleteTable(tableName, client);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -127,14 +127,14 @@ public class LocalSamTest {
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(600, TimeUnit.SECONDS)
                 .writeTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(300, TimeUnit.SECONDS)
+                .readTimeout(600, TimeUnit.SECONDS)
                 .build();
 
         //JSON data
         String jsonInputString = "{\n" +
-                "\"scooterId\" : \"TestLocalDBTrial1\",\n" +
-                "\"startTime\" : \"2019-10-02T15:00:36.739Z\",\n" +
-                "\"endTime\" : \"2019-10-02T16:00:36.739Z\"\n" +
+                "\"scooterId\" : \"TestLocalDBTrial44\",\n" +
+                "\"startTime\" : \"2019-10-08T15:00:36.739Z\",\n" +
+                "\"endTime\" : \"2019-10-08T16:00:36.739Z\"\n" +
                 "}";
 
         //post request with Authentication
@@ -152,10 +152,13 @@ public class LocalSamTest {
 
 
         if (response.code() == 201) {
-            assertEquals(response.code(), 201, response.code());
+            //assertEquals(response.code(), 201, response.code());
             System.out.println("Congratulations on booking your Scooter trip. Safe travel!");
+            System.out.println(response.code());
         } else if (response.code() == 500){
             System.out.println("Failed to create booking");
+            System.out.println("booking id: " + bookingId);
+            System.out.println(responseBody);
         }
         else {
             System.out.println("Error: " + response.code());
@@ -163,6 +166,7 @@ public class LocalSamTest {
         }
 
         JsonNode node = mapper.readTree(responseBody);
+        //String bookingId = String.valueOf(node.get("bookingId"));
         String bookingId = "fakeBookingId";
         if (node.hasNonNull("bookingId")) {
             bookingId = node.get("bookingId").asText();
@@ -176,7 +180,7 @@ public class LocalSamTest {
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(600, TimeUnit.SECONDS)
                 .writeTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(300, TimeUnit.SECONDS)
+                .readTimeout(600, TimeUnit.SECONDS)
                 .build();
 
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonInputString);
@@ -197,7 +201,8 @@ public class LocalSamTest {
                     + "\nResponse code: " + response.code());
         } else {
             System.out.println("There is a " + response.code() + " error in update booking."
-                    + "\n" + responseBody);
+                    + "\n" + "Booking id: " + bookingId
+                    + "\n" + responseBody );
         }
 
         //For reading and writing JSON
@@ -208,6 +213,7 @@ public class LocalSamTest {
 
         bookingId = "fakeBookingId";
         String newStartTime = node.get("startTime").asText();
+        System.out.println("newStartTime: " + newStartTime);
 
         if (node.hasNonNull("bookingId")) {
             bookingId = node.get("bookingId").asText();
@@ -215,13 +221,40 @@ public class LocalSamTest {
         return bookingId;
     }
 
+    public static void listBookingLocalTest() throws IOException {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(600, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(600, TimeUnit.SECONDS)
+                .build();
+
+        Request request = new Request.Builder()
+                .addHeader("User-Agent", "insomnia/6.6.2")
+                .addHeader("Content-Type", "application/" + "json")
+                .url( "http://127.0.0.1:3000/bookings/" + bookingId)
+                .get()
+                .build();
+
+        Response response = client.newCall(request).execute();
+
+        String responseBody = response.body().string();
+
+        if (response.code() == 200) {
+            System.out.println("Booking id: " + bookingId);
+        } else {
+            System.out.println("There is a " + response.code() + " error in list booking."
+                    + "\n" + "Booking id: " + bookingId
+                    + "\n" + responseBody );
+        }
+
+    }
 
     public static String deleteBookingLocalTest(String bookingId) throws IOException {
 
         OkHttpClient client = new OkHttpClient.Builder()
                 .connectTimeout(600, TimeUnit.SECONDS)
                 .writeTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(300, TimeUnit.SECONDS)
+                .readTimeout(600, TimeUnit.SECONDS)
                 .build();
 
         Request request = new Request.Builder()
@@ -241,8 +274,9 @@ public class LocalSamTest {
                     " booking id: " + bookingId + "." + " Thank you for your patronage!" + "\n");
 
         } else {
-            System.out.println("\nThere is a " + response.code() + " error in delete booking." + "\n" + responseBody);
-            System.out.println(responseBody);
+            System.out.println("\nThere is a " + response.code() + " error in delete booking." + "\n" + responseBody
+                    +"\n" + "Booking id: " + bookingId);
+            //System.out.println(responseBody);
         }
         return responseBody;
     }
