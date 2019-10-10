@@ -17,7 +17,7 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
-public class BookingContent {
+public class CreateLocalDB {
 
     private static AmazonDynamoDB client;
     private static DynamoDBMapperConfig mapperConfig;
@@ -30,12 +30,11 @@ public class BookingContent {
 
     @BeforeClass
     public static void setUpClientAndTable() {
-
         client = BookingTestBase.createClient();
         mapperConfig = BookingTestBase.createMapperConfig(tableName);
         BookingTestBase.createTable(tableName, client);
-        populateForOkValidationTest();
-        populateForFailValidationTest();
+        //populateForOkValidationTest();
+        //populateForFailValidationTest();
     }
 
 
