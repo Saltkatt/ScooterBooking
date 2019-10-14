@@ -16,7 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class LocalSamTest {
 
@@ -79,15 +79,50 @@ public class LocalSamTest {
                 .get()
                 .build();
 
-        //ObjectMapper mapper = new ObjectMapper();
+        ObjectMapper mapper = new ObjectMapper();
         Response response = client.newCall(request).execute();
         String responseBody = response.body().string();
 
-        assertEquals("startTime","2019-10-12T15:00:36.739Z","2019-10-12T15:00:36.739Z");
-        //System.out.println("Update Test has past the assertEquals");
+        //Retrieving the data contained inside the node
+        JsonNode node = mapper.readTree(responseBody);
+
+        //bookingId = "fakeBookingId";
+        String newStartTime = node.get("startTime").asText();
+        System.out.println("newStartTime: " + newStartTime);
+
+        //String start = newStartTime;
+        String expected = "2019-10-12T16:00:36.739Z";
+        String actual = node.get("startTime").asText();
+
+        assertEquals(newStartTime, expected, actual);
+
+        System.out.println("newStartTime: " + newStartTime);
+        System.out.println("actual: " + actual);
         System.out.println("Response body: " + responseBody);
         System.out.println("Booking id: " + bookingId );
 
+    }
+
+    @Test
+    public void testThatBookingIsCreated() throws IOException{
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(600, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(600, TimeUnit.SECONDS)
+                .build();
+
+        Request request = new Request.Builder()
+                .addHeader("User-Agent", "insomnia/6.6.2")
+                .addHeader("Content-Type", "application/" + "json")
+                .url("http://127.0.0.1:3000/bookings/" + bookingId)
+                .get()
+                .build();
+
+        Response response = client.newCall(request).execute();
+        String responseBody = response.body().string();
+
+        assertNotNull(bookingId);
+        System.out.println("Booking id is not null if test is passed.");
     }
 
 
@@ -97,12 +132,12 @@ public class LocalSamTest {
         try {
             bookingId = createBookingLocalTest();
             String jsonInputString = "{\n" +
-                    //"\"scooterId\" : \"TestLocalDBTrial1\",\n" +
+                    "\"scooterId\" : \"TestLocalDBTrial46\",\n" +
                     "\"startTime\" : \"2019-10-12T15:00:36.739Z\",\n" +
-                    //"\"endTime\" : \"2019-11-11T16:00:36.739Z\"\n" +
+                    "\"endTime\" : \"2019-10-12T16:00:36.739Z\"\n" +
                     "}";
             updateBookingLocalTest(bookingId, jsonInputString);
-            //listBookingLocalTest();
+            listBookingLocalTest();
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
@@ -132,7 +167,7 @@ public class LocalSamTest {
 
         //JSON data
         String jsonInputString = "{\n" +
-                "\"scooterId\" : \"TestLocalDBTrial44\",\n" +
+                "\"scooterId\" : \"TestLocalDBTrial46\",\n" +
                 "\"startTime\" : \"2019-10-08T15:00:36.739Z\",\n" +
                 "\"endTime\" : \"2019-10-08T16:00:36.739Z\"\n" +
                 "}";
@@ -154,7 +189,7 @@ public class LocalSamTest {
         if (response.code() == 201) {
             //assertEquals(response.code(), 201, response.code());
             System.out.println("Congratulations on booking your Scooter trip. Safe travel!");
-            System.out.println(response.code());
+            //System.out.println(response.code());
         } else if (response.code() == 500){
             System.out.println("Failed to create booking");
             System.out.println("booking id: " + bookingId);
@@ -193,7 +228,6 @@ public class LocalSamTest {
                 .build();
 
         Response response = client.newCall(request).execute();
-
         String responseBody = response.body().string();
 
         if (response.code() == 201) {
@@ -240,7 +274,9 @@ public class LocalSamTest {
         String responseBody = response.body().string();
 
         if (response.code() == 200) {
-            System.out.println("Booking id: " + bookingId);
+            System.out.println(response.code());
+            System.out.println(responseBody);
+
         } else {
             System.out.println("There is a " + response.code() + " error in list booking."
                     + "\n" + "Booking id: " + bookingId
