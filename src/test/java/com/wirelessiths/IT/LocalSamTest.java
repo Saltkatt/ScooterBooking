@@ -25,40 +25,27 @@ public class LocalSamTest {
     private static String tableName = "test-table";
     static String bookingId;
 
-    /**
-     * Tests ListBookingsFunction response code is 200.
-     * @throws IOException
-     */
+
     @Test
-    public void listBookingsOkResponseCode200() throws IOException {
-        // ListBookingFunction
-        URL url = new URL("http://127.0.0.1:3000/bookings");
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    public void testThatBookingIsCreated() throws IOException{
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(600, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(600, TimeUnit.SECONDS)
+                .build();
 
-        connection.setRequestMethod("GET");
-        connection.setRequestProperty("Content-Type", "application/" + "json");
-        int responseCode = connection.getResponseCode();
+        Request request = new Request.Builder()
+                .addHeader("User-Agent", "insomnia/6.6.2")
+                .addHeader("Content-Type", "application/" + "json")
+                .url("http://127.0.0.1:3000/bookings/" + bookingId)
+                .get()
+                .build();
 
-        System.out.println("\nSending 'GET' request to URL : " + url);
-        System.out.println("Response code " + responseCode);
+        Response response = client.newCall(request).execute();
+        String responseBody = response.body().string();
 
-        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        String inputLine;
-        StringBuilder response = new StringBuilder();
-
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
-        }
-        in.close();
-
-        System.out.println(response.toString());
-        if(responseCode == 200){
-            assertEquals(String.valueOf(responseCode), 200, responseCode);
-            System.out.println("Test success");
-        }
-        else{
-            System.out.println("Error: " + responseCode);
-        }
+        assertNotNull(bookingId);
+        System.out.println("Booking id is not null if test is passed.");
     }
 
     @Test
@@ -94,7 +81,7 @@ public class LocalSamTest {
         String expected = "2019-10-12T16:00:36.739Z";
         String actual = node.get("startTime").asText();
 
-        assertEquals(newStartTime, expected, actual);
+        assertEquals(expected, actual);
 
         System.out.println("newStartTime: " + newStartTime);
         System.out.println("actual: " + actual);
@@ -103,36 +90,49 @@ public class LocalSamTest {
 
     }
 
+    /**
+     * Tests ListBookingsFunction response code is 200.
+     * @throws IOException
+     */
     @Test
-    public void testThatBookingIsCreated() throws IOException{
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(600, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(600, TimeUnit.SECONDS)
-                .build();
+    public void listBookingsOkResponseCode200() throws IOException {
+        // ListBookingFunction
+        URL url = new URL("http://127.0.0.1:3000/bookings");
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-        Request request = new Request.Builder()
-                .addHeader("User-Agent", "insomnia/6.6.2")
-                .addHeader("Content-Type", "application/" + "json")
-                .url("http://127.0.0.1:3000/bookings/" + bookingId)
-                .get()
-                .build();
+        connection.setRequestMethod("GET");
+        connection.setRequestProperty("Content-Type", "application/" + "json");
+        int responseCode = connection.getResponseCode();
 
-        Response response = client.newCall(request).execute();
-        String responseBody = response.body().string();
+        System.out.println("\nSending 'GET' request to URL : " + url);
+        System.out.println("Response code " + responseCode);
 
-        assertNotNull(bookingId);
-        System.out.println("Booking id is not null if test is passed.");
+        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String inputLine;
+        StringBuilder response = new StringBuilder();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+        in.close();
+
+        System.out.println(response.toString());
+        if(responseCode == 200){
+            assertEquals(String.valueOf(responseCode), 200, responseCode);
+            System.out.println("Test success");
+        }
+        else{
+            System.out.println("Error: " + responseCode);
+        }
     }
-
-
+    
     @BeforeClass
     public static void runMethods() {
 
         try {
             bookingId = createBookingLocalTest();
             String jsonInputString = "{\n" +
-                    "\"scooterId\" : \"TestLocalDBTrial46\",\n" +
+                    "\"scooterId\" : \"TestLocalDB\",\n" +
                     "\"startTime\" : \"2019-10-12T15:00:36.739Z\",\n" +
                     "\"endTime\" : \"2019-10-12T16:00:36.739Z\"\n" +
                     "}";
@@ -159,11 +159,7 @@ public class LocalSamTest {
      */
     public static String createBookingLocalTest() throws Exception {
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(600, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(600, TimeUnit.SECONDS)
-                .build();
+        clientOkHttp();
 
         //JSON data
         String jsonInputString = "{\n" +
@@ -182,7 +178,7 @@ public class LocalSamTest {
                 .build();
 
         ObjectMapper mapper = new ObjectMapper();
-        Response response = client.newCall(request).execute();
+        Response response = clientOkHttp().newCall(request).execute();
         String responseBody = response.body().string();
 
 
@@ -212,11 +208,7 @@ public class LocalSamTest {
 
     public static String updateBookingLocalTest(String bookingId, String jsonInputString) throws IOException {
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(600, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(600, TimeUnit.SECONDS)
-                .build();
+        clientOkHttp();
 
         RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonInputString);
 
@@ -227,7 +219,7 @@ public class LocalSamTest {
                 .put(body)
                 .build();
 
-        Response response = client.newCall(request).execute();
+        Response response = clientOkHttp().newCall(request).execute();
         String responseBody = response.body().string();
 
         if (response.code() == 201) {
@@ -256,11 +248,7 @@ public class LocalSamTest {
     }
 
     public static void listBookingLocalTest() throws IOException {
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(600, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(600, TimeUnit.SECONDS)
-                .build();
+       clientOkHttp();
 
         Request request = new Request.Builder()
                 .addHeader("User-Agent", "insomnia/6.6.2")
@@ -269,7 +257,7 @@ public class LocalSamTest {
                 .get()
                 .build();
 
-        Response response = client.newCall(request).execute();
+        Response response = clientOkHttp().newCall(request).execute();
 
         String responseBody = response.body().string();
 
@@ -287,11 +275,7 @@ public class LocalSamTest {
 
     public static String deleteBookingLocalTest(String bookingId) throws IOException {
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .connectTimeout(600, TimeUnit.SECONDS)
-                .writeTimeout(60, TimeUnit.SECONDS)
-                .readTimeout(600, TimeUnit.SECONDS)
-                .build();
+        clientOkHttp();
 
         Request request = new Request.Builder()
                 .addHeader("User-Agent", "insomnia/6.6.2")
@@ -300,7 +284,7 @@ public class LocalSamTest {
                 .delete()
                 .build();
 
-        Response response = client.newCall(request).execute();
+        Response response = clientOkHttp().newCall(request).execute();
         String responseBody = response.body().string();
         String msg = null;
 
@@ -315,6 +299,16 @@ public class LocalSamTest {
             //System.out.println(responseBody);
         }
         return responseBody;
+    }
+
+    public static OkHttpClient clientOkHttp() {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(600, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(600, TimeUnit.SECONDS)
+                .build();
+
+        return client;
     }
 
 
