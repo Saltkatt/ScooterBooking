@@ -125,7 +125,7 @@ public class LocalSamTest {
             System.out.println("Error: " + responseCode);
         }
     }
-    
+
     @BeforeClass
     public static void runMethods() {
 
@@ -163,7 +163,7 @@ public class LocalSamTest {
 
         //JSON data
         String jsonInputString = "{\n" +
-                "\"scooterId\" : \"TestLocalDBTrial46\",\n" +
+                "\"scooterId\" : \"TestLocalDBTrial47\",\n" +
                 "\"startTime\" : \"2019-10-08T15:00:36.739Z\",\n" +
                 "\"endTime\" : \"2019-10-08T16:00:36.739Z\"\n" +
                 "}";
