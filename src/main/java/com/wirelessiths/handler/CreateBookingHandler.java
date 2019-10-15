@@ -58,7 +58,6 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
                  maxDuration = settings.getMaxDuration();
                  buffer = settings.getBuffer();
                  maxAllowedBookings = settings.getMaxBookings();
-
             }
             String message;
             double duration = Duration.between(booking.getStartTime(), booking.getEndTime()).getSeconds();
@@ -95,8 +94,12 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
 
             }
             booking.save(booking);
-            String userMessage = String.format("Booking confirmation for startdate: %s and enddate: %s", booking.getStartTime(), booking.getEndTime());
-            sendMessage(userMessage, booking, System.getenv("USER_POOL_ID"));
+            if(!System.getenv("ENVIRONMENT").equals("test")){
+
+                String userMessage = String.format("Booking confirmation for startdate: %s and enddate: %s", booking.getStartTime(), booking.getEndTime());
+                sendMessage(userMessage, booking, System.getenv("USER_POOL_ID"));
+
+            }
             return ApiGatewayResponse.builder()
                     .setStatusCode(201)
                     .setObjectBody(booking)
@@ -147,6 +150,7 @@ public class CreateBookingHandler implements RequestHandler<Map<String, Object>,
                     .build();
         }
     }
+
     private void sendMessage(String message, Booking booking, String userPoolId){
         String phoneNumber = UserService.getUserPhoneNumber(booking.getUserId(), userPoolId);
         AmazonSNS snsClient = getAmazonSNSClient();
