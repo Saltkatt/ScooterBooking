@@ -47,6 +47,7 @@ To run our integration test run:
 
 ```
 docker run -d -p 8000:8000 amazon/dynamodb-local
+mvn surefire:test -Dtest=CreateLocalDB
 mvn clean package
 sam local start-api --env-vars testenvironment.json --docker-network=host
 mvn surefire:test -Dtest=LocalSamTest
