@@ -1,11 +1,17 @@
 package com.wirelessiths;
 
 
+import com.amazonaws.services.sns.model.MessageAttributeValue;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class TestBot {
@@ -13,38 +19,43 @@ public class TestBot {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TestBot.class);
 
+    //Sends the expected Slack messages
 
-    //Sends the expected Slack message
-
-    private SlackMessage slackMessage = SlackMessage.builder()
+    private SlackMessage passedSlackMessage = SlackMessage.builder()
             .channel("Lisa Marie (ITHS)")
             .username("Lisa Marie (ITHS)")
-            .text("The Lambda recieved an error.")
+            .text("The Test Bot is up and running!")
             .icon_emoji(":twice:")
             .build();
 
-
-    private SlackMessage positiveSlackMessage = SlackMessage.builder()
+    private SlackMessage failedSlackMessage = SlackMessage.builder()
             .channel("Lisa Marie (ITHS)")
             .username("Lisa Marie (ITHS)")
-            .text("The Test bot is up and running!")
+            .text("The Test Bot received an error.")
             .icon_emoji(":twice:")
             .build();
 
 
     private String createBooking(String token) throws Exception {
 
+
         OkHttpClient client = new OkHttpClient();
 
+        Instant startTime = Instant.now().plus(5, ChronoUnit.HOURS);
+        Instant endTime = Instant.now().plus(6, ChronoUnit.HOURS);
+
+
         //JSON input data
-        String jsonInputString = "{\n" +
-                "\"scooterId\" : \"Ljpc54\",\n" +
-                "\"startTime\" : \"2019-08-30T15:00:36.739Z\",\n" +
-                "\"endTime\" : \"2019-08-30T16:00:36.739Z\"\n" +
+        String jsonInputStringInstant = "{\n" +
+                "\"scooterId\" : \"9kxR9UDW\",\n" +
+                "\"startTime\" : " + "\"" + startTime + "\",\n" +
+                "\"endTime\"   : " + "\"" + endTime + "\"\n" +
                 "}";
 
+        System.out.println(jsonInputStringInstant);
+
         //Post request with Authentication
-        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonInputString);
+        RequestBody body = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), jsonInputStringInstant);
         Request request = new Request.Builder()
 
                 .addHeader("User-Agent", "insomnia/6.6.2")
@@ -60,12 +71,17 @@ public class TestBot {
         Response response = client.newCall(request).execute();
 
         String responseBody = response.body().string();
+        LOGGER.info("Response when attempting to book Scooter " + responseBody);
         if (response.code() == 201) {
+            SlackUtils.sendMessage(passedSlackMessage);
             LOGGER.info("\nCongratulations on booking your Scooter trip. Safe travel!");
 
         } else {
+            Map<String, MessageAttributeValue> smsAttributes = new HashMap<>();
+            SNSService.sendSMSMessage(SNSService.getAmazonSNSClient(), responseBody,
+                    System.getenv("phoneNumber"), smsAttributes);
+            SlackUtils.sendMessage(failedSlackMessage);
             throw new Exception("Booking failed.");
-
         }
 
         //Retrieving the data contained inside the node
@@ -99,6 +115,10 @@ public class TestBot {
         if (responseCode == 200) {
             LOGGER.info("\nYou have succeeded in retrieving your booking information!");
         } else {
+            Map<String, MessageAttributeValue> smsAttributes = new HashMap<>();
+            SNSService.sendSMSMessage(SNSService.getAmazonSNSClient(), responseBody,
+                    System.getenv("phoneNumber"), smsAttributes);
+            SlackUtils.sendMessage(failedSlackMessage);
             throw new Exception("Failed reading booking");
 
         }
@@ -147,6 +167,10 @@ public class TestBot {
             LOGGER.info("\nThe booking with booking id " + bookingId +
                     " has successfully been updated.");
         } else {
+            Map<String, MessageAttributeValue> smsAttributes = new HashMap<>();
+            SNSService.sendSMSMessage(SNSService.getAmazonSNSClient(), responseBody,
+                    System.getenv("phoneNumber"), smsAttributes);
+            SlackUtils.sendMessage(failedSlackMessage);
             throw new Exception("Update booking failed.");
         }
 
@@ -187,6 +211,10 @@ public class TestBot {
                     " booking id: " + bookingId + "." + " See you next time!" + "\n");
 
         } else {
+            Map<String, MessageAttributeValue> smsAttributes = new HashMap<>();
+            SNSService.sendSMSMessage(SNSService.getAmazonSNSClient(), responseBody,
+                    System.getenv("phoneNumber"), smsAttributes);
+            SlackUtils.sendMessage(failedSlackMessage);
             throw new Exception("Delete booking failed.");
 
 
@@ -196,42 +224,63 @@ public class TestBot {
 
     }
 
-
     public boolean performTesting(String userName, String password) {
 
         boolean success = false;
+        boolean bookingComplete = false;
+        String bookingIdToDelete = null;
+        String tokenForCleanup = null;
+
         try {
             String token = loginUsingOkHttp(userName, password);
 
-            //String response1 creates new booking
-            String response1 = createBooking(token);
-            //String response2 retrieves a booking according to booking id
-            String response2 = readBooking(token, response1);
+            //String bookingId1 creates new booking
+            String bookingId1 = createBooking(token);
+            bookingComplete = true;
+            bookingIdToDelete = bookingId1;
+            tokenForCleanup = token;
+            //String bookingId2 retrieves a booking according to booking id
+            String bookingId2 = readBooking(token, bookingId1);
 
-            String jsonInputString = "{\"startTime\" : \"2019-10-25T14:50:30.427Z\"}";
+            Instant startTime = Instant.now().plus(5, ChronoUnit.HOURS);
 
-            //String response3 updates a booking
-            String response3 = updateBooking(token, response2, jsonInputString);
-            //String response4 deletes the updated booking
-            String response4 = deleteBooking(token, response3);
+            String jsonInputStringInput = "{\n" +
+                    "\"startTime\" : " + "\"" + startTime + "\"\n" +
+                    "}";
 
-            // log that it worked fine
+            System.out.println(jsonInputStringInput);
+
+            //String bookingId3 updates a booking
+            String bookingId3 = updateBooking(token, bookingId2, jsonInputStringInput);
+            //String bookingId4 deletes the updated booking
+            String bookingId4 = deleteBooking(token, bookingId3);
+
+            //Log that the Test Bot succeeded
             success = true;
             LOGGER.info("Success!");
 
         } catch (Exception e) {
-            // log that it failed, including error message from exception
+            // Log that the Test Bot failed and include the error message from the Exception
             success = false;
             LOGGER.info("Test run failed " + e.getMessage());
+            if (bookingComplete) {
+                try {
+                    String bookingId4 = deleteBooking(tokenForCleanup, bookingIdToDelete);
+                    LOGGER.info("Cleanup succeeded.");
+                } catch (Exception exc) {
+                    LOGGER.warn("Cleanup failed.");
+                }
+            }
         }
         return success;
     }
 
+
     public String loginUsingOkHttp(String userName, String password) throws Exception {
 
 
-        userName = "lisamarie";
-        password = "MfC:VD9Vx";
+        userName = System.getenv("userName");
+        password = System.getenv("password");
 
 
         OkHttpClient client = new OkHttpClient();
