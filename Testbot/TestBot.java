@@ -22,19 +22,18 @@ public class TestBot {
     //Sends the expected Slack messages
 
     private SlackMessage passedSlackMessage = SlackMessage.builder()
-            .channel("Lisa Marie (ITHS)")
-            .username("Lisa Marie (ITHS)")
+            .channel("jens")
+            .username("jens")
             .text("The Test Bot is up and running!")
             .icon_emoji(":twice:")
             .build();
 
     private SlackMessage failedSlackMessage = SlackMessage.builder()
-            .channel("Lisa Marie (ITHS)")
-            .username("Lisa Marie (ITHS)")
+            .channel("jens")
+            .username("jens")
             .text("The Test Bot received an error.")
             .icon_emoji(":twice:")
             .build();
-
 
     private String createBooking(String token) throws Exception {
 
@@ -47,7 +46,7 @@ public class TestBot {
 
         //JSON input data
         String jsonInputStringInstant = "{\n" +
-                "\"scooterId\" : \"9kxR9UDW\",\n" +
+                "\"scooterId\" : \"gZH58C5U\",\n" +
                 "\"startTime\" : " + "\"" + startTime + "\",\n" +
                 "\"endTime\"   : " + "\"" + endTime + "\"\n" +
                 "}";
